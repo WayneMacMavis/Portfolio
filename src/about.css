@@ -6,7 +6,7 @@
     position: relative;
     height: 100%;
     background-color: #041b3a;
-    clip-path: polygon(0 5.5vw, 100% 0, 100% 100%, 0 100%);
+    clip-path: polygon(0 4.7%, 100% 0, 100% 100%, 0 100%);
     overflow: hidden;
   }
 

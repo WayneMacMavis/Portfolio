@@ -1,0 +1,10 @@
+.video_bg {
+    object-fit: cover;
+    width: 100vw;
+    height: 95vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+  clip-path: polygon(0 0, 100% 0, 100% 95%, 0 100%);
+  z-index: -10;
+  }

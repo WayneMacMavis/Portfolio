@@ -1,10 +1,13 @@
+import React, { Component } from 'react';
+
 import Profile from './assets/profile.jpg';
 
 import './about.css';
 
-function App() {
+class About extends Component {
+  render() {
   return (
-    <section className="about-section">
+    <section className="about-section" id='about'>
       <h1>About</h1>
       <div className="all-sections">
         <div data-aos="fade-right" className="mini-section">
@@ -70,5 +73,6 @@ function App() {
     </section>
   );
 }
+}
 
-export default App;
+export default About;

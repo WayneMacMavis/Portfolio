@@ -1,18 +1,22 @@
 import './App.css';
-import video_bg from './assets/home-bg.mp4';
+import Home from './Home';
 import About from './about';
 import Navbar from './components/Navbar/Navbar';
+import { BrowserRouter as Routex, Routes, Route } from "react-router-dom";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header"> </header>
-   <Navbar />
-      <video className='video_bg' autoPlay loop muted>
-          <source src={video_bg} type='video/mp4' />
-      </video>
-      <About />
-    </div>
+    <Routex>
+      <div className="App">
+        <Navbar />
+        <Home />
+        <About />
+      </div>
+      <Routes>
+        <Route path="/about" component={About} />
+        <Route path="/home" component={Home} />
+      </Routes>
+    </Routex>
   );
 }
 
