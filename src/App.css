@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+  user-select: none;
 }
 
 
@@ -16,19 +17,4 @@
     transform: rotate(360deg);
   }
 }
-/* 
-.video_container {
-  height: 80vh;
 
-} */
-
-.video_bg {
-  object-fit: cover;
-  width: 100vw;
-  height: 95vh;
-  position: absolute;
-  top: 0;
-  left: 0;
-clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
-z-index: -10;
-}
