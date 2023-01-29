@@ -38,3 +38,21 @@
     margin:auto;
     font-size: 6.3pc;
   }
+
+  @media (max-width: 960px) {
+    h1.text {
+      font-size: 5pc;
+    }
+    h2.text {
+      font-size: 5pc;
+    }
+    }
+
+    @media (max-width: 600px) {
+      h1.text {
+        font-size: 3pc;
+      }
+      h2.text {
+        font-size: 3pc;
+      }
+      }
