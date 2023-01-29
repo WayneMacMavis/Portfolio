@@ -57,12 +57,7 @@ class About extends Component {
           <h2 data-aos="zoom-in-down">Who am I?</h2>
           <div className="div-para">
             <p data-aos="zoom-in-down">
-              Hello everyone, my name is Heithem Kacem and I am a Front End
-              Developer from Tunisia, Mahdia. I am self-taught developer,
-              passionate and very fast learner. I have learned how to program
-              through various resources, currently I am learning on Freecodecamp
-              and Udacity. I am eager to learn and grow - Everyday. My ambition
-              is to make awesome websites, not just good enough.
+              Hi There, I started my coding journey five years ago. Bluh Bluh Bluh. More text that I havent thought about. I hope that you are as uninterested as me. Have a good day. 
             </p>
           </div>
           <button data-aos="zoom-in-down" className="hvr-bounce-to-right">

@@ -1,12 +1,12 @@
 .about-section {
     position: relative;
-    top: 801px;
+    top: 77vh;
     font-family: 'Open Sans', sans-serif;
     width: 100vw;
     position: relative;
     height: 100%;
     background-color: #041b3a;
-    clip-path: polygon(0 4.7%, 100% 0, 100% 100%, 0 100%);
+    clip-path: polygon(0 7.5%, 100% 0, 100% 100%, 0 100%);
     overflow: hidden;
   }
 
@@ -33,6 +33,9 @@
   }
 
   @media (max-width: 1496px) {
+    .about-section {
+      clip-path: polygon(0 2.5%, 100% 0, 100% 100%, 0 100%);
+    }
     .about-section .all-sections {
       flex-wrap: wrap;
     }
@@ -63,7 +66,7 @@
     transform: translate(-50%);
     height: 157.5px;
     width: 45%;
-    background-color: #16d7cd;
+    background-color: rgba(1, 248, 207, 0.8);
     -webkit-clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
     clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   }
@@ -139,7 +142,7 @@
     transform: translate(-50%);
     -webkit-clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
     clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-    background-color: #16d7cd;
+    background-color: rgba(1, 248, 207, 0.8);
   }
   .about-section .who-am-i .all-who h1 {
     font-size: 25px;
@@ -165,9 +168,10 @@
     margin-top: 20px;
     height: 60px;
     width: 200px;
-    border: none;
-  
+    bottom: 15px;
+    background-color: rgb(173, 217, 255);
     font-size: 17px;
+    border-radius: 20px;
     cursor: pointer;
   }
   
@@ -192,7 +196,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: #16d7cd;
+    background-color: rgba(1, 248, 207, 0.8);
     -webkit-transform: scaleX(0);
     transform: scaleX(0);
     -webkit-transform-origin: 0 50%;

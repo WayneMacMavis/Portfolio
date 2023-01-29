@@ -8,3 +8,33 @@
   clip-path: polygon(0 0, 100% 0, 100% 95%, 0 100%);
   z-index: -10;
   }
+
+  .text-container {
+    position:relative;
+    top: 20vh;
+    left:0;
+    width:100%;
+    color: rgb(173, 217, 255);
+    text-shadow: 5px 5px 8px black;
+  }
+
+  
+  h1.text{
+    position:absolute;
+    top:0;
+    left:0;
+    bottom:0;
+    right:0;
+    margin:auto;
+    font-size: 6.3pc;
+  }
+
+  h2.text{
+    position:absolute;
+    top:200px;
+    left:0;
+    bottom:0;
+    right:0;
+    margin:auto;
+    font-size: 6.3pc;
+  }

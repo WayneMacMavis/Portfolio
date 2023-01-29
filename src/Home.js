@@ -12,6 +12,10 @@ function Home() {
       <video className='video_bg' autoPlay loop muted>
           <source src={video_bg} type='video/mp4' />
       </video>
+      <div className='text-container'>
+    <h1 class="text">Wayne Mac Mavis</h1>
+    <h2 class="text">Web Developer</h2>
+    </div>
     </div>
   );
 }
