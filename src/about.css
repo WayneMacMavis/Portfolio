@@ -207,6 +207,7 @@
     transition-duration: 0.5s;
     -webkit-transition-timing-function: ease-out;
     transition-timing-function: ease-out;
+    border-radius: 20px;
   }
   
   .hvr-bounce-to-right:hover,
