@@ -2,7 +2,6 @@ import React from 'react';
 import video_bg from './assets/home-bg.mp4';
 import "./Home.css";
 
-import './Home.css';
 
 function Home() {
 

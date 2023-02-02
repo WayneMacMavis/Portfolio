@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import { MenuItems } from "./Menuitems";
 import { Link } from "react-scroll";
 import './Navbar.css';
@@ -7,26 +7,22 @@ import { faTimes, faBars } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faReact } from "@fortawesome/free-brands-svg-icons";
 
-
-class Navbar extends Component {
-    state = { clicked: false };
-    handleClick = () => {
-      this.setState({
-        clicked: !this.state.clicked
-      });
-    };
-
-    render() {
+const Navbar = () => {
+   const [click, setClick] = useState(false);
+  
+  const handleClick = () => {
+    setClick(!click);
+  }
         return(
             <nav className="NavbarItems" id="top">
-                <h1 className="navbar-logo">React
+                <h1 className="navbar-logo">Powered by React
                 <FontAwesomeIcon icon={faReact} />
                 </h1>
-                <div className="menu-icon" onClick={this.handleClick}>
-                    <FontAwesomeIcon className="fa" icon={this.state.clicked ? faTimes : faBars} />
+                <div className="menu-icon" onClick={handleClick}>
+                    <FontAwesomeIcon className="fa" icon={click ? faTimes : faBars} />
                     
                     </div>    
-                    <ul className={this.state.clicked ? 'nav-menu active' : 'nav-menu'}>
+                    <ul className={click ? 'nav-menu active' : 'nav-menu'}>
                         {MenuItems.map((item, index) => {
                             return (
                                 <Link
@@ -44,6 +40,5 @@ class Navbar extends Component {
             </nav>
         )
     }
-}
 
 export default Navbar

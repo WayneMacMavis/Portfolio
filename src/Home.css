@@ -7,8 +7,8 @@
     position: absolute;
     top: 0;
     left: 0;
-  clip-path: polygon(0 0, 100% 0, 100% 95%, 0 100%);
-  z-index: -10;
+    clip-path: polygon(0 0, 100% 0, 100% 95%, 0 100%);
+    z-index: 0;
   }
 
   .text-container {
@@ -40,6 +40,20 @@
     right:0;
     margin:auto;
     font-size: 7.4pc;
+  }
+
+  .code {
+    position: relative;
+    top: 245px;
+    left: 530px;
+    font-size: 90px;
+  }
+
+  .chev {
+    position: relative;
+    top: 35px;
+    left: -570px;
+    font-size: 80px;
   }
 
   @media (max-width: 960px) {

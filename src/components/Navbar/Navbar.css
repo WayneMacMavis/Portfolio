@@ -1,23 +1,33 @@
 @import url('https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap');
 
 .NavbarItems {
-	background: linear-gradient(90deg, rgb(11, 0, 110) 10%, rgb(0, 1, 53) 100%);
+	position: sticky;
+	background: linear-gradient(90deg, rgba(11, 0, 110, 0.822) 10%, rgba(0, 1, 53, 0.822) 100%);
 	height: 80px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	font-size: 1.6rem;
+	z-index: 60;
 }
 
 .navbar-logo {
+	width: 400px;
 	color: #fff;
 	justify-self: start;
-	margin-left: 20px;
+	margin-left: 10px;
+	margin-top: 1.5%;
+	padding-right: 300px;
 	cursor: pointer;
+	font-size: 22px;
+	text-align: center;
+	display: flex;
+
 }
 
 .fa-react {
-	margin-left: 0.9rem;
+	margin-top: -3px;
+	margin-left: 1rem;
 	font-size: 2.6rem;
 }
 
@@ -33,20 +43,36 @@
 }
 
 .nav-links {
+	position: relative;
 	color: rgba(1, 248, 207, 0.8);
 	text-decoration: none;
-	padding: 0.6rem 1rem;
+	padding: 0.4rem 1rem;
 	font-size: 30px;
 	font-family: 'Dancing Script', cursive;
 	font-weight: 500;
+	display: table-cell; 
 
 }
 
 .nav-links:hover {
-	background-color: #a0d9ff2d;
-	border-radius: 3px;
-	transition: all 0.3s ease-out;
+	color: rgb(0, 255, 213);
 }
+
+  .nav-links:after {    
+	bottom: 0;
+	content: "";
+	height: 3.3px;
+	left: 50%;
+	position: absolute;
+	background: rgba(1, 248, 207, 0.8);
+	transition: width 0.3s ease 0s, left 0.3s ease 0s;
+	width: 0;
+	border-radius: 3px;
+  }
+  .nav-links:hover:after { 
+	width: 100%; 
+	left: 0; 
+  }
 
 .fa {
 	color: #fff;
@@ -83,8 +109,8 @@
 	}
 	
 	.nav-menu.active {
-		background: linear-gradient(90deg, rgb(11, 0, 110) 10%, rgb(0, 1, 53) 100%);
-		top: 60px;
+		background: linear-gradient(90deg, rgba(11, 0, 110, 0.822) 10%, rgba(0, 1, 53, 0.842) 100%);
+		top: 67.5%;
 		left: 0%;
 		opacity: 1;
 		transform: all 0.5s ease;
@@ -93,23 +119,21 @@
 
 	.nav-links {
 		position: relative;
-		top: -55px;
 		text-align: center;
-		padding: 2rem;
+		width: 20%;
+		top: -55px;
+		left: 50%;
+		text-align: center;
+		margin: 1rem;
+		padding: 0.5rem;
 		display: table;
-		/* transform: translate(-10%, 0%); */
-	}
-
-	.nav-links:hover {
-		background-color: #7577fa;
-		border-radius: 0;
+		transform: translate(-65%, 0%);
 	}
 
 	.navbar-logo {
 		position: absolute;
-		top: 0;
+		top: 10px;
 		left: 0;
-		transform: translate(25%, -15%);
 	}
 	.menu-icon {
         display: block;

@@ -1,6 +1,8 @@
 .App {
+  background: linear-gradient(90deg, rgb(11, 0, 110) 10%, rgb(0, 1, 53) 100%);
   text-align: center;
   user-select: none;
+  z-index: 0;
 }
 
 
