@@ -134,8 +134,8 @@
     top: 2px;
   }
   .about-section .who-am-i .image-me {
-    height: 10%;
-    width: 60%;
+    height: 400px;
+    width: 400px;
     position: relative;
     top: 0;
     left: 50%;
@@ -150,7 +150,7 @@
     margin-top: 20px;
   }
   .about-section .who-am-i .all-who .div-para {
-    width: 200px;
+    width: 350px;
     position: relative;
     left: 50%;
     transform: translate(-50%);

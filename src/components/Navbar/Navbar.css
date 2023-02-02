@@ -99,13 +99,14 @@
 	.nav-menu {
 		display: flex;
 		flex-direction: column;
-		width: 100%;
+		width: 94%;
 		height: 570px;
 		position: absolute;
 		top: 60px;
 		left: -100%;
 		opacity: 1;
 		transition: all 0.5s ease;
+		text-align: center;
 	}
 	
 	.nav-menu.active {
@@ -114,20 +115,21 @@
 		left: 0%;
 		opacity: 1;
 		transform: all 0.5s ease;
+
 		z-index: 1
 	}
 
 	.nav-links {
 		position: relative;
 		text-align: center;
-		width: 20%;
+		width: 100%;
 		top: -55px;
-		left: 50%;
 		text-align: center;
 		margin: 1rem;
 		padding: 0.5rem;
 		display: table;
-		transform: translate(-65%, 0%);
+		transform: translate(-50%, 0%);
+		text-align: end;
 	}
 
 	.navbar-logo {

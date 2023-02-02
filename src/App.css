@@ -1,7 +1,9 @@
 .App {
+  position: relative;
   background: linear-gradient(90deg, rgb(11, 0, 110) 10%, rgb(0, 1, 53) 100%);
   text-align: center;
   user-select: none;
+  width: 100%;
   z-index: 0;
 }
 
@@ -9,14 +11,5 @@
 
 .App-link {
   color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
 }
 
