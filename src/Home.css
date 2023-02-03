@@ -1,5 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond&display=swap');
 
+.Home {
+  position: relative;
+  width: 100%;
+  right: 0;
+}
+
 .video_bg {
     object-fit: cover;
     width: 100vw;
@@ -19,6 +25,7 @@
     color: rgb(173, 217, 255);
     text-shadow: 5px 5px 8px black;
     font-family: 'Cormorant Garamond', serif;
+    text-align: center;
   }
 
   
@@ -45,6 +52,9 @@
   @media (max-width: 960px) {
     h1.text {
       font-size: 6.2pc;
+    }
+    .fa-code {
+      font-size: 4.2pc;
     }
     h2.text {
       font-size: 6.2pc;
