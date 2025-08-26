@@ -7,7 +7,8 @@
   align-items: center;
   padding: 1rem 2rem;
   z-index: 100;
-  
+  overflow: hidden;
+
   .logo {
     font-size: 1.5rem;
     font-weight: bold;
@@ -26,4 +27,57 @@
       transition: color 0.3s ease;
     }
   }
+
+  /* 🔹 Hamburger (hidden by default on desktop) */
+  .menu-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+
+    span {
+      width: 25px;
+      height: 3px;
+      background: #fff;
+      transition: 0.3s ease;
+    }
+
+    &.open span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+    &.open span:nth-child(2) {
+      opacity: 0;
+    }
+    &.open span:nth-child(3) {
+      transform: rotate(-45deg) translate(5px, -6px);
+    }
+  }
+
+  /* 📱 Mobile styles */
+  @media (max-width: 768px) {
+    .menu-toggle {
+      display: flex;
+    }
+  ul {
+    position: fixed; /* instead of absolute */
+    top: 60px;
+    right: 0;
+    height: 100vh; /* full viewport height */
+    align-items: center;
+    background: #0d1117;
+    flex-direction: column;
+    width: 100vw;
+    padding: 4rem 1rem; /* padding from top so it clears the logo */
+    gap: 1rem;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    overflow-y: auto; /* allow scrolling if list is taller than screen */
+  }
+  ul.active {
+    transform: translateX(0);
+  }
+   li {
+    font-size: 2.6rem !important;
+  }
 }
+  }

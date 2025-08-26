@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import './NavBar.scss';
 
 export default function NavBar() {
+  const [isOpen, setIsOpen] = useState(false);
   const navLinks = ["Home", "Projects", "About", "Contact"];
 
   return (
@@ -13,8 +14,18 @@ export default function NavBar() {
       transition={{ duration: 0.6 }}
     >
       <div className="logo">🌟 MyPortfolio</div>
-      <ul>
-        {navLinks.map((link, i) => (
+
+      <div 
+        className={`menu-toggle ${isOpen ? "open" : ""}`} 
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+
+      <ul className={isOpen ? "active" : ""}>
+        {navLinks.map(link => (
           <motion.li 
             key={link}
             whileHover={{ scale: 1.1, color: "#ff6f61" }}
