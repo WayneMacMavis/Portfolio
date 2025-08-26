@@ -63,6 +63,10 @@
     border-radius: 50% 20% / 10% 40%;
     overflow: hidden;
 
+    box-shadow:
+  0 0 30px rgba(108, 99, 255, 0.25),
+  0 15px 25px rgba(0, 0, 0, 0.15);
+
     img {
       max-width: 100%;
       height: auto;

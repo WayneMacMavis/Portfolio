@@ -3,7 +3,7 @@
 .navbar {
   position: sticky;
   top: 0;
-  background: var(--navbar-bg); // stays exactly as before
+  background: var(--navbar-bg-solid);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--navbar-border);
   display: flex;

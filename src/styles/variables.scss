@@ -1,16 +1,18 @@
+/* Default (Light Mode) */
 :root {
   /* Brand colors */
   --brand-gradient: linear-gradient(135deg, #6c63ff, #ff6584);
   --brand-color-1: #6c63ff;
   --brand-color-2: #ff6584;
 
+  /* Navbar backgrounds */
+  --navbar-bg-solid: rgba(255, 255, 255, 0.85); /* semi-transparent white */
+  --navbar-bg-gradient: linear-gradient(135deg, rgba(108, 99, 255, 0.9), rgba(255, 101, 132, 0.9));
+  --navbar-border: rgba(0, 0, 0, 0.05);
+
   /* Text colors */
   --text-color: #333;
   --text-color-light: #fff;
-
-  /* Navbar */
-  --navbar-bg: linear-gradient(135deg, rgba(158, 181, 245, 0.85), rgba(255, 255, 255, 0.85)); /* matches your current light look */
-  --navbar-border: rgba(0, 0, 0, 0.05);
 
   /* Backgrounds */
   --bg-color: #fdfbfb;
@@ -19,4 +21,13 @@
   --font-family-base: 'Poppins', sans-serif;
   --font-family-heading: 'Poppins', sans-serif;
   --font-family-nav: 'Inter', sans-serif;
+}
+
+/* Dark Mode (future) */
+[data-theme="dark"] {
+  --navbar-bg-solid: rgba(13, 17, 23, 0.85);
+  --navbar-bg-gradient: linear-gradient(135deg, rgba(108, 99, 255, 0.2), rgba(255, 101, 132, 0.2));
+  --navbar-border: rgba(255, 255, 255, 0.1);
+  --text-color: #f5f5f5;
+  --bg-color: #0d1117;
 }
