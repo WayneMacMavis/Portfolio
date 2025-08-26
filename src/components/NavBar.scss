@@ -1,34 +1,67 @@
+@import '../styles/variables';
+
 .navbar {
   position: sticky;
   top: 0;
-  background: #0d1117;
+  background: var(--navbar-bg); // stays exactly as before
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--navbar-border);
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
   z-index: 100;
-  overflow: hidden;
+  font-family: var(--font-family-nav);
 
+  /* Logo */
   .logo {
     font-size: 1.5rem;
     font-weight: bold;
-    color: #fff;
+    background: var(--brand-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
+  /* Desktop nav links */
   ul {
     list-style: none;
     display: flex;
     gap: 2rem;
 
     li {
-      cursor: pointer;
-      font-size: 1rem;
-      color: #ddd;
-      transition: color 0.3s ease;
+      position: relative;
+
+      a {
+        text-decoration: none;
+        font-size: 1rem;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+
+        &:hover {
+          color: var(--brand-color-2);
+        }
+
+        &::after {
+          content: "";
+          position: absolute;
+          left: 0;
+          bottom: -4px;
+          width: 0%;
+          height: 2px;
+          background: var(--brand-gradient);
+          transition: width 0.3s ease;
+        }
+
+        &:hover::after {
+          width: 100%;
+        }
+      }
     }
   }
 
-  /* 🔹 Hamburger (hidden by default on desktop) */
+  /* Hamburger menu */
   .menu-toggle {
     display: none;
     flex-direction: column;
@@ -38,7 +71,7 @@
     span {
       width: 25px;
       height: 3px;
-      background: #fff;
+      background: var(--text-color);
       transition: 0.3s ease;
     }
 
@@ -53,31 +86,38 @@
     }
   }
 
-  /* 📱 Mobile styles */
+  /* Mobile menu */
   @media (max-width: 768px) {
     .menu-toggle {
       display: flex;
     }
-  ul {
-    position: fixed; /* instead of absolute */
-    top: 60px;
-    right: 0;
-    height: 100vh; /* full viewport height */
-    align-items: center;
-    background: #0d1117;
-    flex-direction: column;
-    width: 100vw;
-    padding: 4rem 1rem; /* padding from top so it clears the logo */
-    gap: 1rem;
-    transform: translateX(100%);
-    transition: transform 0.3s ease;
-    overflow-y: auto; /* allow scrolling if list is taller than screen */
-  }
-  ul.active {
-    transform: translateX(0);
-  }
-   li {
-    font-size: 2.6rem !important;
+
+    ul {
+      position: fixed;
+      top: 0;
+      right: 0;
+      height: 100vh;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      background: var(--brand-gradient);
+      transform: translateX(100%);
+      transition: transform 0.4s ease;
+      gap: 2rem;
+    }
+
+    ul.active {
+      transform: translateX(0);
+    }
+
+    li a {
+      font-size: 2rem;
+      color: var(--text-color-light);
+
+      &::after {
+        background: var(--text-color-light);
+      }
+    }
   }
 }
-  }

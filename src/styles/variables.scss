@@ -1,0 +1,22 @@
+:root {
+  /* Brand colors */
+  --brand-gradient: linear-gradient(135deg, #6c63ff, #ff6584);
+  --brand-color-1: #6c63ff;
+  --brand-color-2: #ff6584;
+
+  /* Text colors */
+  --text-color: #333;
+  --text-color-light: #fff;
+
+  /* Navbar */
+  --navbar-bg: linear-gradient(135deg, rgba(158, 181, 245, 0.85), rgba(255, 255, 255, 0.85)); /* matches your current light look */
+  --navbar-border: rgba(0, 0, 0, 0.05);
+
+  /* Backgrounds */
+  --bg-color: #fdfbfb;
+
+  /* Fonts */
+  --font-family-base: 'Poppins', sans-serif;
+  --font-family-heading: 'Poppins', sans-serif;
+  --font-family-nav: 'Inter', sans-serif;
+}

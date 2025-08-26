@@ -28,10 +28,10 @@ export default function NavBar() {
         {navLinks.map(link => (
           <motion.li 
             key={link}
-            whileHover={{ scale: 1.1, color: "#ff6f61" }}
+            whileHover={{ scale: 1.05 }}
             transition={{ type: "spring", stiffness: 300 }}
           >
-            {link}
+            <a href={`#${link.toLowerCase()}`}>{link}</a>
           </motion.li>
         ))}
       </ul>

@@ -1,10 +1,13 @@
+@import '../styles/variables';
+
 .home {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 4rem 8%;
   min-height: 100vh;
-  background: #fdfbfb;
+  background: var(--bg-color);
+  font-family: var(--font-family-base);
 
   &__content {
     flex: 1;
@@ -13,12 +16,13 @@
     h1 {
       font-size: 3rem;
       margin-bottom: 0.5rem;
-      color: #2d2d2d;
+      color: var(--text-color);
+      font-family: var(--font-family-heading);
     }
 
     h2 {
       font-size: 1.8rem;
-      color: #6c63ff;
+      color: var(--brand-color-1);
       margin-bottom: 1.5rem;
     }
 
@@ -26,12 +30,12 @@
       font-size: 1.1rem;
       line-height: 1.6;
       margin-bottom: 2rem;
-      color: #555;
+      color: var(--text-color);
     }
 
     .btn-primary {
-      background: #6c63ff;
-      color: #fff;
+      background: var(--brand-color-1);
+      color: var(--text-color-light);
       padding: 0.8rem 1.5rem;
       border: none;
       border-radius: 6px;
@@ -40,23 +44,23 @@
       transition: background 0.3s ease;
 
       &:hover {
-        background: #5848d6;
+        background: var(--brand-color-1-hover); // defined in :root
       }
     }
   }
 
-  .home__illustration {
+  &__illustration {
     flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
 
-    background: linear-gradient(135deg, #6c63ff, #ff6584);
-    background-size: 200% 200%; // needed for animation
+    background: var(--brand-gradient);
+    background-size: 200% 200%;
     animation: gradientShift 8s ease infinite;
 
     padding: 2rem;
-    border-radius: 50% 20% / 10% 40%; // asymmetrical shape
+    border-radius: 50% 20% / 10% 40%;
     overflow: hidden;
 
     img {
@@ -64,7 +68,7 @@
       height: auto;
     }
   }
-} // <-- this was missing
+}
 
 @keyframes gradientShift {
   0%   { background-position: 0% 50%; }
@@ -72,7 +76,7 @@
   100% { background-position: 0% 50%; }
 }
 
-// Responsive
+/* Responsive */
 @media (max-width: 900px) {
   .home {
     flex-direction: column;
