@@ -1,11 +1,11 @@
 import React from "react";
 import "./Home.scss";
-import heroIllustration from "../Assets/home_illustration.svg"; // your SVG
+import heroIllustration from "../Assets/home_illustration.svg";
 
 const Home = () => {
   return (
     <section className="home">
-      {/* Left Side - Text */}
+      {/* Left side text */}
       <div className="home__content">
         <h1>Hi, I’m Wayne 👋</h1>
         <h2>Creative Frontend Developer</h2>
@@ -16,7 +16,7 @@ const Home = () => {
         <button className="btn-primary">View My Work</button>
       </div>
 
-      {/* Right Side - Illustration */}
+      {/* Right side illustration with wavey edge */}
       <div className="home__illustration">
         <img src={heroIllustration} alt="Working remotely illustration" />
       </div>
