@@ -1,10 +1,33 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import './NavBar.scss';
 
 export default function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
-  const navLinks = ["Home", "Projects", "About", "Contact"];
+  const navLinks = ["Home", "About", "Skills", "Projects", "Contact"];
+
+  const toggleMenu = () => setIsOpen(prev => !prev);
+  const closeMenu = () => setIsOpen(false);
+
+  const overlayVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 0.25 } },
+    exit: { opacity: 0, transition: { duration: 0.2 } }
+  };
+
+  const menuVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.12, delayChildren: 0.15 }
+    },
+    exit: { opacity: 0, transition: { duration: 0.2 } }
+  };
+
+  const linkVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 20 } }
+  };
 
   return (
     <motion.nav 
@@ -13,28 +36,63 @@ export default function NavBar() {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6 }}
     >
-      <div className="logo">🌟 MyPortfolio</div>
+      <div className="logo">🌟 Portfolio</div>
 
-      <div 
-        className={`menu-toggle ${isOpen ? "open" : ""}`} 
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
-
-      <ul className={isOpen ? "active" : ""}>
+      {/* Desktop links (show on desktop, hide on mobile via CSS) */}
+      <ul className="nav-links">
         {navLinks.map(link => (
-          <motion.li 
-            key={link}
-            whileHover={{ scale: 1.05 }}
-            transition={{ type: "spring", stiffness: 300 }}
-          >
+          <li key={link}>
             <a href={`#${link.toLowerCase()}`}>{link}</a>
-          </motion.li>
+          </li>
         ))}
       </ul>
+
+      {/* Hamburger toggle */}
+      <button 
+        className={`menu-toggle ${isOpen ? "open" : ""}`} 
+        onClick={toggleMenu}
+        aria-label="Toggle menu"
+      >
+        <span></span><span></span><span></span>
+      </button>
+
+      {/* Mobile overlay + links */}
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            <motion.div 
+              className="mobile-menu-overlay"
+              variants={overlayVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+            />
+
+            {/* Full-screen UL catches clicks outside links */}
+            <motion.ul
+              className="mobile-menu-links"
+              variants={menuVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              onClick={closeMenu} // click anywhere closes
+            >
+              {navLinks.map(link => (
+                <motion.li 
+                  key={link}
+                  variants={linkVariants}
+                  whileHover={{ scale: 1.05 }}
+                  onClick={e => e.stopPropagation()} // prevent UL click from firing when tapping a link area
+                >
+                  <a href={`#${link.toLowerCase()}`} onClick={closeMenu}>
+                    {link}
+                  </a>
+                </motion.li>
+              ))}
+            </motion.ul>
+          </>
+        )}
+      </AnimatePresence>
     </motion.nav>
   );
 }

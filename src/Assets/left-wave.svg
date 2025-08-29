@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 600" preserveAspectRatio="none">
-  <!-- Opaque = visible area -->
-  <path d="
-    M0,0
-    C160,80 115,210 30,300
-    C90,380 50,520 0,600
-    H200 V0 Z
-  "/>
-</svg>
