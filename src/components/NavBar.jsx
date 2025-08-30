@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import logo from "../Assets/nav_icon.svg";
 import './NavBar.scss';
 
 export default function NavBar() {
@@ -36,7 +37,10 @@ export default function NavBar() {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6 }}
     >
-      <div className="logo">🌟 Portfolio</div>
+   <a href="#home" className="navbar__brand">
+  <img src={logo} alt="Portfolio logo" className="navbar__icon" />
+  <span className='logo'>Portfolio</span>
+</a>
 
       {/* Desktop links (show on desktop, hide on mobile via CSS) */}
       <ul className="nav-links">
