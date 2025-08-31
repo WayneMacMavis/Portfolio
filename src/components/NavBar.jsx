@@ -1,14 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import logo from "../Assets/nav_icon.svg";
+import logo from "../assets/nav_icon.svg";
 import './NavBar.scss';
+
+// ✅ Moved outside so it's a stable reference
+const NAV_LINKS = ["Home", "About", "Skills", "Projects", "Contact"];
 
 export default function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
-  const navLinks = ["Home", "About", "Skills", "Projects", "Contact"];
+  const [scrolled, setScrolled] = useState(false);
+  const [activeLink, setActiveLink] = useState("Home");
 
   const toggleMenu = () => setIsOpen(prev => !prev);
   const closeMenu = () => setIsOpen(false);
+
+  // Detect scroll for navbar shrink
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Track active section
+  useEffect(() => {
+    const sections = NAV_LINKS.map(link => document.getElementById(link.toLowerCase()));
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            setActiveLink(entry.target.id.charAt(0).toUpperCase() + entry.target.id.slice(1));
+          }
+        });
+      },
+      { threshold: 0.6 }
+    );
+    sections.forEach(sec => sec && observer.observe(sec));
+    return () => observer.disconnect();
+  }, []); // ✅ No warning now
 
   const overlayVariants = {
     hidden: { opacity: 0 },
@@ -32,21 +62,26 @@ export default function NavBar() {
 
   return (
     <motion.nav 
-      className="navbar"
-      initial={{ y: -80, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6 }}
-    >
-   <a href="#home" className="navbar__brand">
-  <img src={logo} alt="Portfolio logo" className="navbar__icon" />
-  <span className='logo'>Portfolio</span>
-</a>
+  className={`navbar ${scrolled ? "scrolled" : ""}`}
+  initial={{ y: -80, opacity: 0 }}
+  animate={{ y: 0, opacity: 1 }}
+  transition={{ duration: 0.5, ease: "easeOut" }} // slightly shorter
+>
+      <a href="#home" className="navbar__brand">
+        <img src={logo} alt="Portfolio logo" className="navbar__icon" />
+        <span className='logo'>Portfolio</span>
+      </a>
 
-      {/* Desktop links (show on desktop, hide on mobile via CSS) */}
+      {/* Desktop links */}
       <ul className="nav-links">
-        {navLinks.map(link => (
+        {NAV_LINKS.map(link => (
           <li key={link}>
-            <a href={`#${link.toLowerCase()}`}>{link}</a>
+            <a 
+              href={`#${link.toLowerCase()}`} 
+              className={activeLink === link ? "active" : ""}
+            >
+              {link}
+            </a>
           </li>
         ))}
       </ul>
@@ -70,25 +105,27 @@ export default function NavBar() {
               initial="hidden"
               animate="visible"
               exit="exit"
+              onClick={closeMenu}
             />
 
-            {/* Full-screen UL catches clicks outside links */}
             <motion.ul
               className="mobile-menu-links"
               variants={menuVariants}
               initial="hidden"
               animate="visible"
               exit="exit"
-              onClick={closeMenu} // click anywhere closes
             >
-              {navLinks.map(link => (
+              {NAV_LINKS.map(link => (
                 <motion.li 
                   key={link}
                   variants={linkVariants}
                   whileHover={{ scale: 1.05 }}
-                  onClick={e => e.stopPropagation()} // prevent UL click from firing when tapping a link area
                 >
-                  <a href={`#${link.toLowerCase()}`} onClick={closeMenu}>
+                  <a 
+                    href={`#${link.toLowerCase()}`} 
+                    onClick={closeMenu}
+                    className={activeLink === link ? "active" : ""}
+                  >
                     {link}
                   </a>
                 </motion.li>
