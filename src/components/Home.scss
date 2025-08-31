@@ -1,5 +1,6 @@
 @import '../styles/variables';
 
+/* === HERO SECTION === */
 .home {
   display: flex;
   align-items: center;
@@ -55,7 +56,9 @@
 
 .home__illustration-wrapper {
   position: relative;
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   max-width: 700px;
   aspect-ratio: 1 / 1;
@@ -64,8 +67,7 @@
 .home__illustration-blob {
   width: 100%;
   height: 100%;
-  background: grey; // keep your original
-  animation: gradientShift 8s ease infinite;
+  background: grey; // replace with your gradient or brand color
   transform: scale(1.3);
   transform-origin: center;
   z-index: 0;
@@ -79,25 +81,109 @@
   pointer-events: none;
 }
 
-@keyframes gradientShift {
+/* === SCROLL PROGRESS BAR === */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 4px;
+  width: 100%;
+  background: transparent;
+  z-index: 9999;
+
+  &__bar {
+    height: 100%;
+    background: var(--brand-gradient, linear-gradient(90deg, #ff6b6b, #f06595));
+    width: 0%;
+    transition: width 0.15s ease-out;
+  }
+}
+
+/* === CINEMATIC SECTIONS WITH FIXED GRADIENT SHIFT === */
+.cinematic-section {
+  min-height: 100vh;
+  padding: clamp(4rem, 6vw, 8rem) 10%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 1.5rem;
+  background: linear-gradient(
+    135deg,
+    var(--section-bg, #f9f9f9) 0%,
+    color-mix(in srgb, var(--section-bg, #f9f9f9) 90%, var(--brand-color-1, #ff6b6b)) 100%
+  );
+  background-size: 200% 200%;
+  animation: sectionGradientShift 14s ease-in-out infinite;
+  transform-origin: center top;
+  will-change: opacity, transform, background-position;
+
+  h2 {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    color: var(--text-color);
+    margin: 0;
+  }
+
+  p,
+  li {
+    font-size: clamp(1rem, 1.5vw, 1.125rem);
+    line-height: 1.7;
+    max-width: 70ch;
+    color: var(--text-color);
+    margin: 0;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      position: relative;
+      padding-left: 1.1rem;
+
+      &::before {
+        content: "•";
+        position: absolute;
+        left: 0;
+        top: 0;
+        color: var(--brand-color-1);
+        font-weight: 700;
+      }
+    }
+  }
+}
+
+/* Alternate background for visual separation */
+.cinematic-section:nth-of-type(even) {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--section-bg, #f9f9f9) 92%, #ffffff) 0%,
+    color-mix(in srgb, var(--section-bg, #f9f9f9) 85%, var(--brand-color-2, #f06595)) 100%
+  );
+  background-size: 200% 200%;
+  animation: sectionGradientShift 16s ease-in-out infinite;
+}
+
+/* Gradient animation keyframes */
+@keyframes sectionGradientShift {
   0%   { background-position: 0% 50%; }
   50%  { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
 
-/* Tablet */
+/* === RESPONSIVE ADJUSTMENTS === */
 @media (max-width: 1024px) {
   .home {
     padding: 4rem 5%;
     gap: 3rem;
   }
-
   .home__illustration-wrapper {
     max-width: 500px;
   }
 }
 
-/* Mobile */
 @media (max-width: 768px) {
   .home {
     flex-direction: column-reverse;
@@ -105,49 +191,29 @@
     padding: 3rem 5%;
     gap: 2rem;
   }
-
   .home__illustration-wrapper {
     max-width: 350px;
     margin: 0 auto;
   }
-
   .home__illustration-image {
     top: 50px;
     width: 110%;
   }
+  .cinematic-section {
+    padding: 4rem 7%;
+    align-items: flex-start;
+    text-align: left;
+  }
 }
 
-/* Small mobile */
 @media (max-width: 480px) {
   .home__illustration-wrapper {
     max-width: 280px;
   }
-
   .home__illustration-image {
     top: 50px;
   }
-}
-
-
-.next-section {
-  min-height: 100vh;
-  padding: 6rem 10%;
-  background: var(--section-bg, #f9f9f9);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 1.5rem;
-
-  h2 {
-    font-size: clamp(2rem, 4vw, 3rem);
-    color: var(--text-color);
-  }
-
-  p {
-    font-size: clamp(1rem, 1.5vw, 1.2rem);
-    line-height: 1.6;
-    max-width: 700px;
-    color: var(--text-color);
+  .cinematic-section {
+    padding: 3.5rem 6%;
   }
 }
