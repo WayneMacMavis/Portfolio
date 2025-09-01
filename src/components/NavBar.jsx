@@ -2,11 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import logo from "../assets/nav_icon.svg";
 import './NavBar.scss';
+import useScrollProgress from "../Components/hooks/useScrollProgress";
 
-// ✅ Moved outside so it's a stable reference
 const NAV_LINKS = ["Home", "About", "Skills", "Projects", "Contact"];
 
 export default function NavBar() {
+  // Shared eased fade (same curve/range as hero for sync)
+  const fadeAmount = useScrollProgress(0, 200, 0.2);
+
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeLink, setActiveLink] = useState("Home");
@@ -14,31 +17,29 @@ export default function NavBar() {
   const toggleMenu = () => setIsOpen(prev => !prev);
   const closeMenu = () => setIsOpen(false);
 
-  // Detect scroll for navbar shrink
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const onScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Track active section
   useEffect(() => {
     const sections = NAV_LINKS.map(link => document.getElementById(link.toLowerCase()));
     const observer = new IntersectionObserver(
       entries => {
-        entries.forEach(entry => {
+        for (const entry of entries) {
           if (entry.isIntersecting) {
-            setActiveLink(entry.target.id.charAt(0).toUpperCase() + entry.target.id.slice(1));
+            const id = entry.target.id;
+            setActiveLink(id.charAt(0).toUpperCase() + id.slice(1));
           }
-        });
+        }
       },
       { threshold: 0.6 }
     );
     sections.forEach(sec => sec && observer.observe(sec));
     return () => observer.disconnect();
-  }, []); // ✅ No warning now
+  }, []);
 
   const overlayVariants = {
     hidden: { opacity: 0 },
@@ -61,23 +62,23 @@ export default function NavBar() {
   };
 
   return (
-    <motion.nav 
-  className={`navbar ${scrolled ? "scrolled" : ""}`}
-  initial={{ y: -80, opacity: 0 }}
-  animate={{ y: 0, opacity: 1 }}
-  transition={{ duration: 0.5, ease: "easeOut" }} // slightly shorter
->
+    <motion.nav
+      className={`navbar ${scrolled ? "scrolled" : ""}`}
+      style={{ '--fade-opacity': fadeAmount }}
+      initial={{ y: -80, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+    >
       <a href="#home" className="navbar__brand">
         <img src={logo} alt="Portfolio logo" className="navbar__icon" />
         <span className='logo'>Portfolio</span>
       </a>
 
-      {/* Desktop links */}
       <ul className="nav-links">
         {NAV_LINKS.map(link => (
           <li key={link}>
-            <a 
-              href={`#${link.toLowerCase()}`} 
+            <a
+              href={`#${link.toLowerCase()}`}
               className={activeLink === link ? "active" : ""}
             >
               {link}
@@ -86,20 +87,18 @@ export default function NavBar() {
         ))}
       </ul>
 
-      {/* Hamburger toggle */}
-      <button 
-        className={`menu-toggle ${isOpen ? "open" : ""}`} 
+      <button
+        className={`menu-toggle ${isOpen ? "open" : ""}`}
         onClick={toggleMenu}
         aria-label="Toggle menu"
       >
         <span></span><span></span><span></span>
       </button>
 
-      {/* Mobile overlay + links */}
       <AnimatePresence>
         {isOpen && (
           <>
-            <motion.div 
+            <motion.div
               className="mobile-menu-overlay"
               variants={overlayVariants}
               initial="hidden"
@@ -107,7 +106,6 @@ export default function NavBar() {
               exit="exit"
               onClick={closeMenu}
             />
-
             <motion.ul
               className="mobile-menu-links"
               variants={menuVariants}
@@ -116,13 +114,13 @@ export default function NavBar() {
               exit="exit"
             >
               {NAV_LINKS.map(link => (
-                <motion.li 
+                <motion.li
                   key={link}
                   variants={linkVariants}
                   whileHover={{ scale: 1.05 }}
                 >
-                  <a 
-                    href={`#${link.toLowerCase()}`} 
+                  <a
+                    href={`#${link.toLowerCase()}`}
                     onClick={closeMenu}
                     className={activeLink === link ? "active" : ""}
                   >

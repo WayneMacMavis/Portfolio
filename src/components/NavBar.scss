@@ -3,44 +3,53 @@
 .navbar {
   position: sticky;
   top: 0;
-  background: var(--navbar-bg-solid);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--navbar-border);
+  z-index: 100;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem 2rem;
-  z-index: 100;
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
   letter-spacing: 0.5px;
-  transition: all 0.3s ease;
+  transition: padding 0.3s ease;
 
-  /* Logo */
-  .logo {
-    font-size: 1.4rem;
-    font-weight: 500;
-    background: var(--brand-color-1);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+  // Background layer that fades
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--navbar-bg-solid);
+    backdrop-filter: blur(10px);
+    opacity: var(--fade-opacity, 1);
+    transition: opacity 0.1s linear;
+    z-index: -1;
   }
 
+  // Brand / logo
   .navbar__brand {
     display: flex;
     align-items: center;
     gap: 0.6rem;
     text-decoration: none;
+
+    .logo {
+      font-size: 1.4rem;
+      font-weight: 500;
+      background: var(--brand-color-1);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .navbar__icon {
+      width: 50px;
+      height: 50px;
+      color: var(--text, #141414);
+    }
   }
 
-  .navbar__icon {
-    width: 50px;
-    height: 50px;
-    color: var(--text, #141414);
-  }
-
-  /* Desktop nav links */
-  ul {
+  // Desktop nav links
+  .nav-links {
     list-style: none;
     display: flex;
     gap: 2rem;
@@ -71,14 +80,19 @@
           transition: width 0.3s ease;
         }
 
-        &:hover::after {
+        &:hover::after,
+        &.active::after {
           width: 100%;
         }
+      }
+
+      a.active {
+        color: var(--brand-color-2);
       }
     }
   }
 
-  /* Hamburger menu button */
+  // Hamburger toggle (mobile)
   .menu-toggle {
     --bar-w: 28px;
     --bar-h: 3px;
@@ -89,11 +103,13 @@
     width: var(--bar-w);
     height: var(--box-h);
     background: none;
-    border: 0;
+    border: none;
     padding: 0;
     cursor: pointer;
     z-index: 1001;
     display: none;
+    flex-direction: column;
+    justify-content: space-between;
 
     span {
       position: absolute;
@@ -132,7 +148,7 @@
     }
   }
 
-  /* Overlay background */
+  // Mobile overlay
   .mobile-menu-overlay {
     position: fixed;
     top: 0;
@@ -143,7 +159,7 @@
     z-index: 999;
   }
 
-  /* Mobile menu links */
+  // Mobile menu links
   .mobile-menu-links {
     position: fixed;
     top: 0;
@@ -157,6 +173,7 @@
     gap: 2rem;
     z-index: 1000;
     list-style: none;
+    background: var(--brand-gradient);
 
     li a {
       font-size: 2rem;
@@ -175,14 +192,21 @@
         transition: width 0.3s ease;
       }
 
-      &:hover::after {
+      &:hover::after,
+      &.active::after {
         width: 100%;
       }
     }
   }
+
+  // Shrink + shadow when scrolled
+  &.scrolled {
+    padding: 0.3rem 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
 }
 
-/* Desktop only */
+// Desktop only
 @media (min-width: 769px) {
   .navbar .menu-toggle,
   .navbar .mobile-menu-overlay,
@@ -191,46 +215,12 @@
   }
 }
 
-/* Mobile only */
+// Mobile only
 @media (max-width: 768px) {
-  .navbar > ul {
+  .navbar .nav-links {
     display: none;
   }
-
   .navbar .menu-toggle {
     display: flex !important;
-    flex-direction: column;
-    justify-content: space-between;
   }
-
-  .navbar .mobile-menu-links {
-    background: var(--brand-gradient);
-  }
-
-  .navbar .mobile-menu-links li a {
-    font-size: 2rem;
-    color: var(--text-color-light);
-
-    &::after {
-      background: var(--brand-gradient);
-    }
-  }
-}
-
-/* === New behavior styles === */
-.navbar.scrolled {
-  padding: 0.3rem 2rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.navbar ul li a.active {
-  color: var(--brand-color-2);
-}
-
-.navbar ul li a.active::after {
-  width: 100%;
-}
-
-.navbar .mobile-menu-links li a.active::after {
-  width: 100%;
 }

@@ -1,27 +1,56 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import "./Home.scss";
 import heroIllustration from "../assets/home_illustration.svg";
 import blobShape from "../assets/blob.svg";
+import useScrollProgress from "../hooks/useScrollProgress";
 
 const SECTION_IDS = ["home", "about", "skills", "projects", "contact"];
 
-// 🎯 Fade presets for quick testing
+// Optional presets if you want to tie fade to hero height fractions
 const FADE_PRESETS = {
-  cinematic: { start: 0.15, end: 0.65 }, // gentle, stretched fade
-  fast: { start: 0.05, end: 0.35 },      // quick fade
-  slow: { start: 0.2, end: 0.85 },       // very gradual fade
+  cinematic: { start: 0.15, end: 0.65 },
+  fast: { start: 0.05, end: 0.35 },
+  slow: { start: 0.2, end: 0.85 },
 };
 
 export default function Home() {
+  const heroRef = useRef(null);
+
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [progressMap, setProgressMap] = useState({});
   const [scrollPercent, setScrollPercent] = useState(0);
   const [directNavTarget, setDirectNavTarget] = useState(null);
-  const [heroScroll, setHeroScroll] = useState(0);
 
-  // Pick your preset here 👇
-  const { start: fadeStart, end: fadeEnd } = FADE_PRESETS.cinematic;
+  // Choose preset for fade relative to hero height
+  const { start: fadeStartFrac, end: fadeEndFrac } = FADE_PRESETS.cinematic;
+
+  // Convert preset fractions to absolute document pixel positions for the hook
+  const [fadeStartPx, setFadeStartPx] = useState(0);
+  const [fadeEndPx, setFadeEndPx] = useState(200);
+
+  useEffect(() => {
+    const measure = () => {
+      const el = heroRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const topDocY = window.scrollY + rect.top; // absolute top of hero in doc space
+      const h = rect.height || 1;
+      setFadeStartPx(topDocY + h * fadeStartFrac);
+      setFadeEndPx(topDocY + h * fadeEndFrac);
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    // Re-measure after assets load (SVGs/images)
+    window.addEventListener("load", measure);
+    return () => {
+      window.removeEventListener("resize", measure);
+      window.removeEventListener("load", measure);
+    };
+  }, [fadeStartFrac, fadeEndFrac]);
+
+  // Hero opacity synced with navbar easing/curve
+  const heroOpacity = useScrollProgress(fadeStartPx, fadeEndPx, 0);
 
   // Detect direct navigation via hash
   useEffect(() => {
@@ -44,7 +73,7 @@ export default function Home() {
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
-  // Scroll listener
+  // Scroll listeners: section progress + global progress bar
   useEffect(() => {
     const handleScroll = () => {
       // Section progress
@@ -65,15 +94,6 @@ export default function Home() {
       const docHeight =
         document.documentElement.scrollHeight - window.innerHeight;
       setScrollPercent(docHeight > 0 ? (scrollY / docHeight) * 100 : 0);
-
-      // Hero scroll fraction
-      const homeEl = document.getElementById("home");
-      if (homeEl) {
-        const rect = homeEl.getBoundingClientRect();
-        const scrolledPast = Math.min(Math.max(-rect.top, 0), rect.height);
-        const fraction = scrolledPast / rect.height;
-        setHeroScroll(fraction);
-      }
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -81,23 +101,12 @@ export default function Home() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // 🎬 Tuned fade-out timing
-  let heroOpacity;
-  if (heroScroll <= fadeStart) {
-    heroOpacity = 1;
-  } else if (heroScroll >= fadeEnd) {
-    heroOpacity = 0;
-  } else {
-    const fadeFraction = (heroScroll - fadeStart) / (fadeEnd - fadeStart);
-    heroOpacity = 1 - fadeFraction;
-  }
-
-  // Parallax intensity
-  const intensity = 1 - heroScroll;
+  // Parallax intensity tied to heroOpacity for a cohesive feel
+  const intensity = heroOpacity;
   const blobX = mousePos.x * 16 * intensity;
   const imgX = mousePos.x * 24 * intensity;
-  const blobY = mousePos.y * 10 * intensity + heroScroll * 40;
-  const imgY = mousePos.y * 14 * intensity + heroScroll * 70;
+  const blobY = mousePos.y * 10 * intensity + (1 - heroOpacity) * 40;
+  const imgY = mousePos.y * 14 * intensity + (1 - heroOpacity) * 70;
 
   // Section animation helper
   const getSectionAnim = (prevId, curId) => {
@@ -134,18 +143,28 @@ export default function Home() {
       </div>
 
       {/* HERO */}
-      <section className="home" id="home" style={{ opacity: heroOpacity }}>
+      <section
+        className="home"
+        id="home"
+        ref={heroRef}
+        style={{ opacity: heroOpacity }}
+      >
         <motion.div
           className="home__content"
           variants={heroTextVariants}
           initial="hidden"
           animate="visible"
         >
-          <h1>Hi, I’m Wayne 👋</h1>
-          <h2>Creative Frontend Developer</h2>
+          <h1>Hello, I’m Wayne 👋</h1>
+          <h2>
+            Full-Stack Developer  
+            <br />& Creative Frontend Engineer
+          </h2>
           <p>
-            I design and build modern, responsive websites with a focus on
-            performance, accessibility, and clean design.
+            I design and build scalable web applications from database to UI.
+            Whether it’s crafting intuitive, responsive interfaces or architecting
+            solid backend services, I deliver performance, accessibility, and
+            clean code at every layer.
           </p>
           <button className="btn-primary">View My Work</button>
         </motion.div>
