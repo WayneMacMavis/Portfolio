@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import logo from "../assets/nav_icon.svg";
-import './NavBar.scss';
-import useScrollProgress from "../Components/hooks/useScrollProgress";
+import '../styles/NavBar.scss';
+import useScrollProgress from "../hooks/useScrollProgress";
 
 const NAV_LINKS = ["Home", "About", "Skills", "Projects", "Contact"];
 

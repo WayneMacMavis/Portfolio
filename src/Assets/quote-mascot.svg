@@ -1,0 +1,5 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="60" cy="60" r="58" fill="#E0F2FE" stroke="#0D1B2A" stroke-width="4"/>
+  <path d="M40 75H80V65C80 60 75 55 70 55H50C45 55 40 60 40 65V75Z" fill="#1E3A8A"/>
+  <text x="50%" y="50%" text-anchor="middle" fill="#FEF3C7" font-size="40" font-family="Poppins" dy=".3em">“</text>
+</svg>

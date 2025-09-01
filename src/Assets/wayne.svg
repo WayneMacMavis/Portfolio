@@ -1,0 +1,14 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Wayne character with blonde hair -->
+  <circle cx="100" cy="50" r="30" fill="#FDD835" /> <!-- hair -->
+  <circle cx="100" cy="80" r="28" fill="#FEEBC3" /> <!-- face -->
+  <circle cx="90" cy="75" r="4" fill="#0D1B2A" />
+  <circle cx="110" cy="75" r="4" fill="#0D1B2A" />
+  <path d="M90 90C90 95 110 95 110 90" stroke="#0D1B2A" stroke-width="3" stroke-linecap="round"/>
+  <!-- Body -->
+  <rect x="70" y="110" width="60" height="60" rx="20" fill="#1E3A8A"/>
+  <!-- Floating code elements -->
+  <path d="M50 50L80 80" stroke="#FBDF07" stroke-width="3" stroke-linecap="round" />
+  <rect x="120" y="40" width="20" height="20" stroke="#FBDF07" stroke-width="3" fill="none"/>
+  <path d="M130 40V60M120 50H140" stroke="#FBDF07" stroke-width="3" stroke-linecap="round"/>
+</svg>

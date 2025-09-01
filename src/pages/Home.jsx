@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import "./Home.scss";
+import "../styles/Home.scss";
 import heroIllustration from "../assets/home_illustration.svg";
 import blobShape from "../assets/blob.svg";
 import useScrollProgress from "../hooks/useScrollProgress";
@@ -193,21 +193,6 @@ export default function Home() {
           />
         </motion.div>
       </section>
-
-      {/* ABOUT */}
-      <motion.section
-        id="about"
-        className="cinematic-section"
-        style={getSectionAnim("home", "about")}
-        transition={{ duration: 0.4, ease: "easeOut" }}
-      >
-        <h2>About Me</h2>
-        <p>
-          I’m a creative frontend developer with a passion for illustrated,
-          modern web design. I love crafting immersive, responsive experiences
-          that feel intentional and polished.
-        </p>
-      </motion.section>
 
       {/* SKILLS */}
       <motion.section
