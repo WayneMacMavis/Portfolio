@@ -195,7 +195,7 @@ export default function Home() {
       </section>
 
       {/* SKILLS */}
-      <motion.section
+      {/* <motion.section
         id="skills"
         className="cinematic-section"
         style={getSectionAnim("about", "skills")}
@@ -208,10 +208,10 @@ export default function Home() {
           <li>SVG Editing</li>
           <li>Responsive Design</li>
         </ul>
-      </motion.section>
+      </motion.section> */}
 
       {/* PROJECTS */}
-      <motion.section
+      {/* <motion.section
         id="projects"
         className="cinematic-section"
         style={getSectionAnim("skills", "projects")}
@@ -219,10 +219,10 @@ export default function Home() {
       >
         <h2>Projects</h2>
         <p>Here’s a selection of my recent work...</p>
-      </motion.section>
+      </motion.section> */}
 
       {/* CONTACT */}
-      <motion.section
+      {/* <motion.section
         id="contact"
         className="cinematic-section"
         style={getSectionAnim("projects", "contact")}
@@ -230,7 +230,7 @@ export default function Home() {
       >
         <h2>Contact</h2>
         <p>Let’s work together! Drop me a message...</p>
-      </motion.section>
+      </motion.section> */}
     </>
   );
 }

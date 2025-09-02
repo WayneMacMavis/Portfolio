@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 48" role="img" aria-label="Code bubble">
+  <style>
+    :root { --fill: #6f8cff; --ink:#121212; }
+    .bubble { fill: var(--fill); }
+    .stroke { stroke: var(--ink); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+  </style>
+  <rect x="3" y="3" width="66" height="42" rx="10" class="bubble"/>
+  <path d="M33 14l-12 10l12 10" class="stroke"/>
+  <path d="M39 14l12 10l-12 10" class="stroke"/>
+  <path d="M36 12v24" class="stroke" opacity="0.7"/>
+</svg>
