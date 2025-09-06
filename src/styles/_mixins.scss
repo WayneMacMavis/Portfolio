@@ -1,0 +1,72 @@
+// -----------------------------
+// MEDIA QUERY HELPERS
+// -----------------------------
+@mixin respond-max($breakpoint) {
+  @media (max-width: $breakpoint) {
+    @content;
+  }
+}
+
+@mixin respond-min($breakpoint) {
+  @media (min-width: $breakpoint) {
+    @content;
+  }
+}
+
+// Common breakpoints
+$bp-small: 480px;
+$bp-medium: 768px;
+$bp-large: 1024px;
+$bp-xl: 1440px;
+
+
+// -----------------------------
+// FLUID TYPOGRAPHY
+// -----------------------------
+// Usage: @include fluid-type(1rem, 1.5rem, 320px, 1440px);
+@mixin fluid-type($min, $max, $min-vw, $max-vw) {
+  font-size: clamp($min, calc(#{$min} + (#{$max} - #{$min}) *
+    ((100vw - #{$min-vw}) / (#{$max-vw} - #{$min-vw}))), $max);
+}
+
+
+// -----------------------------
+// FLUID SPACING
+// -----------------------------
+// Usage: padding: fluid-space(1rem, 3rem);
+@function fluid-space($min, $max) {
+  @return clamp($min, calc(#{$min} + (#{$max} - #{$min}) *
+    ((100vw - 320px) / (1440 - 320))), $max);
+}
+
+
+// -----------------------------
+// SHADOWS
+// -----------------------------
+@mixin shadow-soft($color: rgba(0, 0, 0, 0.15)) {
+  box-shadow: 0 4px 8px $color;
+}
+
+@mixin shadow-strong($color: rgba(0, 0, 0, 0.25)) {
+  box-shadow: 0 6px 16px $color;
+}
+
+
+// -----------------------------
+// ANIMATION HELPERS
+// -----------------------------
+// Easing curves
+$ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+$ease-in-out: ease-in-out;
+
+// Reusable animation shorthand
+@mixin animate($property, $duration: 0.3s, $ease: $ease-in-out, $delay: 0s) {
+  transition: $property $duration $ease $delay;
+}
+
+// Keyframe generator
+@mixin keyframes($name) {
+  @keyframes #{$name} {
+    @content;
+  }
+}

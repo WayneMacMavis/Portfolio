@@ -1,0 +1,67 @@
+.about__illustration {
+  position: relative;
+  text-align: center;
+  justify-self: start;
+}
+
+/* Portrait image */
+.about__image {
+  max-width: 100%;
+  width: clamp(280px, 42vw, 440px);
+  height: auto;
+  border-radius: 12px;
+  object-fit: cover;
+  object-position: center;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.15));
+  user-select: none;
+  will-change: transform, filter;
+}
+
+/* Icons */
+.about__icon {
+  position: absolute;
+  width: 54px;
+  height: 54px;
+  stroke: currentColor;
+  color: var(--icon-color, #00d4ff);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+  transition: color 0.3s ease, filter 0.3s ease;
+
+  &--1 { top: -6%; left: -48px; }
+  &--2 { bottom: -6%; right: -48px; }
+  &--3 { top: -8%; right: -46px; }
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .about__illustration {
+    order: -1;
+    margin-bottom: 1.5rem;
+    justify-self: center;
+  }
+
+  .about__image {
+    width: clamp(200px, 62vw, 320px);
+    border-radius: 10px;
+  }
+
+  .about__icon {
+    width: 40px;
+    height: 40px;
+
+    &--1 { top: -2%; left: -16px; }
+    &--2 { bottom: -2%; right: -16px; }
+    &--3 { top: -4%; right: -14px; }
+  }
+}
+
+/* Tiny screens and short viewports */
+@media (max-width: 380px), (max-height: 640px) {
+  .about__image {
+    width: clamp(180px, 58vw, 260px);
+  }
+
+  .about__icon {
+    display: none;
+  }
+}

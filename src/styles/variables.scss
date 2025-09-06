@@ -23,7 +23,23 @@
   --font-family-base: 'Poppins', sans-serif;
   --font-family-heading: 'Poppins', sans-serif;
   --font-family-nav: 'Inter', sans-serif;
+
+  // About
+    --color1: rgba(255, 255, 255, 0.85);
+  --color2: rgba(188, 228, 255, 0.85);
+  --color3: rgba(255, 255, 255, 0.85);
+  --color4: rgba(204, 234, 255, 0.85);
+  --color-text: #2a2a2a;
+  --icon-color: #00d4ff;
+
+  --gradient-speed: 15s;
+  --pulse-duration: 2.3s;
+  
 }
+
+// About
+$font-heading: "Baloo 2", sans-serif;
+$font-body: "Inter", sans-serif;
 
 /* Dark Mode (future) */
 [data-theme="dark"] {

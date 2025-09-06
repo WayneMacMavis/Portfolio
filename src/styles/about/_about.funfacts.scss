@@ -1,0 +1,83 @@
+.about__funfacts {
+  margin-top: 2.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+  font-family: "Inter", sans-serif;
+  z-index: 1;
+  position: relative;
+
+  .funfact {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    border: 1px solid transparent;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+
+    /* Full-tile glow + synced pulse on hover */
+    &:hover {
+      transform: translateY(-3px);
+      border-color: rgba(0, 217, 255, 0.6);
+      animation: funfactPulse 2.3s ease-in-out infinite;
+      animation-delay: 0.8s; /* matches icon glow delay */
+    }
+
+    &__label {
+        position: relative;
+      font-weight: 600;
+      color: var(--color-text);
+      transition: color 0.3s ease, text-shadow 0.3s ease;
+
+      /* Label glow matches keyword highlight */
+      .funfact:hover & {
+        color: #00d9ff;
+        text-shadow: 0 0 8px rgba(0, 217, 255, 0.8);
+      }
+      .spark {
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  width: 6px;
+  height: 6px;
+  background: #00d9ff;
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(0, 217, 255, 0.8);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+    }
+
+    &__value {
+      color: rgba(53, 52, 52, 0.85);
+    }
+  }
+}
+
+/* Pulse animation keyframes — synced to icon heartbeat */
+@keyframes funfactPulse {
+  0% {
+    box-shadow: 0 0 0 rgba(0, 217, 255, 0.0), 0 4px 10px rgba(0,0,0,0.15);
+  }
+  50% {
+    box-shadow: 0 0 14px rgba(0, 217, 255, 0.5), 0 4px 12px rgba(0,0,0,0.15);
+  }
+  100% {
+    box-shadow: 0 0 0 rgba(0, 217, 255, 0.0), 0 4px 10px rgba(0,0,0,0.15);
+  }
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .about__funfacts {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 380px), (max-height: 640px) {
+  .about__funfacts {
+    gap: 0.75rem;
+  }
+}

@@ -1,0 +1,86 @@
+.about__content {
+  position: relative;
+  justify-self: end;
+  max-width: 600px;
+  text-align: left;
+
+  h1,
+  p {
+    overflow: hidden;
+    margin-left: 0;
+  }
+
+  span {
+    display: inline-block;
+  }
+
+  h1 {
+    font-family: "Baloo 2", sans-serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    color: #6c63ff;
+    margin-bottom: 1rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  p {
+    font-family: "Inter", sans-serif;
+    font-size: 1.125rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    color: #202020;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* Base heartbeat-synced animation */
+.highlight,
+.funfact__label {
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+  animation: highlightPulse 2.3s ease-in-out infinite;
+}
+
+/* Sequential delays — flowing from bio to fun facts */
+.highlight:nth-of-type(1) { animation-delay: 0.8s; }   /* "full‑stack developer" */
+.highlight:nth-of-type(2) { animation-delay: 1.0s; }   /* "technical precision" */
+.highlight:nth-of-type(3) { animation-delay: 1.2s; }   /* "immersive front‑end experiences" */
+.highlight:nth-of-type(4) { animation-delay: 1.4s; }   /* "every interaction should feel earned" */
+.highlight:nth-of-type(5) { animation-delay: 1.6s; }   /* "illustration, animation, and interactivity" */
+.highlight:nth-of-type(6) { animation-delay: 1.8s; }   /* "memorable" */
+
+/* Fun Facts labels continue the wave */
+.about__funfacts .funfact:nth-of-type(1) .funfact__label { animation-delay: 2.0s; }
+.about__funfacts .funfact:nth-of-type(2) .funfact__label { animation-delay: 2.2s; }
+.about__funfacts .funfact:nth-of-type(3) .funfact__label { animation-delay: 2.4s; }
+.about__funfacts .funfact:nth-of-type(4) .funfact__label { animation-delay: 2.6s; }
+
+/* Pulse animation — matches icon & funfact glow */
+@keyframes highlightPulse {
+  0% {
+    color: inherit;
+    text-shadow: none;
+  }
+  50% {
+    color: #00d9ff;
+    text-shadow: 0 0 8px rgba(0, 217, 255, 0.8);
+  }
+  100% {
+    color: inherit;
+    text-shadow: none;
+  }
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .about__content {
+    justify-self: center;
+    text-align: center;
+  }
+
+  .about__content h1 {
+    font-size: clamp(2rem, 8vw, 2.75rem);
+  }
+
+  .about__content p {
+    font-size: 1rem;
+  }
+}
