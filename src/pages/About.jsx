@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useVelocity } from "framer-motion";
 import "../styles/About.scss";
 import illustration from "../assets/Wayne.jpg";
 
@@ -10,7 +10,7 @@ export default function About({ scrollContainerRef }) {
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     container: scrollContainerRef,
-    offset: ["start 90%", "end 10%"],
+    offset: ["start end", "end start"],
   });
 
   // Parallax transforms
@@ -19,8 +19,21 @@ export default function About({ scrollContainerRef }) {
   const icon1Y = useTransform(scrollYProgress, [0, 1], ["-6vh", "6vh"]);
   const icon2Y = useTransform(scrollYProgress, [0, 1], ["-5vh", "5vh"]);
   const icon3Y = useTransform(scrollYProgress, [0, 1], ["-7vh", "7vh"]);
+  const textY = icon2Y;
 
-  // Mouse tilt handler
+  // Scroll velocity → funfact pulse intensity
+  const scrollVelocity = useVelocity(scrollYProgress);
+  const funfactGlow = useTransform(scrollVelocity, [-2, 0, 2], [0.4, 0.2, 0.4]);
+  const funfactBoxShadow = useTransform(
+    funfactGlow,
+    (g) => `0 0 ${g * 30}px rgba(0, 217, 255, ${g})`
+  );
+
+  // Sweep angle & offset from scroll
+  const sweepAngle = useTransform(scrollYProgress, [0, 1], ["85deg", "95deg"]);
+  const sweepOffset = useTransform(scrollVelocity, [-2, 0, 2], ["-3deg", "0deg", "3deg"]);
+
+  // Mouse tilt
   const handleMouseMove = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -30,13 +43,12 @@ export default function About({ scrollContainerRef }) {
     setTilt({ rotateX, rotateY });
   };
 
-  // Master sequence
+  // Variants
   const masterVariants = {
     hidden: {},
     visible: { transition: { staggerChildren: 0.18, delayChildren: 0.1 } },
   };
 
-  // Portrait entrance + heartbeat glow
   const illoVariants = {
     hidden: {
       opacity: 0,
@@ -63,7 +75,6 @@ export default function About({ scrollContainerRef }) {
     },
   };
 
-  // Icon variants with pop, settle bounce, and glow
   const makeIconVariants = (delay) => ({
     hidden: {
       opacity: 0,
@@ -94,7 +105,6 @@ export default function About({ scrollContainerRef }) {
   const icon2Variants = makeIconVariants(1.05);
   const icon3Variants = makeIconVariants(1.3);
 
-  // Text container & items
   const textContainerVariants = {
     hidden: {},
     visible: { transition: { delayChildren: 0.4, staggerChildren: 0.25 } },
@@ -109,7 +119,15 @@ export default function About({ scrollContainerRef }) {
     },
   };
 
-  // Background heartbeat
+  const highlightVariants = {
+    hidden: { color: "inherit", textShadow: "none" },
+    visible: {
+      color: "#00d9ff",
+      textShadow: "0 0 8px rgba(0, 217, 255, 0.8)",
+      transition: { duration: 0.6, ease: "easeInOut" },
+    },
+  };
+
   const bgVariants = {
     hidden: {
       opacity: 0,
@@ -136,12 +154,16 @@ export default function About({ scrollContainerRef }) {
   };
 
   return (
-    <section id="about" className="about" ref={sectionRef}>
-      {/* Background gradient */}
+      <section id="about" className="about" ref={sectionRef}>
+      {/* Background gradient with sweep */}
       <motion.div
         className="about__bg about__bg--animated"
         aria-hidden="true"
-        style={{ y: bgY }}
+        style={{
+          y: bgY,
+          "--sweep-angle": sweepAngle,
+          "--sweep-offset": sweepOffset
+        }}
         variants={bgVariants}
         initial="visible"
         whileInView="visible"
@@ -180,7 +202,7 @@ export default function About({ scrollContainerRef }) {
             }}
           />
 
-          {/* Icon 1: Curly braces {} */}
+          {/* Icon 1 */}
           <motion.svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 64 64"
@@ -199,7 +221,7 @@ export default function About({ scrollContainerRef }) {
             <path d="M42 8c6 0 10 4 10 10v6c0 4 2 6 6 6v4c-4 0-6 2-6 6v6c0 6-4 10-10 10" />
           </motion.svg>
 
-          {/* Icon 2: Angle brackets </> */}
+          {/* Icon 2 */}
           <motion.svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 64 64"
@@ -219,7 +241,7 @@ export default function About({ scrollContainerRef }) {
             <line x1="28" y1="48" x2="36" y2="16" />
           </motion.svg>
 
-          {/* Icon 3: Terminal / Command Prompt */}
+          {/* Icon 3 */}
           <motion.svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 64 64"
@@ -240,9 +262,10 @@ export default function About({ scrollContainerRef }) {
           </motion.svg>
         </motion.div>
 
-        {/* Text */}
+        {/* Text with highlights */}
         <motion.div
           className="about__content"
+          style={{ y: textY }}
           variants={textContainerVariants}
           initial="hidden"
           whileInView="visible"
@@ -261,19 +284,80 @@ export default function About({ scrollContainerRef }) {
 
           <p>
             <motion.span variants={textItemVariants}>
-              I’m Wayne — a full‑stack developer who blends technical depth with
-              playful, original design. I love crafting immersive web
-              experiences that feel personal, memorable, and just a little
-              whimsical.
+              I’m Wayne — a{" "}
+              <motion.span variants={highlightVariants} className="highlight">
+                full‑stack developer
+              </motion.span>{" "}
+              and creative engineer who blends{" "}
+              <motion.span variants={highlightVariants} className="highlight">
+                technical precision
+              </motion.span>{" "}
+              with playful, original design. I’ve built everything from{" "}
+              <motion.span variants={highlightVariants} className="highlight">
+                immersive front‑end experiences
+              </motion.span>{" "}
+              to scalable back‑end systems — always chasing that feeling when
+              an interface becomes a story.
             </motion.span>
           </p>
 
           <p>
             <motion.span variants={textItemVariants}>
-              Whether it’s a quirky SVG animation or a scalable backend, I
-              believe every detail should tell a story.
+              My work starts with intention:{" "}
+              <motion.span variants={highlightVariants} className="highlight">
+                every interaction should feel earned
+              </motion.span>
+              . From micro‑timed reveals to breathing layouts, I design for
+              rhythm, clarity, and a touch of whimsy. If something doesn’t
+              belong, it goes — composition is everything.
             </motion.span>
           </p>
+
+          <p>
+            <motion.span variants={textItemVariants}>
+              I love blending{" "}
+              <motion.span variants={highlightVariants} className="highlight">
+                illustration, animation, and interactivity
+              </motion.span>{" "}
+              into cohesive narratives. The web is my canvas, and my goal is to
+              make the experience feel{" "}
+              <motion.span variants={highlightVariants} className="highlight">
+                memorable
+              </motion.span>
+              — personal enough to smile at, and crafted enough to trust.
+            </motion.span>
+          </p>
+
+          {/* Fun Facts strip */}
+          <motion.div
+            className="about__funfacts"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.6 }}
+            variants={textContainerVariants}
+          >
+            {[
+              { label: "Favourite Debugging Snack", value: "Salt & Vinegar Chips" },
+              { label: "Most Used CSS Property", value: "transform" },
+              { label: "First Line of Code", value: "print('Hello World')" },
+              { label: "Current Obsession", value: "Micro‑interactions" },
+            ].map((fact, i) => (
+              <motion.div
+                key={i}
+                className="funfact"
+                variants={textItemVariants}
+                style={{ boxShadow: funfactBoxShadow }}
+              >
+                <motion.span
+                  className="funfact__label"
+                  variants={highlightVariants}
+                >
+                  {fact.label}:
+                </motion.span>{" "}
+                <span className="funfact__value">{fact.value}</span>
+              </motion.div>
+            ))}
+          </motion.div>
         </motion.div>
       </motion.div>
     </section>
