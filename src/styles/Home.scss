@@ -47,7 +47,7 @@ overflow: visible;
       transition: transform 0.2s ease, background 0.3s ease;
 
       &:hover {
-        background: var(--brand-color-1-hover);
+        background: #00d9ff;
         transform: translateY(-2px);
       }
     }
