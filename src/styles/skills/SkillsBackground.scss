@@ -1,0 +1,74 @@
+.skills-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  top: 0;
+  height: 90vh;
+  width: 100vw;
+
+  /* Defaults for parallax variables */
+  --mouse-x: 0px;
+  --mouse-y: 0px;
+  --scroll-x: 0px;
+  --scroll-y: 0px;
+}
+
+.bg-item {
+  position: absolute;
+
+  /* Compose drift + parallax via CSS vars */
+  --ox: calc(var(--mouse-x) * var(--factor) + var(--scroll-x) * var(--factor));
+  --oy: calc(var(--mouse-y) * var(--factor) + var(--scroll-y) * var(--factor));
+
+  transform: translate(calc(var(--ox) + var(--drift-x)), calc(var(--oy) + var(--drift-y)));
+
+  animation:
+    drift var(--duration, 60s) ease-in-out var(--delay, 0s) infinite,
+    fade 18s ease-in-out var(--fade-delay, 0s) infinite;
+
+  .icon-wrap {
+    transform: rotate(var(--rot, 0deg)) scale(var(--scale, 1));
+    will-change: transform, opacity;
+
+    svg {
+      font-size: clamp(4rem, 8vw, 6rem);
+      opacity: 0.25; /* base opacity, fade anim will modulate this */
+      color: rgba(0, 0, 0, 0.4);
+    }
+  }
+}
+
+/* Depth scaling */
+.layer-back .icon-wrap { transform: rotate(var(--rot)) scale(calc(var(--scale) * 0.9)); }
+.layer-mid  .icon-wrap { transform: rotate(var(--rot)) scale(var(--scale)); }
+.layer-front .icon-wrap { transform: rotate(var(--rot)) scale(calc(var(--scale) * 1.15)); }
+
+/* Drift animation — slow and subtle */
+@keyframes drift {
+  0%   { --drift-x: 0px;   --drift-y: 0px; }
+  50%  { --drift-x: 10px;  --drift-y: -6px; }
+  100% { --drift-x: 0px;   --drift-y: 0px; }
+}
+
+/* Fade breathing animation */
+@keyframes fade {
+  0%, 100% { opacity: 0; }
+  20%, 80% { opacity: 1; }
+}
+
+/* Layer-specific drift durations for depth */
+.layer-back { --duration: 80s; }
+.layer-mid  { --duration: 60s; }
+.layer-front{ --duration: 45s; }
+
+/* Accessibility: respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .bg-item {
+    animation: none;
+    transform: none;
+  }
+  .icon-wrap {
+    transform: none;
+  }
+}

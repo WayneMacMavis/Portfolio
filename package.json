@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@react-icons/all-files": "^4.1.0",
     "cra-template-pwa": "2.0.0",
     "framer-motion": "^12.23.12",
     "react": "^19.1.1",

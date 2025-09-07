@@ -1,32 +1,54 @@
+/* ================================
+   Skills Section — Full SCSS
+   ================================ */
+
 .skills {
-  padding: 4rem 2rem;
+  position: relative;
+  padding: 7rem 7rem;
   background: #f9f9f9;
-  max-width: 1000px;
+  max-width: 100vw;
+  height: 90vh;
   margin: 0 auto;
+
+  overflow: hidden;
+  display: flex;
+flex-direction: column;
+justify-content: center; /* vertical center */
+align-items: center;     /* horizontal center */
+
 
   &__heading {
     text-align: center;
-    font-size: 2rem;
-    margin-bottom: 3rem;
-    color: #333;
+    font-size: 3.5rem;
+    margin-bottom: 7rem;
+    color: #5659ff;
   }
 
-  &__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 1.5rem;
-  }
+ 
 }
+
+  .skills__grid {
+    position: relative;
+  display: flex;
+  flex-wrap: wrap;         /* allow cards to wrap into new rows */
+  justify-content: center; /* center cards horizontally */
+  align-items: flex-start; /* align rows to the top so they stack evenly */
+  gap: 3rem;              /* space between cards */
+
+}
+
+
 
 .skill-card {
   position: relative;
-  background: white;
+  background: rgba(255, 255, 255, 0.616);
   border-radius: 12px;
   padding: 1.5rem 1rem;
   text-align: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   cursor: pointer;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
+  width: 10%;
 
   &:hover {
     transform: translateY(-4px);
@@ -34,23 +56,53 @@
   }
 
   &__icon {
-    width: 50px;
-    height: 50px;
+    width: 70px;
+    height: 70px;
     margin: 0 auto 0.75rem;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.5rem;
-    color: white;
     position: relative;
     z-index: 1;
+    color: #fff;
+    transition: box-shadow 0.3s ease;
   }
 
   &__name {
-    font-size: 1rem;
+    font-size: 1.3rem;
     font-weight: 500;
     color: #222;
+  }
+
+  /* Glow + pulse on hover */
+  &:hover .skill-card__icon {
+    animation: pulseGlow 1.5s infinite alternate;
+    box-shadow:
+      0 0 8px var(--tooltip-shadow, rgba(0, 0, 0, 0.15)),
+      0 0 16px var(--tooltip-shadow, rgba(0, 0, 0, 0.15));
+  }
+
+  .skill-card__icon svg {
+  font-size: 3rem; /* or whatever size you want */
+}
+
+
+  /* Ripple effect */
+  &:hover .skill-card__icon::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: var(--tooltip-shadow, rgba(0, 0, 0, 0.15));
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.5;
+    animation: rippleWave 1.2s ease-out infinite;
+    z-index: -1;
   }
 
   /* Tooltip */
@@ -58,8 +110,7 @@
     position: absolute;
     bottom: 110%;
     left: 50%;
-    transform: translateX(-50%) translateY(10px);
-    background: rgba(0, 0, 0, 0.85);
+    transform: translateX(-50%) translateY(10px) scale(0.95);
     color: white;
     padding: 0.5rem 0.75rem;
     border-radius: 6px;
@@ -68,12 +119,35 @@
     white-space: nowrap;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.25s ease, transform 0.25s ease;
+    background-color: inherit;
+    animation: none;
+    transform-origin: bottom center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0);
+    text-shadow:
+      -1px -1px 0 var(--tooltip-shadow, rgba(0,0,0,0.3)),
+       1px -1px 0 var(--tooltip-shadow, rgba(0,0,0,0.3)),
+      -1px  1px 0 var(--tooltip-shadow, rgba(0,0,0,0.3)),
+       1px  1px 0 var(--tooltip-shadow, rgba(0,0,0,0.3));
+    position: relative;
+    min-width: max-content;
+    overflow: visible;
   }
 
-  &:hover .skill-card__tooltip {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
+  /* Shimmer overlay (separate element inside tooltip) */
+  .tooltip-shimmer {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      120deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.4) 50%,
+      transparent 100%
+    );
+    transform: skewX(-20deg);
+    pointer-events: none;
   }
 
   /* Tooltip arrow */
@@ -82,9 +156,146 @@
     position: absolute;
     top: 100%;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-50%) translateY(-4px);
     border-width: 6px;
     border-style: solid;
-    border-color: rgba(0, 0, 0, 0.85) transparent transparent transparent;
+    border-color: inherit transparent transparent transparent;
+    opacity: 0;
+  }
+
+  /* Hover choreography */
+  &:hover .skill-card__tooltip {
+    animation: tooltipFadeScaleShadowIn 0.35s ease forwards;
+    animation-delay: 0.15s; /* after bounce */
+  }
+
+  &:hover .skill-card__tooltip::after {
+    animation: tooltipArrowFadeIn 0.25s ease forwards;
+    animation-delay: 0.25s; /* arrow after tooltip */
+  }
+
+  &:hover .tooltip-shimmer {
+    animation: shimmerSweep 0.6s ease forwards;
+    animation-delay: 0.5s; /* shimmer after tooltip is visible */
+  }
+}
+
+/* ================================
+   Unified Idle + Scroll Drift
+   ================================ */
+
+@keyframes floatDrift {
+  0%, 100% {
+    transform: translateY(var(--scroll-offset, 0)) scale(1);
+  }
+  50% {
+    transform: translateY(calc(var(--scroll-offset, 0) - 2px)) scale(1.02);
+  }
+}
+
+/* Idle float+drift when not hovered */
+.skill-card:not(:hover) .skill-card__icon {
+  animation: floatDrift 4s ease-in-out infinite;
+}
+
+/* Freeze float during post-hover micro-pause (toggled via data-hold on .skills) */
+.skills[data-hold] .skill-card:not(:hover) .skill-card__icon {
+  animation-play-state: paused;
+}
+
+/* Organic stagger for idle/drift */
+.skill-card:nth-child(1) .skill-card__icon { animation-delay: 0s; }
+.skill-card:nth-child(2) .skill-card__icon { animation-delay: 0.4s; }
+.skill-card:nth-child(3) .skill-card__icon { animation-delay: 0.8s; }
+.skill-card:nth-child(4) .skill-card__icon { animation-delay: 1.2s; }
+.skill-card:nth-child(5) .skill-card__icon { animation-delay: 1.6s; }
+.skill-card:nth-child(6) .skill-card__icon { animation-delay: 2s; }
+.skill-card:nth-child(7) .skill-card__icon { animation-delay: 2.4s; }
+.skill-card:nth-child(8) .skill-card__icon { animation-delay: 2.8s; }
+.skill-card:nth-child(9) .skill-card__icon { animation-delay: 3.2s; }
+.skill-card:nth-child(10) .skill-card__icon { animation-delay: 3.6s; }
+.skill-card:nth-child(11) .skill-card__icon { animation-delay: 4s; }
+
+
+/* ================================
+   Keyframes for Effects
+   ================================ */
+
+@keyframes pulseGlow {
+  0% {
+    box-shadow:
+      0 0 8px var(--tooltip-shadow, rgba(0,0,0,0.15)),
+      0 0 16px var(--tooltip-shadow, rgba(0,0,0,0.15));
+  }
+  100% {
+    box-shadow:
+      0 0 16px var(--tooltip-shadow, rgba(0,0,0,0.15)),
+      0 0 32px var(--tooltip-shadow, rgba(0,0,0,0.15));
+  }
+}
+
+@keyframes rippleWave {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2.5);
+    opacity: 0;
+  }
+}
+
+@keyframes tooltipFadeScaleShadowIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(6px) scale(0.95);
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0);
+  }
+  60% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1.02);
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 12px var(--tooltip-shadow, rgba(0, 0, 0, 0.15));
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+    letter-spacing: normal;
+    box-shadow: 0 4px 12px var(--tooltip-shadow, rgba(0, 0, 0, 0.15));
+  }
+}
+
+
+@keyframes tooltipArrowFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes shimmerSweep {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+/* ================================
+   Accessibility: reduce motion
+   ================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .skill-card,
+  .skill-card * {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .skill-card:hover {
+    transform: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   }
 }

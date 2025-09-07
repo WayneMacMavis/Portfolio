@@ -6,7 +6,7 @@
   align-items: center;
   justify-content: space-between;
   padding: clamp(4rem, 6vw, 8rem) 10%;
-  min-height: 100vh;
+  max-height: 89vh;
   background: var(--navbar-bg-solid);
   font-family: var(--font-family-base);
   gap: 2rem;
