@@ -3,7 +3,7 @@
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background: linear-gradient(-45deg, var(--color1), var(--color2), var(--color3), var(--color4));
+  background: linear-gradient(-45deg, white, white, white, white);
   background-size: 400% 400%;
   animation: gradientShift var(--gradient-speed, 15s) ease infinite;
   will-change: transform, opacity, filter, background-position;
@@ -20,7 +20,7 @@
       rgba(0, 217, 255, 0) 100%
     );
     opacity: 0;
-    animation: bgSweep 2.3s ease-in-out infinite;
+    animation: bgSweep 3.2s ease-in-out infinite;
     animation-delay: 0.8s; /* phase sync */
     will-change: transform, opacity, background;
   }
