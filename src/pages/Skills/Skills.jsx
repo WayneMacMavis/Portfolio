@@ -27,7 +27,7 @@ const skills = [
   { name: "Python", color: "#3776AB", icon: <FaPython />, description: "Data scripts, automation, and backend logic", hover: { scale: 1.2, rotate: -5 } },
   { name: "Git & GitHub", color: "#181717", icon: <FaGitAlt />, description: "Version control and collaborative workflows", hover: { rotate: -10 } },
   { name: "Figma", color: "#F24E1E", icon: <FaFigma />, description: "UI/UX design and prototyping with precision", hover: { y: 5 } },
-  { name: "VS Code", color: "#007ACC", icon: <DiVisualstudio />, description: "Where my ideas turn into code", hover: { y: -5, rotate: 5 } }
+  { name: "VS Code", color: "#007ACC", icon: <DiVisualstudio />, description: "Where my ideas turn into code", hover: { y: -5, rotate: 5, scale: 1.2 } }
 ];
 
 export default function Skills() {

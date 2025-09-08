@@ -5,14 +5,15 @@ import {
   // Tools & platforms
   FaGitAlt, FaGithub, FaFigma, FaCloud, FaTerminal,
   // Generic dev symbols
-  FaCode, FaLaptopCode, FaCogs, FaTools, FaKeyboard,
+  FaCode, FaLaptopCode, FaCogs, FaTools,
 } from "react-icons/fa";
+import { DiVisualstudio } from "react-icons/di";
 import "../../styles/skills/SkillsBackground.scss";
 
 const icons = [
   FaHtml5, FaSass, FaReact, FaNodeJs, FaPython, FaJs, FaCss3,
   FaGitAlt, FaGithub, FaFigma, FaCloud, FaTerminal,
-  FaCode, FaLaptopCode, FaCogs, FaTools, FaKeyboard,
+  FaCode, FaLaptopCode, FaCogs, FaTools, DiVisualstudio
 ];
 
 export default function SkillsBackground() {
