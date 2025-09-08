@@ -1,10 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { FiHome, FiUser, FiCode, FiFolder, FiMail } from "react-icons/fi";
 import logo from "../assets/nav_icon.svg";
 import '../styles/NavBar.scss';
 import useScrollProgress from "../hooks/useScrollProgress";
 
-const NAV_LINKS = ["Home", "About", "Skills", "Projects", "Contact"];
+// Map each link to an icon
+const NAV_LINKS = [
+  { name: "Home", icon: <FiHome /> },
+  { name: "About", icon: <FiUser /> },
+  { name: "Skills", icon: <FiCode /> },
+  { name: "Projects", icon: <FiFolder /> },
+  { name: "Contact", icon: <FiMail /> }
+];
 
 export default function NavBar() {
   // Shared eased fade (same curve/range as hero for sync)
@@ -24,8 +32,9 @@ export default function NavBar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // IntersectionObserver to track active section
   useEffect(() => {
-    const sections = NAV_LINKS.map(link => document.getElementById(link.toLowerCase()));
+    const sections = NAV_LINKS.map(link => document.getElementById(link.name.toLowerCase()));
     const observer = new IntersectionObserver(
       entries => {
         for (const entry of entries) {
@@ -61,6 +70,35 @@ export default function NavBar() {
     visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 20 } }
   };
 
+  // Helper to render a nav link (desktop or mobile)
+  const renderNavLink = (name, icon, isMobile = false) => {
+    const isActive = activeLink === name;
+    const isNearby = !isActive && fadeAmount > 0.5;
+    const baseGlow = isMobile ? 10 : 8;
+    const glowSize = isActive ? baseGlow : baseGlow * fadeAmount;
+
+    return (
+      <a
+        href={`#${name.toLowerCase()}`}
+        onClick={isMobile ? closeMenu : undefined}
+        className={isActive ? "active" : ""}
+      >
+       <motion.span
+  className={`nav-icon ${isNearby ? "pulse" : ""}`}
+  style={{
+    color: isActive ? "var(--accent-color)" : "inherit",
+    '--glow-size': `${glowSize}px`
+  }}
+  whileHover={{ scale: 1.2, rotate: 5 }}
+  transition={{ type: "spring", stiffness: 300 }}
+>
+  {icon}
+</motion.span>
+        <span className="nav-text">{name}</span>
+      </a>
+    );
+  };
+
   return (
     <motion.nav
       className={`navbar ${scrolled ? "scrolled" : ""}`}
@@ -69,24 +107,20 @@ export default function NavBar() {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
     >
+      {/* Brand */}
       <a href="#home" className="navbar__brand">
         <img src={logo} alt="Portfolio logo" className="navbar__icon" />
         <span className='logo'>Portfolio</span>
       </a>
 
+      {/* Desktop Nav */}
       <ul className="nav-links">
-        {NAV_LINKS.map(link => (
-          <li key={link}>
-            <a
-              href={`#${link.toLowerCase()}`}
-              className={activeLink === link ? "active" : ""}
-            >
-              {link}
-            </a>
-          </li>
+        {NAV_LINKS.map(({ name, icon }) => (
+          <li key={name}>{renderNavLink(name, icon)}</li>
         ))}
       </ul>
 
+      {/* Mobile Menu Toggle */}
       <button
         className={`menu-toggle ${isOpen ? "open" : ""}`}
         onClick={toggleMenu}
@@ -95,6 +129,7 @@ export default function NavBar() {
         <span></span><span></span><span></span>
       </button>
 
+      {/* Mobile Menu */}
       <AnimatePresence>
         {isOpen && (
           <>
@@ -113,19 +148,13 @@ export default function NavBar() {
               animate="visible"
               exit="exit"
             >
-              {NAV_LINKS.map(link => (
+              {NAV_LINKS.map(({ name, icon }) => (
                 <motion.li
-                  key={link}
+                  key={name}
                   variants={linkVariants}
                   whileHover={{ scale: 1.05 }}
                 >
-                  <a
-                    href={`#${link.toLowerCase()}`}
-                    onClick={closeMenu}
-                    className={activeLink === link ? "active" : ""}
-                  >
-                    {link}
-                  </a>
+                  {renderNavLink(name, icon, true)}
                 </motion.li>
               ))}
             </motion.ul>

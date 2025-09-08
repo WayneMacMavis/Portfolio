@@ -70,3 +70,41 @@ $ease-in-out: ease-in-out;
     @content;
   }
 }
+
+// ===============================
+// _mixins.scss
+// ===============================
+
+// Static brand glow
+@mixin brand-glow($color: var(--accent-color), $intensity: 8px, $pulse: false) {
+  filter: drop-shadow(0 0 $intensity $color);
+
+  @if $pulse == true {
+    animation: brandGlowPulse 2.5s ease-in-out infinite;
+  }
+}
+
+@keyframes brandGlowPulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 6px var(--accent-color));
+  }
+  50% {
+    filter: drop-shadow(0 0 12px var(--accent-color));
+  }
+}
+
+// Variable-based breathing pulse (works with scroll-reactive glow)
+@mixin brand-glow-pulse($min: 0px, $max: 8px, $duration: 1.5s) {
+  animation: brandGlowVarPulse $duration ease-in-out infinite;
+  --pulse-min: #{$min};
+  --pulse-max: #{$max};
+}
+
+@keyframes brandGlowVarPulse {
+  0%, 100% {
+    --pulse-boost: var(--pulse-min);
+  }
+  50% {
+    --pulse-boost: var(--pulse-max);
+  }
+}

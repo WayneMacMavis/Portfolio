@@ -1,4 +1,5 @@
 @import '../styles/variables';
+@import '../styles/mixins';
 
 .navbar {
   position: sticky;
@@ -13,7 +14,6 @@
   letter-spacing: 0.5px;
   transition: padding 0.3s ease;
 
-  // Background layer that fades
   &::before {
     content: "";
     position: absolute;
@@ -25,7 +25,6 @@
     z-index: -1;
   }
 
-  // Brand / logo
   .navbar__brand {
     display: flex;
     align-items: center;
@@ -48,7 +47,6 @@
     }
   }
 
-  // Desktop nav links
   .nav-links {
     list-style: none;
     display: flex;
@@ -58,6 +56,9 @@
       position: relative;
 
       a {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
         text-decoration: none;
         font-size: 1rem;
         font-weight: 500;
@@ -67,6 +68,7 @@
 
         &:hover {
           color: #00d9ff;
+          font-weight: 600;
         }
 
         &::after {
@@ -84,15 +86,35 @@
         &.active::after {
           width: 100%;
         }
-      }
 
-      a.active {
-        color: #00d9ff;
+        &.active {
+          color: #00d9ff;
+        }
+
+        .nav-icon {
+          font-size: 1.2rem;
+          display: flex;
+          align-items: center;
+          transition: transform 0.25s ease, filter 0.25s ease, color 0.25s ease;
+
+          /* Combine scroll glow + pulse */
+          --pulse-boost: 0px;
+          --glow-size: 0px;
+          filter: drop-shadow(0 0 calc(var(--glow-size) + var(--pulse-boost)) var(--accent-color));
+        }
+
+        &.active .nav-icon {
+          color: var(--accent-color);
+          --glow-size: max(var(--glow-size), 8px);
+        }
+
+        .nav-text {
+          display: inline-block;
+        }
       }
     }
   }
 
-  // Hamburger toggle (mobile)
   .menu-toggle {
     --bar-w: 28px;
     --bar-h: 3px;
@@ -121,34 +143,19 @@
       border-radius: 2px;
       transform-origin: center;
       transition: transform 0.25s ease, opacity 0.2s ease;
-      will-change: transform;
     }
 
-    span:nth-child(1) {
-      transform: translateY(calc(-1 * (var(--bar-gap) + var(--bar-h))));
-    }
-    span:nth-child(2) {
-      transform: translateY(0);
-    }
-    span:nth-child(3) {
-      transform: translateY(calc(var(--bar-gap) + var(--bar-h)));
-    }
+    span:nth-child(1) { transform: translateY(calc(-1 * (var(--bar-gap) + var(--bar-h)))); }
+    span:nth-child(2) { transform: translateY(0); }
+    span:nth-child(3) { transform: translateY(calc(var(--bar-gap) + var(--bar-h))); }
 
     &.open {
-      span:nth-child(1) {
-        transform: rotate(45deg);
-      }
-      span:nth-child(2) {
-        opacity: 0;
-        transform: scaleX(0.8);
-      }
-      span:nth-child(3) {
-        transform: rotate(-45deg);
-      }
+      span:nth-child(1) { transform: rotate(45deg); }
+      span:nth-child(2) { opacity: 0; transform: scaleX(0.8); }
+      span:nth-child(3) { transform: rotate(-45deg); }
     }
   }
 
-  // Mobile overlay
   .mobile-menu-overlay {
     position: fixed;
     top: 0;
@@ -159,7 +166,6 @@
     z-index: 999;
   }
 
-  // Mobile menu links
   .mobile-menu-links {
     position: fixed;
     top: 0;
@@ -176,6 +182,9 @@
     background: var(--brand-gradient);
 
     li a {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
       font-size: 2rem;
       color: var(--text-color-light);
       text-decoration: none;
@@ -196,17 +205,36 @@
       &.active::after {
         width: 100%;
       }
+
+      .nav-icon {
+        font-size: 1.6rem;
+        display: flex;
+        align-items: center;
+        transition: transform 0.25s ease, filter 0.25s ease, color 0.25s ease;
+
+        --pulse-boost: 0px;
+        --glow-size: 0px;
+        filter: drop-shadow(0 0 calc(var(--glow-size) + var(--pulse-boost)) var(--accent-color));
+      }
+
+      &.active .nav-icon {
+        color: var(--accent-color);
+        --glow-size: max(var(--glow-size), 10px);
+      }
     }
   }
 
-  // Shrink + shadow when scrolled
   &.scrolled {
     padding: 0.3rem 2rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   }
 }
 
-// Desktop only
+/* Pulse animation for nearby icons */
+.nav-icon.pulse {
+  @include brand-glow-pulse(0px, 8px, 2.2s);
+}
+
 @media (min-width: 769px) {
   .navbar .menu-toggle,
   .navbar .mobile-menu-overlay,
@@ -215,7 +243,6 @@
   }
 }
 
-// Mobile only
 @media (max-width: 768px) {
   .navbar .nav-links {
     display: none;
