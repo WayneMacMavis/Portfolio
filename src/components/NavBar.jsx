@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiHome, FiUser, FiCode, FiFolder, FiMail } from "react-icons/fi";
-import logo from "../assets/nav_icon.svg";
+import logo from "../Assets/nav_icon.svg";
 import '../styles/NavBar.scss';
 import useScrollProgress from "../hooks/useScrollProgress";
 

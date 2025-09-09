@@ -1,6 +1,6 @@
 // src/components/About/AboutIllustration.jsx
 import { motion } from "framer-motion";
-import illustration from "../../assets/Wayne.jpg";
+import illustration from "../../Assets/Wayne.jpg";
 
 export default function AboutIllustration({
   illoY,

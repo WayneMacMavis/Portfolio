@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import "../styles/Home.scss";
-import heroIllustration from "../assets/home_illustration.svg";
-import blobShape from "../assets/blob.svg";
+import heroIllustration from "../Assets/home_illustration.svg";
+import blobShape from "../Assets/blob.svg";
 import useScrollProgress from "../hooks/useScrollProgress";
 
 const SECTION_IDS = ["home", "about", "skills", "projects", "contact"];
