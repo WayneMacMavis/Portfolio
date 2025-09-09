@@ -27,9 +27,9 @@
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
   transition: color 0.3s ease, filter 0.3s ease;
 
-  &--1 { top: -6%; left: -48px; }
-  &--2 { bottom: -6%; right: -48px; }
-  &--3 { top: -8%; right: -46px; }
+  &--1 { top: -4%; left: -100px; }
+  &--2 { bottom: 5%; right: -200px; }
+  &--3 { top: 10%; right: -97px; }
 }
 
 /* Mobile adjustments */
