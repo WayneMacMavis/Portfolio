@@ -1,0 +1,36 @@
+// pages/Projects.scss
+.projects-page {
+  padding: 4rem 2rem;
+  background: var(--bg-color, #0d0d0d);
+  color: var(--text-color, #fff);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  .projects-header {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+
+    .page-title {
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 700;
+      background: linear-gradient(90deg, var(--brand-color), var(--brand-accent));
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .page-subtitle {
+      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.8);
+      margin-top: 0.5rem;
+    }
+  }
+
+  .projects-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
