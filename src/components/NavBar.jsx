@@ -1,30 +1,109 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiHome, FiUser, FiCode, FiFolder, FiMail } from "react-icons/fi";
 import logo from "../Assets/nav_icon.svg";
 import '../styles/NavBar.scss';
 import useScrollProgress from "../hooks/useScrollProgress";
 
-// Map each link to an icon
+// Config
 const NAV_LINKS = [
-  { name: "Home", icon: <FiHome /> },
-  { name: "About", icon: <FiUser /> },
-  { name: "Skills", icon: <FiCode /> },
-  { name: "Projects", icon: <FiFolder /> },
-  { name: "Contact", icon: <FiMail /> }
+  { name: "Home", icon: FiHome },
+  { name: "About", icon: FiUser },
+  { name: "Skills", icon: FiCode },
+  { name: "Projects", icon: FiFolder },
+  { name: "Contact", icon: FiMail }
 ];
 
-export default function NavBar() {
-  // Shared eased fade (same curve/range as hero for sync)
-  const fadeAmount = useScrollProgress(0, 200, 0.2);
+// Motion variants
+const overlayVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.25 } },
+  exit: { opacity: 0, transition: { duration: 0.2 } }
+};
 
+// Mobile menu container — logo first, then links ripple
+const mobileMenuContainer = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.15
+    }
+  },
+  exit: { transition: { staggerChildren: 0.05, staggerDirection: -1 } }
+};
+
+const mobileLogoVariants = {
+  hidden: { opacity: 0, y: -10, rotate: -5 },
+  visible: { opacity: 1, y: 0, rotate: 0, transition: { type: "spring", stiffness: 300, damping: 20 } }
+};
+
+const mobileLinkVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 20 } }
+};
+
+// Desktop ripple
+const desktopLinksContainer = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.4 // after logo
+    }
+  }
+};
+
+const desktopLinkItem = {
+  hidden: { opacity: 0, y: -10 },
+  visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 20 } }
+};
+
+// Logo intro (desktop)
+const logoVariants = {
+  hidden: { opacity: 0, y: -10, rotate: -5 },
+  visible: { opacity: 1, y: 0, rotate: 0, transition: { type: "spring", stiffness: 300, damping: 20 } }
+};
+
+// Reusable Nav Link Component
+function NavLinkItem({ name, Icon, active, onClick, variants }) {
+  return (
+    <motion.a
+      href={`#${name.toLowerCase()}`}
+      onClick={onClick}
+      className={`nav-link ${active ? "active" : ""}`}
+      aria-current={active ? "page" : undefined}
+      variants={variants}
+    >
+      <motion.span
+        className="nav-icon"
+        whileHover={{ scale: 1.15, rotate: 3 }}
+        whileTap={{ scale: 0.95 }}
+        animate={active ? { scale: 1.05, rotate: 0 } : { scale: 1, rotate: 0 }}
+        transition={{
+          type: "spring",
+          stiffness: 300,
+          damping: 20
+        }}
+      >
+        <Icon />
+      </motion.span>
+      <span className="nav-text">{name}</span>
+    </motion.a>
+  );
+}
+
+export default function NavBar() {
+  const fadeAmount = useScrollProgress(0, 200, 0.2);
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeLink, setActiveLink] = useState("Home");
+  const sectionsRef = useRef([]);
 
   const toggleMenu = () => setIsOpen(prev => !prev);
   const closeMenu = () => setIsOpen(false);
 
+  // Scroll detection
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -32,9 +111,9 @@ export default function NavBar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // IntersectionObserver to track active section
+  // Active section tracking
   useEffect(() => {
-    const sections = NAV_LINKS.map(link => document.getElementById(link.name.toLowerCase()));
+    sectionsRef.current = NAV_LINKS.map(link => document.getElementById(link.name.toLowerCase()));
     const observer = new IntersectionObserver(
       entries => {
         for (const entry of entries) {
@@ -46,58 +125,9 @@ export default function NavBar() {
       },
       { threshold: 0.6 }
     );
-    sections.forEach(sec => sec && observer.observe(sec));
+    sectionsRef.current.forEach(sec => sec && observer.observe(sec));
     return () => observer.disconnect();
   }, []);
-
-  const overlayVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { duration: 0.25 } },
-    exit: { opacity: 0, transition: { duration: 0.2 } }
-  };
-
-  const menuVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.12, delayChildren: 0.15 }
-    },
-    exit: { opacity: 0, transition: { duration: 0.2 } }
-  };
-
-  const linkVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 20 } }
-  };
-
-  // Helper to render a nav link (desktop or mobile)
-  const renderNavLink = (name, icon, isMobile = false) => {
-    const isActive = activeLink === name;
-    const isNearby = !isActive && fadeAmount > 0.5;
-    const baseGlow = isMobile ? 10 : 8;
-    const glowSize = isActive ? baseGlow : baseGlow * fadeAmount;
-
-    return (
-      <a
-        href={`#${name.toLowerCase()}`}
-        onClick={isMobile ? closeMenu : undefined}
-        className={isActive ? "active" : ""}
-      >
-       <motion.span
-  className={`nav-icon ${isNearby ? "pulse" : ""}`}
-  style={{
-    color: isActive ? "var(--accent-color)" : "inherit",
-    '--glow-size': `${glowSize}px`
-  }}
-  whileHover={{ scale: 1.2, rotate: 5 }}
-  transition={{ type: "spring", stiffness: 300 }}
->
-  {icon}
-</motion.span>
-        <span className="nav-text">{name}</span>
-      </a>
-    );
-  };
 
   return (
     <motion.nav
@@ -107,24 +137,43 @@ export default function NavBar() {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
     >
-      {/* Brand */}
-      <a href="#home" className="navbar__brand">
+      {/* Brand (desktop) */}
+      <motion.a
+        href="#home"
+        className="navbar__brand"
+        variants={logoVariants}
+        initial="hidden"
+        animate="visible"
+      >
         <img src={logo} alt="Portfolio logo" className="navbar__icon" />
         <span className='logo'>Portfolio</span>
-      </a>
+      </motion.a>
 
-      {/* Desktop Nav */}
-      <ul className="nav-links">
-        {NAV_LINKS.map(({ name, icon }) => (
-          <li key={name}>{renderNavLink(name, icon)}</li>
+      {/* Desktop Nav with ripple */}
+      <motion.ul
+        className="nav-links"
+        variants={desktopLinksContainer}
+        initial="hidden"
+        animate="visible"
+      >
+        {NAV_LINKS.map(({ name, icon: Icon }) => (
+          <li key={name}>
+            <NavLinkItem
+              name={name}
+              Icon={Icon}
+              active={activeLink === name}
+              variants={desktopLinkItem}
+            />
+          </li>
         ))}
-      </ul>
+      </motion.ul>
 
       {/* Mobile Menu Toggle */}
       <button
         className={`menu-toggle ${isOpen ? "open" : ""}`}
         onClick={toggleMenu}
         aria-label="Toggle menu"
+        aria-expanded={isOpen}
       >
         <span></span><span></span><span></span>
       </button>
@@ -143,18 +192,28 @@ export default function NavBar() {
             />
             <motion.ul
               className="mobile-menu-links"
-              variants={menuVariants}
+              variants={mobileMenuContainer}
               initial="hidden"
               animate="visible"
               exit="exit"
             >
-              {NAV_LINKS.map(({ name, icon }) => (
-                <motion.li
-                  key={name}
-                  variants={linkVariants}
-                  whileHover={{ scale: 1.05 }}
-                >
-                  {renderNavLink(name, icon, true)}
+              {/* Mobile logo intro */}
+              <motion.li variants={mobileLogoVariants} style={{ marginBottom: '1.5rem' }}>
+                <a href="#home" onClick={closeMenu} className="navbar__brand">
+                  <img src={logo} alt="Portfolio logo" className="navbar__icon" />
+                  <span className='logo'>Portfolio</span>
+                </a>
+              </motion.li>
+
+              {/* Mobile links ripple after logo */}
+              {NAV_LINKS.map(({ name, icon: Icon }) => (
+                <motion.li key={name} variants={mobileLinkVariants}>
+                  <NavLinkItem
+                    name={name}
+                    Icon={Icon}
+                    active={activeLink === name}
+                    onClick={closeMenu}
+                  />
                 </motion.li>
               ))}
             </motion.ul>
