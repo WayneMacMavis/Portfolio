@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FiHome, FiUser, FiCode, FiFolder, FiMail } from "react-icons/fi";
 import logo from "../Assets/nav_icon.svg";
 import useScrollProgress from "../hooks/useScrollProgress";
+import { HERO_FADE_RANGE } from "../config";
 import '../styles/NavBar.scss';
 
 // Config
@@ -14,7 +15,7 @@ const NAV_LINKS = [
   { name: "Contact", icon: FiMail }
 ];
 
-// Motion variants (unchanged)
+// Motion variants
 const overlayVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.25 } }, exit: { opacity: 0, transition: { duration: 0.2 } } };
 const mobileMenuContainer = { hidden: {}, visible: { transition: { staggerChildren: 0.1, delayChildren: 0.15 } }, exit: { transition: { staggerChildren: 0.05, staggerDirection: -1 } } };
 const mobileLogoVariants = { hidden: { opacity: 0, y: -10, rotate: -5 }, visible: { opacity: 1, y: 0, rotate: 0, transition: { type: "spring", stiffness: 300, damping: 20 } } };
@@ -63,8 +64,8 @@ export default function NavBar() {
     if (homeEl) homeRef.current = homeEl;
   }, []);
 
-  // Always safe — hook returns 0 until ref is ready
-  const homeFadeProgress = useScrollProgress(homeRef, { startFrac: 0.15, endFrac: 0.65 });
+  // Progress is 0 → 1 over HERO_FADE_RANGE
+  const homeFadeProgress = useScrollProgress(homeRef, HERO_FADE_RANGE);
 
   // Scroll detection for navbar style
   useEffect(() => {
@@ -74,30 +75,60 @@ export default function NavBar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Active section tracking
+  // Active section tracking — delayed attach for stable layout
   useEffect(() => {
-    sectionsRef.current = NAV_LINKS.map(link => document.getElementById(link.name.toLowerCase()));
+    sectionsRef.current = NAV_LINKS.map(link =>
+      document.getElementById(link.name.toLowerCase())
+    );
+
     const observer = new IntersectionObserver(
       entries => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            const id = entry.target.id;
-            setActiveLink(id.charAt(0).toUpperCase() + id.slice(1));
-            if (window.location.hash !== `#${id}`) {
-              window.history.replaceState(null, "", `#${id}`);
+        const visible = entries
+          .filter(e => e.isIntersecting)
+          .sort((a, b) => {
+            if (b.intersectionRatio !== a.intersectionRatio) {
+              return b.intersectionRatio - a.intersectionRatio;
             }
+            return a.boundingClientRect.top - b.boundingClientRect.top;
+          });
+
+        if (visible.length > 0) {
+          const topEntry = visible[0];
+          const id = topEntry.target.id;
+          setActiveLink(id.charAt(0).toUpperCase() + id.slice(1));
+
+          if (window.location.hash !== `#${id}`) {
+            window.history.replaceState(null, "", `#${id}`);
           }
         }
       },
-      { threshold: 0.6 }
+      {
+        threshold: Array.from({ length: 21 }, (_, i) => i / 20), // 0.0 → 1.0 in 0.05 steps
+        rootMargin: "-15% 0px -55% 0px"
+      }
     );
-    sectionsRef.current.forEach(sec => sec && observer.observe(sec));
-    return () => observer.disconnect();
+
+    const attachObserver = () => {
+      sectionsRef.current.forEach(sec => sec && observer.observe(sec));
+      // Initial check in case we're already scrolled
+      observer.takeRecords();
+    };
+
+    if (document.readyState === "complete") {
+      attachObserver();
+    } else {
+      window.addEventListener("load", attachObserver, { once: true });
+    }
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("load", attachObserver);
+    };
   }, []);
 
-  // Override with "Home" if still in hero fade zone
+  // Override with "Home" until fade completes
   useEffect(() => {
-    if (homeFadeProgress < 0.8) {
+    if (homeFadeProgress < 1) {
       setActiveLink("Home");
     }
   }, [homeFadeProgress]);

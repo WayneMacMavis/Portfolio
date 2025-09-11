@@ -1,15 +1,16 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import "../styles/Home.scss";
 import heroIllustration from "../Assets/home_illustration.svg";
 import blobShape from "../Assets/blob.svg";
 import useScrollProgress from "../hooks/useScrollProgress";
+import { HERO_FADE_RANGE } from "../config"; // shared fade range
 
 export default function Home() {
   const heroRef = useRef(null);
 
-  // Fade starts at 15% down hero, ends at 65% down hero
-  const fadeProgress = useScrollProgress(heroRef, { startFrac: 0.15, endFrac: 0.65 });
+  // Fade progress using shared config
+  const fadeProgress = useScrollProgress(heroRef, HERO_FADE_RANGE);
   const eased = fadeProgress * fadeProgress * (3 - 2 * fadeProgress); // smoothstep
   const heroOpacity = 1 - eased;
 
@@ -19,7 +20,7 @@ export default function Home() {
   const smx = useSpring(mx, { stiffness: 60, damping: 18 });
   const smy = useSpring(my, { stiffness: 60, damping: 18 });
 
-  React.useEffect(() => {
+  useEffect(() => {
     const prefersReduced =
       typeof window !== "undefined" &&
       window.matchMedia &&
