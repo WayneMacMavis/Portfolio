@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiHome, FiUser, FiCode, FiFolder, FiMail } from "react-icons/fi";
 import logo from "../Assets/nav_icon.svg";
-import '../styles/NavBar.scss';
 import useScrollProgress from "../hooks/useScrollProgress";
+import '../styles/NavBar.scss';
 
 // Config
 const NAV_LINKS = [
@@ -14,56 +14,14 @@ const NAV_LINKS = [
   { name: "Contact", icon: FiMail }
 ];
 
-// Motion variants
-const overlayVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: 0.25 } },
-  exit: { opacity: 0, transition: { duration: 0.2 } }
-};
-
-// Mobile menu container — logo first, then links ripple
-const mobileMenuContainer = {
-  hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.15
-    }
-  },
-  exit: { transition: { staggerChildren: 0.05, staggerDirection: -1 } }
-};
-
-const mobileLogoVariants = {
-  hidden: { opacity: 0, y: -10, rotate: -5 },
-  visible: { opacity: 1, y: 0, rotate: 0, transition: { type: "spring", stiffness: 300, damping: 20 } }
-};
-
-const mobileLinkVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 20 } }
-};
-
-// Desktop ripple
-const desktopLinksContainer = {
-  hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.08,
-      delayChildren: 0.4 // after logo
-    }
-  }
-};
-
-const desktopLinkItem = {
-  hidden: { opacity: 0, y: -10 },
-  visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 20 } }
-};
-
-// Logo intro (desktop)
-const logoVariants = {
-  hidden: { opacity: 0, y: -10, rotate: -5 },
-  visible: { opacity: 1, y: 0, rotate: 0, transition: { type: "spring", stiffness: 300, damping: 20 } }
-};
+// Motion variants (unchanged)
+const overlayVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.25 } }, exit: { opacity: 0, transition: { duration: 0.2 } } };
+const mobileMenuContainer = { hidden: {}, visible: { transition: { staggerChildren: 0.1, delayChildren: 0.15 } }, exit: { transition: { staggerChildren: 0.05, staggerDirection: -1 } } };
+const mobileLogoVariants = { hidden: { opacity: 0, y: -10, rotate: -5 }, visible: { opacity: 1, y: 0, rotate: 0, transition: { type: "spring", stiffness: 300, damping: 20 } } };
+const mobileLinkVariants = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 20 } } };
+const desktopLinksContainer = { hidden: {}, visible: { transition: { staggerChildren: 0.08, delayChildren: 0.4 } } };
+const desktopLinkItem = { hidden: { opacity: 0, y: -10 }, visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 20 } } };
+const logoVariants = { hidden: { opacity: 0, y: -10, rotate: -5 }, visible: { opacity: 1, y: 0, rotate: 0, transition: { type: "spring", stiffness: 300, damping: 20 } } };
 
 // Reusable Nav Link Component
 function NavLinkItem({ name, Icon, active, onClick, variants }) {
@@ -80,11 +38,7 @@ function NavLinkItem({ name, Icon, active, onClick, variants }) {
         whileHover={{ scale: 1.15, rotate: 3 }}
         whileTap={{ scale: 0.95 }}
         animate={active ? { scale: 1.05, rotate: 0 } : { scale: 1, rotate: 0 }}
-        transition={{
-          type: "spring",
-          stiffness: 300,
-          damping: 20
-        }}
+        transition={{ type: "spring", stiffness: 300, damping: 20 }}
       >
         <Icon />
       </motion.span>
@@ -94,16 +48,25 @@ function NavLinkItem({ name, Icon, active, onClick, variants }) {
 }
 
 export default function NavBar() {
-  const fadeAmount = useScrollProgress(0, 200, 0.2);
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeLink, setActiveLink] = useState("Home");
   const sectionsRef = useRef([]);
+  const homeRef = useRef(null);
 
   const toggleMenu = () => setIsOpen(prev => !prev);
   const closeMenu = () => setIsOpen(false);
 
-  // Scroll detection
+  // Attach homeRef after mount
+  useEffect(() => {
+    const homeEl = document.getElementById("home");
+    if (homeEl) homeRef.current = homeEl;
+  }, []);
+
+  // Always safe — hook returns 0 until ref is ready
+  const homeFadeProgress = useScrollProgress(homeRef, { startFrac: 0.15, endFrac: 0.65 });
+
+  // Scroll detection for navbar style
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -120,6 +83,9 @@ export default function NavBar() {
           if (entry.isIntersecting) {
             const id = entry.target.id;
             setActiveLink(id.charAt(0).toUpperCase() + id.slice(1));
+            if (window.location.hash !== `#${id}`) {
+              window.history.replaceState(null, "", `#${id}`);
+            }
           }
         }
       },
@@ -129,10 +95,16 @@ export default function NavBar() {
     return () => observer.disconnect();
   }, []);
 
+  // Override with "Home" if still in hero fade zone
+  useEffect(() => {
+    if (homeFadeProgress < 0.8) {
+      setActiveLink("Home");
+    }
+  }, [homeFadeProgress]);
+
   return (
     <motion.nav
       className={`navbar ${scrolled ? "scrolled" : ""}`}
-      style={{ '--fade-opacity': fadeAmount }}
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: "easeOut" }}

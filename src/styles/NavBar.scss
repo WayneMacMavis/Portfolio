@@ -29,7 +29,7 @@
     background: var(--accent-color);
     transform: scaleX(0);
     transform-origin: left;
-    transition: transform 0.3s ease;
+    transition: transform 0.45s cubic-bezier(0.68, -0.55, 0.27, 1.55);
   }
 
   &:hover::after,
@@ -87,19 +87,6 @@
     opacity: var(--fade-opacity, 1);
     transition: opacity 0.1s linear;
     z-index: -1;
-  }
-
-  /* Optional scroll progress bar */
-  &::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    height: 2px;
-    width: calc(var(--scroll-progress, 0) * 1%);
-    background: var(--brand-gradient);
-    transition: width 0.2s ease;
-    pointer-events: none;
   }
 
   /* Brand */
@@ -191,40 +178,49 @@
 
   /* Mobile links */
   .mobile-menu-links {
-    position: fixed;
-    inset: 0;
-    height: 100vh;
+  position: fixed;
+  inset: 0;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;   /* keep the stack vertically centered */
+  align-items: center;       /* center the column horizontally */
+  gap: 1.25rem;
+  z-index: 1000;
+  list-style: none;
+  background: var(--brand-gradient);
+  padding: 0 1.5rem;
+
+     li {
     width: 100%;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    justify-content: center; /* keeps the link block centered */
+    .nav-link {
+    font-size: 2rem;
+    color: var(--text-color-light);
+
+    /* Fixed-width column for consistent left edge */
+    width: min(90vw, 165px);
+    display: flex;
     align-items: center;
-    gap: 2rem;
-    z-index: 1000;
-    list-style: none;
-    background: var(--brand-gradient);
+    justify-content: flex-start; /* left-align icon + text inside the block */
+    text-align: left;
+    gap: 1rem;
+    padding-left: 0.5rem;
+    position: relative;
 
-    li {
-      .nav-link {
-        @extend %nav-link-base;
-        font-size: 2rem;
-        color: var(--text-color-light);
+      &:hover,
+      &.active {
+        color: var(--accent-color);
+      }
 
-        &:hover,
-        &.active {
-          color: var(--accent-color);
-        }
-
-        &::after {
-          background: var(--accent-color);
-        }
-
-        .nav-icon {
-          font-size: 1.6rem;
-        }
+      .nav-icon {
+        font-size: 1.6rem;
       }
     }
   }
+}
 
   /* Height settle on scroll */
   &.scrolled {
@@ -250,6 +246,9 @@
   }
   .navbar .menu-toggle {
     display: flex !important;
+  }
+  .mobile-menu-links .nav-link::after {
+    transition-delay: 0.12s; /* starts just after text fade-in */
   }
 }
 

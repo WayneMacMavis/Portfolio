@@ -81,23 +81,6 @@ overflow: visible;
   pointer-events: none;
 }
 
-/* === SCROLL PROGRESS BAR === */
-.scroll-progress {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 4px;
-  width: 100%;
-  background: transparent;
-  z-index: 9999;
-
-  &__bar {
-    height: 100%;
-    background: var(--brand-gradient, linear-gradient(90deg, #ff6b6b, #f06595));
-    width: 0%;
-    transition: width 0.15s ease-out;
-  }
-}
 
 /* === CINEMATIC SECTIONS WITH FIXED GRADIENT SHIFT === */
 .cinematic-section {

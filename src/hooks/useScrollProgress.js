@@ -1,30 +1,59 @@
 import { useState, useEffect } from "react";
 
-// easeInOutCubic
-const easeInOutCubic = t =>
-  t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-
 /**
- * Returns an eased opacity value between 1 and minOpacity
- * based on window.scrollY between startPx and endPx.
+ * Universal scroll progress hook.
+ * 
+ * @param {number|object} start - Pixel value OR element ref for fade start.
+ * @param {number|object} end - Pixel value OR fractional offset (if using ref).
+ * @param {number} offset - Optional pixel offset to shift the range.
+ * @returns {number} progress - Normalized 0 → 1 scroll progress.
  */
-export default function useScrollProgress(startPx = 0, endPx = 200, minOpacity = 0.2) {
-  const [opacity, setOpacity] = useState(1);
+export default function useScrollProgress(start, end, offset = 0) {
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const y = window.scrollY;
-      const range = Math.max(endPx - startPx, 1);
-      let t = (y - startPx) / range;
-      t = Math.min(Math.max(t, 0), 1);
-      t = easeInOutCubic(t);
-      setOpacity(1 - t * (1 - minOpacity));
+    const measure = () => {
+      let startPx = 0;
+      let endPx = 0;
+
+      // Element mode
+      if (start?.current) {
+        const el = start.current;
+        const rect = el.getBoundingClientRect();
+        const topDocY = window.scrollY + rect.top;
+        const h = rect.height || 1;
+
+        const startFrac = typeof end === "object" && end.startFrac ? end.startFrac : 0;
+        const endFrac   = typeof end === "object" && end.endFrac   ? end.endFrac   : 1;
+
+        startPx = topDocY + h * startFrac;
+        endPx   = topDocY + h * endFrac;
+      }
+      // Pixel mode
+      else {
+        startPx = typeof start === "number" ? start : 0;
+        endPx   = typeof end === "number" ? end : startPx + 1;
+      }
+
+      const update = () => {
+        const scrollY = window.scrollY;
+        const range = Math.max(1, endPx - startPx);
+        const t = (scrollY - startPx + offset) / range;
+        const clamped = Math.min(Math.max(t, 0), 1);
+        setProgress(clamped);
+      };
+
+      update();
+      window.addEventListener("scroll", update, { passive: true });
+      window.addEventListener("resize", measure);
+      return () => {
+        window.removeEventListener("scroll", update);
+        window.removeEventListener("resize", measure);
+      };
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll(); // initialize on mount
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [startPx, endPx, minOpacity]);
+    measure();
+  }, [start, end, offset]);
 
-  return opacity;
+  return progress;
 }

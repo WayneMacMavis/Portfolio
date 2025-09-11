@@ -1,26 +1,59 @@
 // hooks/useSectionProgress.js
 import { useState, useEffect } from "react";
 
-export default function useSectionProgress(id) {
+export default function useScrollProgress(start, end, offset = 0) {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const sectionEl = document.getElementById(id);
-    if (!sectionEl) return;
+    let startPx = 0;
+    let endPx = 0;
 
-    const handleScroll = () => {
-      const rect = sectionEl.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
+    const measure = () => {
+      // Element mode
+      if (start && start.current instanceof Element) {
+        const el = start.current;
+        if (!el) {
+          setProgress(0);
+          return;
+        }
+        const rect = el.getBoundingClientRect();
+        const topDocY = window.scrollY + rect.top;
+        const h = rect.height || 1;
 
-      // 0 when top hits viewport, 1 when bottom leaves viewport
-      const raw = Math.min(Math.max(1 - rect.top / windowHeight, 0), 1);
-      setProgress(raw);
+        const startFrac = typeof end === "object" && end.startFrac ? end.startFrac : 0;
+        const endFrac   = typeof end === "object" && end.endFrac   ? end.endFrac   : 1;
+
+        startPx = topDocY + h * startFrac;
+        endPx   = topDocY + h * endFrac;
+      }
+      // Pixel mode
+      else {
+        startPx = typeof start === "number" ? start : 0;
+        endPx   = typeof end === "number" ? end : startPx + 1;
+      }
     };
 
-    window.addEventListener("scroll", handleScroll);
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [id]);
+    const update = () => {
+      const range = Math.max(1, endPx - startPx);
+      const t = (window.scrollY - startPx + offset) / range;
+      const clamped = Math.min(Math.max(t, 0), 1);
+      setProgress(clamped);
+    };
+
+    measure();
+    update();
+
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", () => {
+      measure();
+      update();
+    });
+
+    return () => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", measure);
+    };
+  }, [start, end, offset]);
 
   return progress;
 }
