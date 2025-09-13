@@ -1,7 +1,7 @@
 // src/components/About/About.jsx
 import React from "react";
 import { motion } from "framer-motion";
-import "../../styles/About/About.scss";
+import "../../styles/About.scss";
 
 import useAboutParallax from "./useAboutParallax";
 import useTilt from "./useTilt";

@@ -1,0 +1,8 @@
+@use 'variables.scss' as *;
+@use "mixins.scss" as *;
+
+@use "./About/about.base" as *;
+@use "./About/about.background.scss" as *;
+@use "./About/about.illustration" as *;
+@use "./About/about.content" as *;
+@use "./About/about.funfacts" as *;
