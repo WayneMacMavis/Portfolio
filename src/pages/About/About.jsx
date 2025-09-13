@@ -1,7 +1,7 @@
 // src/components/About/About.jsx
 import React from "react";
 import { motion } from "framer-motion";
-import "../../styles/about/About.scss";
+import "../../styles/About/About.scss";
 
 // Hooks
 import useAboutParallax from "./useAboutParallax";

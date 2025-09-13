@@ -8,7 +8,7 @@ import {
   FaCode, FaLaptopCode, FaCogs, FaTools,
 } from "react-icons/fa";
 import { DiVisualstudio } from "react-icons/di";
-import "../../styles/skills/SkillsBackground.scss";
+import "../../styles/Skills/SkillsBackground.scss";
 
 const icons = [
   FaHtml5, FaSass, FaReact, FaNodeJs, FaPython, FaJs, FaCss3,

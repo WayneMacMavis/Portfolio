@@ -1,12 +1,12 @@
 // ProjectsCarousel.jsx
 import { useState } from "react";
 import { motion } from "framer-motion";
-import bg1 from "../Assets/bg1.jpg";
-import bg2 from "../Assets/bg2.jpg";
-import bg3 from "../Assets/bg3.jpg";
-import bg4 from "../Assets/bg4.jpg";
-import bg5 from "../Assets/bg5.jpg";
-import "../styles/ProjectsCarousel.scss";
+import bg1 from "../../Assets/bg1.jpg";
+import bg2 from "../../Assets/bg2.jpg";
+import bg3 from "../../Assets/bg3.jpg";
+import bg4 from "../../Assets/bg4.jpg";
+import bg5 from "../../Assets/bg5.jpg";
+import "../../styles/Projects/ProjectsCarousel.scss";
 
 const projects = [
   { title: "Project One", image: bg1, site: "#", code: "#", figma: "#" },

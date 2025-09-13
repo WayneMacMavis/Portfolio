@@ -3,18 +3,20 @@
 /* Default (Light Mode) */
 :root {
   /* Brand colors */
-  --brand-gradient: linear-gradient(135deg, rgba(67, 184, 252, 0.9), rgba(8, 2, 128, 0.712));
-  --brand-color-1: #6c63ff;
-  --brand-color-2: #19b3abda;
+  --brand-gradient: linear-gradient(135deg, rgba(67, 184, 252, 0.9), rgba(255, 0, 212, 0.89));
+  --brand-color-1: rgba(75, 87, 255, 0.781);
+  --brand-color-2: rgba(51, 222, 228, 0.781);
+  --brand-color-2: rgba(245, 245, 245, 0.904);
+
+   /* Text colors */
+  --text-color: #333;
+  --text-color-light: #fff;
 
   /* Navbar backgrounds */
   --navbar-bg-solid: rgba(255, 255, 255, 0.85); /* semi-transparent white */
   --navbar-bg-gradient: linear-gradient(135deg, rgba(108, 99, 255, 0.9), rgba(101, 250, 255, 0.9));
   --navbar-border: rgba(0, 0, 0, 0.05);
---accent-color: rgb(0, 238, 255);
-  /* Text colors */
-  --text-color: #333;
-  --text-color-light: #fff;
+--accent-color: rgba(51, 222, 228, 0.781);
 
   /* Backgrounds */
   --bg-color: #fdfbfb;

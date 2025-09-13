@@ -14,7 +14,7 @@ import {
 } from "react-icons/fa";
 import { SiFramer } from "react-icons/si";
 import { DiVisualstudio } from "react-icons/di";
-import "../../styles/skills/Skills.scss";
+import "../../styles/Skills/Skills.scss";
 
 const skills = [
   { name: "HTML", color: "#E44D26", icon: <FaHtml5 />, description: "Semantic, accessible markup for solid foundations", hover: { rotate: 10 } },
