@@ -3,14 +3,32 @@
 /* Default (Light Mode) */
 :root {
   /* Brand colors */
-  --brand-gradient: linear-gradient(135deg, rgba(67, 184, 252, 0.9), rgba(255, 0, 212, 0.89));
+  --brand-gradient: linear-gradient(140deg, rgba(67, 184, 252, 0.9), rgba(255, 0, 212, 0.89));
+  --brand-gradient-2: linear-gradient(-45deg, rgba(249, 249, 249), rgba(249, 249, 249));
   --brand-color-1: rgba(75, 87, 255, 0.781);
   --brand-color-2: rgba(51, 222, 228, 0.781);
-  --brand-color-2: rgba(245, 245, 245, 0.904);
+  --brand-color-3: rgba(249, 249, 249);
 
    /* Text colors */
   --text-color: #333;
   --text-color-light: #fff;
+
+  /* Fonts */
+  --font-family-base: 'Poppins', sans-serif;
+  --font-family-heading: 'Poppins', sans-serif;
+  --font-family-nav: 'Inter', sans-serif;
+
+  /* Buttons */
+  --button-color: rgba(228, 39, 203, 0.911);
+
+
+
+
+
+
+
+
+
 
   /* Navbar backgrounds */
   --navbar-bg-solid: rgba(255, 255, 255, 0.85); /* semi-transparent white */
@@ -20,11 +38,6 @@
 
   /* Backgrounds */
   --bg-color: #fdfbfb;
-
-  /* Fonts */
-  --font-family-base: 'Poppins', sans-serif;
-  --font-family-heading: 'Poppins', sans-serif;
-  --font-family-nav: 'Inter', sans-serif;
 
   // About
     --color1: rgba(255, 255, 255, 0.85);

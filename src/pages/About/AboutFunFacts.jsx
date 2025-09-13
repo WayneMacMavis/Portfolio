@@ -1,7 +1,8 @@
-// AboutFunFacts.jsx
+// src/components/About/AboutFunFacts.jsx
 import { motion } from "framer-motion";
 
 export default function AboutFunFacts({
+  funfactsY,
   textContainerVariants,
   textItemVariants,
   highlightVariants,
@@ -27,6 +28,7 @@ export default function AboutFunFacts({
   return (
     <motion.div
       className="about__funfacts"
+      style={{ y: funfactsY }}
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.6 }}

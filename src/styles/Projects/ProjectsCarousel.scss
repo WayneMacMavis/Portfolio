@@ -1,5 +1,4 @@
 :root {
-  --brand-color: #6a60f8;
   --brand-accent: #5e75f7ea;
   --brand-rgb: 255, 100, 50;
   --code-green: #2ecc71;
@@ -18,15 +17,15 @@
   .nav {
     background: none;
     border: none;
-    font-size: 3rem;
-    color: #fff;
+    font-size: 5rem;
+    color: var(--text-color);
     cursor: pointer;
     z-index: 10;
     padding: 0 1rem;
     line-height: 1;
     transition: color 0.25s ease;
 
-    &:hover { color: var(--brand-color); }
+    &:hover { color: var(--button-color); }
   }
 
   .carousel-stage {

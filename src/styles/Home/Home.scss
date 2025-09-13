@@ -7,7 +7,7 @@
   justify-content: space-between;
   padding: clamp(4rem, 6vw, 8rem) 10%;
   max-height: 89vh;
-  background: var(--navbar-bg-solid);
+  background: var(--brand-color-3);
   font-family: var(--font-family-base);
   gap: 2rem;
 overflow: visible;
@@ -43,11 +43,13 @@ overflow: visible;
       border: none;
       border-radius: 6px;
       font-size: 1rem;
+      text-decoration: none;
       cursor: pointer;
       transition: transform 0.2s ease, background 0.3s ease;
 
       &:hover {
-        background: #00d9ff;
+        background: var(--button-color);
+        color: var(--text-color);
         transform: translateY(-2px);
       }
     }

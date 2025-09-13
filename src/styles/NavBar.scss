@@ -15,7 +15,7 @@
   transition: color 0.25s ease;
 
   &:hover {
-    color: var(--accent-color);
+    color: var(--brand-color-1);
   }
 
   /* Slide-in underline */
@@ -25,8 +25,8 @@
     left: 0;
     bottom: -4px;
     width: 100%;
-    height: 2px;
-    background: var(--accent-color);
+    height: 2.5px;
+    background: var(--brand-gradient);
     transform: scaleX(0);
     transform-origin: left;
     transition: transform 0.45s cubic-bezier(0.68, -0.55, 0.27, 1.55);
@@ -81,10 +81,10 @@
     content: "";
     position: absolute;
     inset: 0;
-    background: var(--navbar-bg-solid);
+    background: var(--brand-color-3);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    opacity: var(--fade-opacity, 1);
+    opacity: var(--fade-opacity, 0.3);
     transition: opacity 0.1s linear;
     z-index: -1;
   }
@@ -99,7 +99,7 @@
     .logo {
       font-size: 1.4rem;
       font-weight: 500;
-      background: linear-gradient(90deg, #00d9ff, #00a3cc);
+      background: var(--brand-gradient);
       background-clip: text;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;

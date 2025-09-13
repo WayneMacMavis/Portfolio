@@ -2,7 +2,6 @@
 import { motion } from "framer-motion";
 
 export default function AboutContent({
-  textY,
   textContainerVariants,
   textItemVariants,
   highlightVariants,
@@ -11,12 +10,12 @@ export default function AboutContent({
   return (
     <motion.div
       className="about__content"
-      style={{ y: textY }}
       variants={textContainerVariants}
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.6 }}
     >
+      {/* Heading */}
       <h1 className="about__heading">
         <motion.span variants={textItemVariants}>About Me</motion.span>
         <motion.span
@@ -28,6 +27,7 @@ export default function AboutContent({
         />
       </h1>
 
+      {/* Paragraph 1 */}
       <p>
         <motion.span variants={textItemVariants}>
           I’m Wayne — a{" "}
@@ -47,6 +47,7 @@ export default function AboutContent({
         </motion.span>
       </p>
 
+      {/* Paragraph 2 */}
       <p>
         <motion.span variants={textItemVariants}>
           My work starts with intention:{" "}
@@ -59,6 +60,7 @@ export default function AboutContent({
         </motion.span>
       </p>
 
+      {/* Paragraph 3 */}
       <p>
         <motion.span variants={textItemVariants}>
           I love blending{" "}
@@ -74,7 +76,7 @@ export default function AboutContent({
         </motion.span>
       </p>
 
-      {/* Fun Facts strip */}
+      {/* Fun Facts */}
       <motion.div
         className="about__funfacts"
         initial="hidden"

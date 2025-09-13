@@ -4,16 +4,18 @@ import useScrollProgress from "../hooks/useScrollProgress";
 import "../styles/ProgressBar.scss";
 
 export default function ProgressBar({ activeLink }) {
-  // Full-page scroll progress
   const progress = useScrollProgress(null, { startFrac: 0, endFrac: 1 });
 
-  // Map section names to colors
+  // Normalize key matching (e.g., "home" → "Home")
+  const normalizedLink =
+    activeLink && activeLink.charAt(0).toUpperCase() + activeLink.slice(1);
+
   const sectionColors = {
-    Home: "var(--accent-color)",
-    About: "var(--about-color)",
-    Skills: "var(--skills-color)",
-    Projects: "var(--projects-color)",
-    Contact: "var(--contact-color)"
+    Home: "var(--accent-color, #ff6600)",
+    About: "var(--about-color, #00ff00ff)",
+    Skills: "var(--skills-color, #ff6600)",
+    Projects: "var(--projects-color, #ff6600)",
+    Contact: "var(--contact-color, #ff6600)"
   };
 
   return (
@@ -22,7 +24,9 @@ export default function ProgressBar({ activeLink }) {
       style={{
         scaleX: progress,
         transformOrigin: "left center",
-        backgroundColor: sectionColors[activeLink] || "var(--brand-color)"
+        background:
+          sectionColors[normalizedLink] ||
+          "var(--brand-gradient, #ff6600)" // safe fallback
       }}
     />
   );
