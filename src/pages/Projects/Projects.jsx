@@ -1,6 +1,6 @@
 // pages/Projects.jsx
 import React from "react";
-import "../../styles/Projects/Projects.scss";
+import "../../styles/Projects.scss";
 import ProjectsCarousel from "../Projects/ProjectsCarousel";
 
 export default function Projects() {

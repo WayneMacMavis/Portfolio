@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import "../../styles/Home/Home.scss";
+import "../../styles/Home.scss";
 import heroIllustration from "../../Assets/home_illustration.svg";
 import blobShape from "../../Assets/blob.svg";
 import useScrollProgress from "../../hooks/useScrollProgress";

@@ -6,7 +6,7 @@ import bg2 from "../../Assets/bg2.jpg";
 import bg3 from "../../Assets/bg3.jpg";
 import bg4 from "../../Assets/bg4.jpg";
 import bg5 from "../../Assets/bg5.jpg";
-import "../../styles/Projects/ProjectsCarousel.scss";
+import "../../styles/ProjectsCarousel.scss";
 
 const projects = [
   { title: "Project One", image: bg1, site: "#", code: "#", figma: "#" },
