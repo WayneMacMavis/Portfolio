@@ -1,10 +1,10 @@
 // src/components/About/About.jsx
 import React from "react";
 import { motion } from "framer-motion";
-import "../styles/About/About.scss";
+import "../../styles/About/About.scss";
 
-import useAboutParallax from "./About/useAboutParallax";
-import useTilt from "./About/useTilt";
+import useAboutParallax from "./useAboutParallax";
+import useTilt from "./useTilt";
 
 import {
   masterVariants,
@@ -14,11 +14,11 @@ import {
   textItemVariants,
   highlightVariants,
   bgVariants
-} from "./About/about.variants";
+} from "./about.variants";
 
-import AboutBackground from "./About/AboutBackground";
-import AboutIllustration from "./About/AboutIllustration";
-import AboutContent from "./About/AboutContent";
+import AboutBackground from "./AboutBackground";
+import AboutIllustration from "./AboutIllustration";
+import AboutContent from "./AboutContent";
 
 export default function About({ scrollContainerRef }) {
   const {
