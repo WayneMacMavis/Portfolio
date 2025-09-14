@@ -1,13 +1,108 @@
+/* ===========================
+   🎛 Breathing System Tuning Map
+   =========================== */
+
+/* Debug toggles */
+$breathing-enabled: true; // false = pause all breathing animations
+$debug-mode: false;       // true = solid color debug layers
+
+/* Timing */
+$breath-duration: 5s;
+$breath-ease: ease-in-out;
+
+/* Image scale */
+$image-scale-min: 1;
+$image-scale-max: 1.015;
+
+/* Overlay opacity */
+$overlay-opacity-min: 0.5;
+$overlay-opacity-max: 0.6;
+
+/* Overlay color temps */
+$overlay-warm: hsl(40, 100%, 97%);
+$overlay-cool: hsl(210, 40%, 97%);
+
+/* Tooltip glow bloom sizes */
+$glow-inner-min: 0px;
+$glow-inner-max: 8px;
+$glow-outer-min: 10px;
+$glow-outer-max: 20px;
+
+/* Tooltip glow opacity */
+$glow-opacity-min: 0.5;
+$glow-opacity-max: 0.6;
+
+/* ===========================
+   Contact Section Styles
+   =========================== */
+
 .contact {
-  min-height: 100vh;
+  min-height: 80vh;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
   padding: 4rem 1.5rem;
   background: var(--brand-color-3, #0d0d0d);
   color: var(--text-color, white);
-  gap: 3rem;
+
+  &__inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3rem;
+    width: 100%;
+    max-width: 1200px;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+    }
+  }
+
+  /* Left column: image with breathing overlay */
+  &__image {
+    position: relative;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+      border-radius: 8px;
+      @if $debug-mode {
+        filter: grayscale(1) brightness(0.5);
+      }
+      @if $breathing-enabled {
+        animation: imageBreathingCounterDelay $breath-duration $breath-ease infinite;
+      }
+    }
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: if($debug-mode, rgba(255, 0, 0, 0.5), $overlay-warm);
+      opacity: $overlay-opacity-max;
+      z-index: 1;
+      pointer-events: none;
+      @if $breathing-enabled {
+        animation: overlayBreathingCounter $breath-duration $breath-ease infinite;
+      }
+    }
+  }
+
+  /* Right column: content */
+  &__content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3rem;
+  }
 
   &__header {
     text-align: center;
@@ -43,7 +138,7 @@
       border: 1px solid var(--border-color, #333);
       border-radius: 6px;
       font-size: 1rem;
-      background: var( --text-color-secondary, #1a1a1a);
+      background: var(--text-color-secondary, #1a1a1a);
       color: inherit;
       transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 
@@ -58,7 +153,7 @@
     button {
       align-self: flex-start;
       padding: 0.75rem 1.5rem;
-      background: var(--accent, #ff4d5a);
+      background: var(--brand-color-1, #4da0ff);
       color: white;
       border: none;
       border-radius: 6px;
@@ -67,14 +162,16 @@
       transition: background 0.2s ease;
 
       &:hover {
-        background: var(--accent-hover, #e04350);
+        background: var(--button-color, #e043d8);
       }
-      button.sent {
-  background: var(--success, #28a745);
-}
+
+      &.sent {
+        background: var(--success, #28a745);
+      }
     }
   }
 
+  /* Social icons */
   &__socials {
     display: flex;
     justify-content: center;
@@ -82,15 +179,164 @@
     flex-wrap: wrap;
 
     a {
-      color: var(--accent, #ff4d5a);
-      text-decoration: none;
-      font-weight: 500;
-      transition: color 0.2s ease, transform 0.2s ease;
+      font-size: 2.2rem;
+      position: relative;
+      transform-origin: center;
+      transition: color 0.2s ease, transform 0.2s ease, filter 0.2s ease;
+
+      &.phone { color: #e0e967; }
+      &.email { color: #D44638; }
+      &.github { color: #333; }
+      &.linkedin { color: #0077B5; }
+      &.facebook { color: #1877F2; }
 
       &:hover {
-        color: var(--accent-hover, #e04350);
-        transform: translateY(-2px);
+        filter: brightness(1.2);
+      }
+
+      &.tooltip::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: -1.8rem;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--bg-secondary, #222);
+        color: var(--text-primary, #fff);
+        padding: 0.3rem 0.6rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+      }
+
+      &:hover::after {
+        opacity: 1;
+        @if $breathing-enabled {
+          animation: tooltipGlowCounterDelay $breath-duration $breath-ease infinite;
+        }
       }
     }
+  }
+}
+
+.contact__inner.hover-sync {
+  .contact__image img {
+    @if $breathing-enabled {
+      animation: imageBreathingInPhaseDelay $breath-duration $breath-ease infinite;
+    }
+  }
+  .contact__image::before {
+    @if $breathing-enabled {
+      animation: overlayBreathingInPhase $breath-duration $breath-ease infinite;
+    }
+  }
+  .contact__socials a.tooltip:hover::after {
+    @if $breathing-enabled {
+      animation: tooltipGlowInPhaseDelay $breath-duration $breath-ease infinite;
+    }
+  }
+}
+
+/* ===========================
+   Keyframes
+   =========================== */
+
+/* Overlay breathing + color shift */
+@keyframes overlayBreathingCounter {
+  0%   { opacity: $overlay-opacity-max; background: $overlay-warm; }
+  50%  { opacity: $overlay-opacity-min; background: $overlay-cool; }
+  100% { opacity: $overlay-opacity-max; background: $overlay-warm; }
+}
+
+@keyframes overlayBreathingInPhase {
+  0%   { opacity: $overlay-opacity-min; background: $overlay-cool; }
+  50%  { opacity: $overlay-opacity-max; background: $overlay-warm; }
+  100% { opacity: $overlay-opacity-min; background: $overlay-cool; }
+}
+
+/* Image breathing with micro-delay inertia (holds at peaks/troughs) */
+@keyframes imageBreathingCounterDelay {
+  0%   { transform: scale($image-scale-max); }
+  15%  { transform: scale($image-scale-max); } /* hold peak */
+  50%  { transform: scale($image-scale-min); }
+  65%  { transform: scale($image-scale-min); } /* hold trough */
+  100% { transform: scale($image-scale-max); }
+}
+
+@keyframes imageBreathingInPhaseDelay {
+  0%   { transform: scale($image-scale-min); }
+  15%  { transform: scale($image-scale-min); } /* hold trough */
+  50%  { transform: scale($image-scale-max); }
+  65%  { transform: scale($image-scale-max); } /* hold peak */
+  100% { transform: scale($image-scale-min); }
+}
+
+/* Tooltip glow with micro-delay inertia + soft two-layer bloom
+   (color shifts with overlay; tooltip background remains dark) */
+@keyframes tooltipGlowCounterDelay {
+  0% {
+    box-shadow:
+      0 0 $glow-inner-max 4px $overlay-warm,
+      0 0 $glow-outer-max 8px $overlay-warm;
+    opacity: $glow-opacity-max;
+  }
+  25% {
+    box-shadow:
+      0 0 $glow-inner-max 4px $overlay-warm,
+      0 0 $glow-outer-max 8px $overlay-warm;
+    opacity: $glow-opacity-max;
+  }
+  50% {
+    box-shadow:
+      0 0 $glow-inner-min 0px $overlay-cool,
+      0 0 $glow-outer-min 4px $overlay-cool;
+    opacity: $glow-opacity-min;
+  }
+  75% {
+    box-shadow:
+      0 0 $glow-inner-min 0px $overlay-cool,
+      0 0 $glow-outer-min 4px $overlay-cool;
+    opacity: $glow-opacity-min;
+  }
+  100% {
+    box-shadow:
+      0 0 $glow-inner-max 4px $overlay-warm,
+      0 0 $glow-outer-max 8px $overlay-warm;
+    opacity: $glow-opacity-max;
+  }
+}
+
+@keyframes tooltipGlowInPhaseDelay {
+  0% {
+    box-shadow:
+      0 0 $glow-inner-min 0px $overlay-cool,
+      0 0 $glow-outer-min 4px $overlay-cool;
+    opacity: $glow-opacity-min;
+  }
+  25% {
+    box-shadow:
+      0 0 $glow-inner-min 0px $overlay-cool,
+      0 0 $glow-outer-min 4px $overlay-cool;
+    opacity: $glow-opacity-min;
+  }
+  50% {
+    box-shadow:
+      0 0 $glow-inner-max 4px $overlay-warm,
+      0 0 $glow-outer-max 8px $overlay-warm;
+    opacity: $glow-opacity-max;
+  }
+  75% {
+    box-shadow:
+      0 0 $glow-inner-max 4px $overlay-warm,
+      0 0 $glow-outer-max 8px $overlay-warm;
+    opacity: $glow-opacity-max;
+  }
+  100% {
+    box-shadow:
+      0 0 $glow-inner-min 0px $overlay-cool,
+      0 0 $glow-outer-min 4px $overlay-cool;
+    opacity: $glow-opacity-min;
   }
 }

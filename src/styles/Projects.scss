@@ -13,9 +13,9 @@
     margin: 0 auto;
 
     .page-title {
-      font-size: clamp(2rem, 5vw, 3rem);
+      font-size: 3.5em;
       font-weight: 700;
-      background: linear-gradient(90deg, var(--brand-color), var(--brand-accent));
+      background: var(--brand-color-1);
       background-clip: text;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;

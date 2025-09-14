@@ -1,6 +1,6 @@
 :root {
   --brand-accent: #5e75f7ea;
-  --brand-rgb: 255, 100, 50;
+  --brand-color: #ff0000ea;
   --code-green: #2ecc71;
   --figma-purple: #9b59b6;
 }
@@ -128,7 +128,7 @@
     z-index: 3;
 
     a {
-      background: var(--brand-color);
+      background: var(--brand-color-1);
       color: #0a0a0a;
       width: 44px;
       height: 44px;

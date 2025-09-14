@@ -1,15 +1,28 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { FaPhone, FaEnvelope, FaGithub, FaLinkedin, FaFacebook } from "react-icons/fa";
 import useBreathingMotion from "../../hooks/useBreathingMotion";
+import contactImage from "../../Assets/contact-img.png";
 import "../../styles/Contact.scss";
 
 export default function Contact() {
   const [sent, setSent] = useState(false);
+  const [iconHovered, setIconHovered] = useState(false);
 
-  // Breathing animation controls
-  const breathingControls = useBreathingMotion({
+  const breathingSettings = { inhale: 2.2, exhale: 2.8, pause: 0.3 };
+
+  const formBreathing = useBreathingMotion({
     scaleRange: [1, 1.015],
-    duration: 5
+    ...breathingSettings
+  });
+
+  const iconBreathing = useBreathingMotion({
+    scaleRange: [1, 1.01],
+    ...breathingSettings,
+    cycleOffset:
+      (breathingSettings.inhale +
+        breathingSettings.exhale +
+        breathingSettings.pause * 2) / 2
   });
 
   const handleSubmit = (e) => {
@@ -18,90 +31,132 @@ export default function Contact() {
     setTimeout(() => setSent(false), 2000);
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
+  };
+
+  const iconVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } }
+  };
+
   return (
     <section className="contact" id="contact">
-      {/* Header */}
-      <motion.div
-        className="contact__header"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-      >
-        <h1>Let’s Connect</h1>
-        <p>
-          Whether you’ve got a project in mind, a question, or just want to say hi — I’d love to hear from you.
-        </p>
-      </motion.div>
+      <div className={`contact__inner ${iconHovered ? "hover-sync" : ""}`}>
+        {/* Left column: Image */}
+        <div className="contact__image">
+          <img src={contactImage} alt="Contact visual" />
+        </div>
 
-      {/* Form with breathing + fade-in */}
-      <motion.form
-        className="contact__form"
-        animate={breathingControls} // breathing loop
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }} // fade-in on scroll
-        viewport={{ once: true }}
-        transition={{ delay: 0.2, duration: 0.6, ease: "easeOut" }}
-        onSubmit={handleSubmit}
-      >
-        <label>
-          Name
-          <input type="text" name="name" required />
-        </label>
-        <label>
-          Email
-          <input type="email" name="email" required />
-        </label>
-        <label>
-          Message
-          <textarea name="message" rows="5" required></textarea>
-        </label>
+        {/* Right column: Content */}
+        <div className="contact__content">
+          {/* Header */}
+          <motion.div
+            className="contact__header"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+          >
+            <h1>Let’s Connect</h1>
+            <p>
+              Whether you’ve got a project in mind, a question, or just want to say hi — I’d love to hear from you.
+            </p>
+          </motion.div>
 
-        {/* Morphing button */}
-        <motion.button
-          type="submit"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.97 }}
-          className={sent ? "sent" : ""}
-        >
-          <AnimatePresence mode="wait" initial={false}>
-            {sent ? (
-              <motion.span
-                key="check"
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.5 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+          {/* Form */}
+          <motion.form
+            className="contact__form"
+            animate={iconHovered ? { scale: [1, 1.015, 1] } : formBreathing}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2, duration: 0.6, ease: "easeOut" }}
+            onSubmit={handleSubmit}
+          >
+            <label>
+              Name
+              <input type="text" name="name" required />
+            </label>
+            <label>
+              Email
+              <input type="email" name="email" required />
+            </label>
+            <label>
+              Message
+              <textarea name="message" rows="5" required></textarea>
+            </label>
+
+            <motion.button
+              type="submit"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.97 }}
+              className={sent ? "sent" : ""}
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                {sent ? (
+                  <motion.span
+                    key="check"
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.5 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                  >
+                    ✓ Sent!
+                  </motion.span>
+                ) : (
+                  <motion.span
+                    key="text"
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -5 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    Send Message
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </motion.button>
+          </motion.form>
+
+          {/* Social icons */}
+          <motion.div
+            className="contact__socials"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            {[
+              { href: "+27728627957", label: "Phone", icon: <FaPhone />, className: "phone" },
+              { href: "mailto:you@example.com", label: "Email", icon: <FaEnvelope />, className: "email" },
+              { href: "https://github.com/yourusername", label: "GitHub", icon: <FaGithub />, className: "github" },
+              { href: "https://linkedin.com/in/yourusername", label: "LinkedIn", icon: <FaLinkedin />, className: "linkedin" },
+              { href: "https://facebook.com/yourusername", label: "Facebook", icon: <FaFacebook />, className: "facebook" }
+            ].map(({ href, label, icon, className }) => (
+              <motion.a
+                key={label}
+                href={href}
+                target={href.startsWith("http") ? "_blank" : undefined}
+                rel={href.startsWith("http") ? "noreferrer" : undefined}
+                className={`tooltip ${className}`}
+                data-tooltip={label}
+                variants={iconVariants}
+                animate={iconBreathing}
+                whileHover={{
+                  scale: 1.2,
+                  transition: { type: "spring", stiffness: 300, damping: 10 }
+                }}
+                onHoverStart={() => setIconHovered(true)}
+                onHoverEnd={() => setIconHovered(false)}
               >
-                ✓ Sent!
-              </motion.span>
-            ) : (
-              <motion.span
-                key="text"
-                initial={{ opacity: 0, y: 5 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -5 }}
-                transition={{ duration: 0.2 }}
-              >
-                Send Message
-              </motion.span>
-            )}
-          </AnimatePresence>
-        </motion.button>
-      </motion.form>
-
-      {/* Social links */}
-      <motion.div
-        className="contact__socials"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ delay: 0.4, duration: 0.6 }}
-      >
-        <a href="mailto:you@example.com">Email</a>
-        <a href="https://github.com/yourusername" target="_blank" rel="noreferrer">GitHub</a>
-        <a href="https://linkedin.com/in/yourusername" target="_blank" rel="noreferrer">LinkedIn</a>
-      </motion.div>
+                {icon}
+              </motion.a>
+            ))}
+          </motion.div>
+        </div>
+      </div>
     </section>
   );
 }
