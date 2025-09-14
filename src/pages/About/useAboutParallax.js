@@ -1,5 +1,5 @@
 // src/pages/About/useAboutParallax.js
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import {
   useScroll,
   useTransform,
@@ -15,6 +15,14 @@ export default function useAboutParallax(scrollContainerRef) {
     target: sectionRef,
     offset: ["start end", "end start"],
   });
+
+  // Debounced settle trigger
+  const [settleTrigger, setSettleTrigger] = useState(0);
+  const lastTriggerRef = useRef(0);
+  const lastScrollStartRef = useRef(scrollY.get());
+
+  const DEBOUNCE_MS = 1000; // min time between breaths
+  const DISTANCE_THRESHOLD = 50; // px scrolled before breath allowed
 
   useEffect(() => {
     const unsub = scrollYProgress.on("change", (v) =>
@@ -43,8 +51,7 @@ export default function useAboutParallax(scrollContainerRef) {
     let phaseOffset = 0;
     let settleTimer;
 
-    // Match overshoot timing to bounce spring frequency (~stiffness 300, damping 18)
-    const bouncePeriod = 1000 / 2.2; // ~2.2Hz natural frequency → ~455ms per cycle
+    const bouncePeriod = 1000 / 2.2; // ~455ms per cycle
 
     const loop = () => {
       frame++;
@@ -56,9 +63,14 @@ export default function useAboutParallax(scrollContainerRef) {
       const direction = Math.sign(delta);
       lastY = currentY;
 
+      // Detect start of a meaningful scroll
+      if (speed > 0.5 && Math.abs(currentY - lastScrollStartRef.current) > DISTANCE_THRESHOLD) {
+        lastScrollStartRef.current = currentY;
+      }
+
       // Flip phase instantly on direction change
       if (direction !== 0 && direction !== Math.sign(phaseOffset)) {
-        phaseOffset = direction * Math.PI; // 180° phase shift
+        phaseOffset = direction * Math.PI;
       }
 
       // Map speed to jitter amplitude (min 0.5px, max ~3px)
@@ -76,12 +88,39 @@ export default function useAboutParallax(scrollContainerRef) {
       clearTimeout(settleTimer);
       if (speed < 0.2) {
         settleTimer = setTimeout(() => {
-          const overshoot = 1.5; // px
+          const overshoot = 1.5;
           jitter1.set(jitter1.get() + overshoot * Math.sign(jitter1.get() || 1));
           jitter2.set(jitter2.get() + overshoot * 0.8 * Math.sign(jitter2.get() || 1));
           jitter3.set(jitter3.get() + overshoot * 1.1 * Math.sign(jitter3.get() || 1));
-          // Let springs pull them back naturally
-        }, bouncePeriod / 4); // overshoot hits at quarter-cycle for max visual sync
+
+          // 🔔 Trigger illo breath if debounce + distance conditions met
+          const now = Date.now();
+          const distanceSinceStart = Math.abs(currentY - lastScrollStartRef.current);
+          const timeSinceLast = now - lastTriggerRef.current;
+
+          console.log(
+            `[SettleCheck] Distance: ${distanceSinceStart.toFixed(1)}px | Time since last: ${timeSinceLast}ms`
+          );
+
+          if (timeSinceLast > DEBOUNCE_MS && distanceSinceStart > DISTANCE_THRESHOLD) {
+            lastTriggerRef.current = now;
+            setSettleTrigger(now);
+
+            // 🎭 Fun ASCII breath animation in console
+            console.log("%c\n   ( ͡° ͜ʖ ͡°)  < *inhale*  \n", "color: cyan; font-weight: bold;");
+            setTimeout(() => {
+              console.log("%c\n   ( ͡° ͜ʖ ͡°)  < *exhale*  \n", "color: lightgreen; font-weight: bold;");
+            }, 400);
+          } else {
+            console.log(
+              `[SettleTrigger] ❌ Skipped — ${
+                timeSinceLast <= DEBOUNCE_MS
+                  ? "too soon since last breath"
+                  : "scroll distance too small"
+              }`
+            );
+          }
+        }, bouncePeriod / 4);
       }
 
       requestAnimationFrame(loop);
@@ -90,7 +129,7 @@ export default function useAboutParallax(scrollContainerRef) {
   }, [scrollY, jitter1, jitter2, jitter3]);
 
   // Combine base parallax with jitter for icons
-  const illoY  = illoYBase; // no jitter for illo
+  const illoY  = illoYBase;
   const icon1Y = useSpring(useTransform([icon1YBase, jitter1], ([y, j]) => `calc(${y} + ${j}px)`));
   const icon2Y = useSpring(useTransform([icon2YBase, jitter2], ([y, j]) => `calc(${y} + ${j}px)`));
   const icon3Y = useSpring(useTransform([icon3YBase, jitter3], ([y, j]) => `calc(${y} + ${j}px)`));
@@ -112,5 +151,6 @@ export default function useAboutParallax(scrollContainerRef) {
     icon1Opacity,
     icon2Opacity,
     icon3Opacity,
+    settleTrigger // pass to AboutIllustration
   };
 }

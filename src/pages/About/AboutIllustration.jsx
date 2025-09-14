@@ -1,5 +1,6 @@
 // src/components/About/AboutIllustration.jsx
-import { motion, useSpring, useTransform, easeInOut } from "framer-motion";
+import { motion, useSpring, useAnimation } from "framer-motion";
+import { useEffect } from "react";
 import illustration from "../../Assets/Wayne.jpg";
 
 export default function AboutIllustration({
@@ -17,24 +18,31 @@ export default function AboutIllustration({
   illoVariants,
   icon1Variants,
   icon2Variants,
-  icon3Variants
+  icon3Variants,
+  settleTrigger // <-- NEW: boolean or timestamp from useAboutParallax when settle happens
 }) {
   // Softer spring for illo
   const illoSpringConfig = { stiffness: 180, damping: 20, mass: 0.8 };
   // Snappier spring for icons
-  const iconSpringConfig = { stiffness: 300, damping: 20, mass: 0.6 };
+  const iconSpringConfig = { stiffness: 300, damping: 18, mass: 0.6 };
 
-  // Base springs
   const illoScaleSpring  = useSpring(illoOpacity,  illoSpringConfig);
-  const icon1ScaleSpring = useSpring(icon1Opacity, iconSpringConfig);
-  const icon2ScaleSpring = useSpring(icon2Opacity, iconSpringConfig);
-  const icon3ScaleSpring = useSpring(icon3Opacity, iconSpringConfig);
+  const icon1Scale = useSpring(icon1Opacity, iconSpringConfig);
+  const icon2Scale = useSpring(icon2Opacity, iconSpringConfig);
+  const icon3Scale = useSpring(icon3Opacity, iconSpringConfig);
 
-  // Apply easing to the bounce motion itself
-  const illoScale  = useTransform(illoScaleSpring,  [0, 1], [0.95, 1], { ease: easeInOut });
-  const icon1Scale = useTransform(icon1ScaleSpring, [0, 1], [0.95, 1], { ease: easeInOut });
-  const icon2Scale = useTransform(icon2ScaleSpring, [0, 1], [0.95, 1], { ease: easeInOut });
-  const icon3Scale = useTransform(icon3ScaleSpring, [0, 1], [0.95, 1], { ease: easeInOut });
+  // Controls for one-shot breathing
+  const illoControls = useAnimation();
+
+  // Trigger breath when settleTrigger changes (icons settle)
+  useEffect(() => {
+    if (settleTrigger) {
+      illoControls.start({
+        scale: [1, 1.015, 1],
+        transition: { duration: 0.8, ease: "easeInOut" }
+      });
+    }
+  }, [settleTrigger, illoControls]);
 
   return (
     <motion.div
@@ -50,25 +58,17 @@ export default function AboutIllustration({
       onMouseMove={handleMouseMove}
       onMouseLeave={() => setTilt({ rotateX: 0, rotateY: 0 })}
     >
-      {/* Illo */}
+      {/* Illo — fade + bounce, breath on settle */}
       <motion.img
         src={illustration}
         alt="Wayne portrait"
         className="about__image"
         style={{
           opacity: illoOpacity,
-          scale: illoScale,
+          scale: illoScaleSpring,
           willChange: "transform, opacity",
         }}
-        animate={{ scale: [1, 1.02, 1] }}
-        transition={{
-          scale: {
-            duration: 6,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 0.4
-          },
-        }}
+        animate={illoControls}
         draggable="false"
       />
 
