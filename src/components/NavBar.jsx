@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FiHome, FiUser, FiCode, FiFolder, FiMail } from "react-icons/fi";
 import logo from "../Assets/nav_icon.svg";
 import useScrollProgress from "../hooks/useScrollProgress";
+import DownloadCvBtn from "../components/DownloadCvBtn";
 import { HERO_FADE_RANGE } from "../config";
 import '../styles/NavBar.scss';
 
@@ -148,8 +149,8 @@ export default function NavBar() {
         initial="hidden"
         animate="visible"
       >
-        <img src={logo} alt="Portfolio logo" className="navbar__icon" />
         <span className='logo'>Portfolio</span>
+          <DownloadCvBtn></DownloadCvBtn>
       </motion.a>
 
       {/* Desktop Nav with ripple */}

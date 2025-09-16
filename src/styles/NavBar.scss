@@ -76,6 +76,7 @@
   font-weight: 600;
   letter-spacing: 0.5px;
   transition: padding 0.3s ease, background-color 0.3s ease;
+  opacity: 0.3;
 
   &::before {
     content: "";
@@ -84,7 +85,7 @@
     background: var(--brand-color-3);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    opacity: var(--fade-opacity, 0.3);
+    opacity: 0.3;
     transition: opacity 0.1s linear;
     z-index: -1;
   }
@@ -225,7 +226,7 @@
   /* Height settle on scroll */
   &.scrolled {
     padding: 0.3rem 2rem;
-    background-color: rgba(255, 255, 255, 0.85);
+    background: var(--brand-color-3-opacity);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   }
 }

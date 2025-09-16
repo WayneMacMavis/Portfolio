@@ -64,7 +64,6 @@ export default function Contact() {
               Whether you’ve got a project in mind, a question, or just want to say hi — I’d love to hear from you.
             </p>
           </motion.div>
-
           {/* Form */}
           <motion.form
             className="contact__form"
@@ -119,7 +118,6 @@ export default function Contact() {
               </AnimatePresence>
             </motion.button>
           </motion.form>
-
           {/* Social icons */}
           <motion.div
             className="contact__socials"
