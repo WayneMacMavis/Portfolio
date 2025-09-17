@@ -14,6 +14,7 @@ export default function DownloadCVButton({ label = "", filePath = "/Wayne-CV.pdf
       whileTap={{ scale: 0.97 }}
     >
       <span className="cv-icon">📄</span>
+     <span className="cv-tooltip">Download my CV as PDF</span>
       {label}
     </motion.a>
   );
