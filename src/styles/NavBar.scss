@@ -127,6 +127,71 @@
     }
   }
 
+  /* NEW: Flex placeholders so toggle stays centered */
+.nav-left,
+.nav-right {
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+}
+
+.nav-right {
+  justify-content: flex-end; /* ✅ pushes nav links to the far right */
+}
+
+
+  /* NEW: Theme toggle button */
+.theme-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 60px;
+  height: 30px;
+  background: var(--brand-color-3);
+  border-radius: 999px;
+  border: none;
+  padding: 0 4px;
+  cursor: pointer;
+  overflow: hidden;
+  gap: 10px;
+
+  .icon {
+    position:relative;
+    font-size: 1rem;
+    z-index: 1;
+    transition: text-shadow 0.3s ease;
+  }
+
+  .toggle-knob {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 24px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+    z-index: 2;
+  }
+
+  &.light-mode {
+    .sun { text-shadow: 0 0 6px var(--accent-sun, #ffdd55); }
+  }
+
+  &.dark-mode {
+    .moon { text-shadow: 0 0 6px var(--accent-moon, #88ccff); }
+  }
+}
+
+
+
+
+
+
   /* Hamburger */
   .menu-toggle {
     --bar-w: 28px;
@@ -179,49 +244,48 @@
 
   /* Mobile links */
   .mobile-menu-links {
-  position: fixed;
-  inset: 0;
-  height: 100vh;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;   /* keep the stack vertically centered */
-  align-items: center;       /* center the column horizontally */
-  gap: 1.25rem;
-  z-index: 1000;
-  list-style: none;
-  background: var(--brand-gradient);
-  padding: 0 1.5rem;
-
-     li {
+    position: fixed;
+    inset: 0;
+    height: 100vh;
     width: 100%;
     display: flex;
-    justify-content: center; /* keeps the link block centered */
-    .nav-link {
-    font-size: 2rem;
-    color: var(--text-color-light);
-
-    /* Fixed-width column for consistent left edge */
-    width: min(90vw, 165px);
-    display: flex;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    justify-content: flex-start; /* left-align icon + text inside the block */
-    text-align: left;
-    gap: 1rem;
-    padding-left: 0.5rem;
-    position: relative;
+    gap: 1.25rem;
+    z-index: 1000;
+    list-style: none;
+    background: var(--brand-gradient);
+    padding: 0 1.5rem;
 
-      &:hover,
-      &.active {
-        color: var(--accent-color);
-      }
+    li {
+      width: 100%;
+      display: flex;
+      justify-content: center;
 
-      .nav-icon {
-        font-size: 1.6rem;
+      .nav-link {
+        font-size: 2rem;
+        color: var(--text-color-light);
+        width: min(90vw, 165px);
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        text-align: left;
+        gap: 1rem;
+        padding-left: 0.5rem;
+        position: relative;
+
+        &:hover,
+        &.active {
+          color: var(--accent-color);
+        }
+
+        .nav-icon {
+          font-size: 1.6rem;
+        }
       }
     }
   }
-}
 
   /* Height settle on scroll */
   &.scrolled {
@@ -249,7 +313,7 @@
     display: flex !important;
   }
   .mobile-menu-links .nav-link::after {
-    transition-delay: 0.12s; /* starts just after text fade-in */
+    transition-delay: 0.12s;
   }
 }
 

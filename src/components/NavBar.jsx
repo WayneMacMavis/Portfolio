@@ -5,6 +5,7 @@ import logo from "../Assets/nav_icon.svg";
 import useScrollProgress from "../hooks/useScrollProgress";
 import DownloadCvBtn from "../components/DownloadCvBtn";
 import { HERO_FADE_RANGE } from "../config";
+import useThemeToggle from '../hooks/useThemeToggle';
 import '../styles/NavBar.scss';
 
 // Config
@@ -17,13 +18,36 @@ const NAV_LINKS = [
 ];
 
 // Motion variants
-const overlayVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.25 } }, exit: { opacity: 0, transition: { duration: 0.2 } } };
-const mobileMenuContainer = { hidden: {}, visible: { transition: { staggerChildren: 0.1, delayChildren: 0.15 } }, exit: { transition: { staggerChildren: 0.05, staggerDirection: -1 } } };
-const mobileLogoVariants = { hidden: { opacity: 0, y: -10, rotate: -5 }, visible: { opacity: 1, y: 0, rotate: 0, transition: { type: "spring", stiffness: 300, damping: 20 } } };
-const mobileLinkVariants = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 20 } } };
-const desktopLinksContainer = { hidden: {}, visible: { transition: { staggerChildren: 0.08, delayChildren: 0.4 } } };
-const desktopLinkItem = { hidden: { opacity: 0, y: -10 }, visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 20 } } };
-const logoVariants = { hidden: { opacity: 0, y: -10, rotate: -5 }, visible: { opacity: 1, y: 0, rotate: 0, transition: { type: "spring", stiffness: 300, damping: 20 } } };
+const overlayVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.25 } },
+  exit: { opacity: 0, transition: { duration: 0.2 } }
+};
+const mobileMenuContainer = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.1, delayChildren: 0.15 } },
+  exit: { transition: { staggerChildren: 0.05, staggerDirection: -1 } }
+};
+const mobileLogoVariants = {
+  hidden: { opacity: 0, y: -10, rotate: -5 },
+  visible: { opacity: 1, y: 0, rotate: 0, transition: { type: "spring", stiffness: 300, damping: 20 } }
+};
+const mobileLinkVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 20 } }
+};
+const desktopLinksContainer = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.08, delayChildren: 0.4 } }
+};
+const desktopLinkItem = {
+  hidden: { opacity: 0, y: -10 },
+  visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 20 } }
+};
+const logoVariants = {
+  hidden: { opacity: 0, y: -10, rotate: -5 },
+  visible: { opacity: 1, y: 0, rotate: 0, transition: { type: "spring", stiffness: 300, damping: 20 } }
+};
 
 // Reusable Nav Link Component
 function NavLinkItem({ name, Icon, active, onClick, variants }) {
@@ -58,6 +82,8 @@ export default function NavBar() {
 
   const toggleMenu = () => setIsOpen(prev => !prev);
   const closeMenu = () => setIsOpen(false);
+
+   const { theme, toggleTheme } = useThemeToggle();
 
   // Attach homeRef after mount
   useEffect(() => {
@@ -104,7 +130,7 @@ export default function NavBar() {
         }
       },
       {
-        threshold: Array.from({ length: 21 }, (_, i) => i / 20), // 0.0 → 1.0 in 0.05 steps
+        threshold: Array.from({ length: 21 }, (_, i) => i / 20),
         rootMargin: "-15% 0px -55% 0px"
       }
     );
@@ -141,46 +167,103 @@ export default function NavBar() {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
     >
-      {/* Brand (desktop) */}
-      <motion.a
-        href="#home"
-        className="navbar__brand"
-        variants={logoVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        <span className='logo'>Portfolio</span>
-          <DownloadCvBtn></DownloadCvBtn>
-      </motion.a>
+      {/* Left side */}
+      <div className="nav-left">
+        <motion.a
+          href="#home"
+          className="navbar__brand"
+          variants={logoVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          <span className='logo'>Portfolio</span>
+          <DownloadCvBtn />
+        </motion.a>
+      </div>
 
-      {/* Desktop Nav with ripple */}
-      <motion.ul
-        className="nav-links"
-        variants={desktopLinksContainer}
-        initial="hidden"
-        animate="visible"
+  <button
+        id="theme-toggle"
+        className={`theme-toggle ${theme}-mode`}
+        aria-label="Toggle theme"
+        type="button"
+        onClick={toggleTheme}
       >
-        {NAV_LINKS.map(({ name, icon: Icon }) => (
-          <li key={name}>
-            <NavLinkItem
-              name={name}
-              Icon={Icon}
-              active={activeLink === name}
-              variants={desktopLinkItem}
-            />
-          </li>
-        ))}
-      </motion.ul>
+        <motion.span
+          className="icon sun"
+          aria-hidden="true"
+          animate={{
+            scale: theme === 'light' ? [1, 1.2, 1] : 1
+          }}
+          transition={{
+            duration: 0.25,
+            times: [0, 0.5, 1],
+            ease: "easeOut"
+          }}
+        >
+          ☀️
+        </motion.span>
 
-      {/* Mobile Menu Toggle */}
-      <button
-        className={`menu-toggle ${isOpen ? "open" : ""}`}
-        onClick={toggleMenu}
-        aria-label="Toggle menu"
-        aria-expanded={isOpen}
-      >
-        <span></span><span></span><span></span>
+        <motion.span
+          className="icon moon"
+          aria-hidden="true"
+          animate={{
+            scale: theme === 'dark' ? [1, 1.2, 1] : 1
+          }}
+          transition={{
+            duration: 0.25,
+            times: [0, 0.5, 1],
+            ease: "easeOut"
+          }}
+        >
+          🌙
+        </motion.span>
+
+      <motion.span
+  className="toggle-knob"
+  aria-hidden="true"
+  animate={{ x: theme === 'light' ? 30 : 0 }}
+  transition={{
+    type: "spring",
+    stiffness: 200, // lower stiffness = softer spring
+    damping: 20,    // lower damping = more glide
+    mass: 0.5,      // slightly heavier feel
+    duration: 0.5   // ensures it doesn't snap instantly
+  }}
+/>
       </button>
+
+
+      {/* Right side */}
+      <div className="nav-right">
+        {/* Desktop Nav */}
+        <motion.ul
+          className="nav-links"
+          variants={desktopLinksContainer}
+          initial="hidden"
+          animate="visible"
+        >
+          {NAV_LINKS.map(({ name, icon: Icon }) => (
+            <li key={name}>
+              <NavLinkItem
+                name={name}
+                Icon={Icon}
+                active={activeLink === name}
+                variants={desktopLinkItem}
+              />
+            </li>
+          ))}
+        </motion.ul>
+
+        {/* Mobile Menu Toggle */}
+        <button
+          className={`menu-toggle ${isOpen ? "open" : ""}`}
+          onClick={toggleMenu}
+          aria-label="Toggle menu"
+          aria-expanded={isOpen}
+        >
+          <span></span><span></span><span></span>
+        </button>
+      </div>
 
       {/* Mobile Menu */}
       <AnimatePresence>
@@ -202,14 +285,17 @@ export default function NavBar() {
               exit="exit"
             >
               {/* Mobile logo intro */}
-              <motion.li variants={mobileLogoVariants} style={{ marginBottom: '1.5rem' }}>
+              <motion.li
+                variants={mobileLogoVariants}
+                style={{ marginBottom: '1.5rem' }}
+              >
                 <a href="#home" onClick={closeMenu} className="navbar__brand">
                   <img src={logo} alt="Portfolio logo" className="navbar__icon" />
                   <span className='logo'>Portfolio</span>
                 </a>
               </motion.li>
 
-              {/* Mobile links ripple after logo */}
+              {/* Mobile links */}
               {NAV_LINKS.map(({ name, icon: Icon }) => (
                 <motion.li key={name} variants={mobileLinkVariants}>
                   <NavLinkItem

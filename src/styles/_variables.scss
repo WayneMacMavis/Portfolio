@@ -60,9 +60,25 @@ $font-body: "Inter", sans-serif;
 
 /* Dark Mode (future) */
 [data-theme="dark"] {
-  --navbar-bg-solid: rgba(13, 17, 23, 0.85);
-  --navbar-bg-gradient: linear-gradient(135deg, rgba(108, 99, 255, 0.2), rgba(255, 101, 132, 0.2));
-  --navbar-border: rgba(255, 255, 255, 0.1);
-  --text-color: #f5f5f5;
-  --bg-color: #0d1117;
+  /* Brand colors */
+  --brand-gradient: linear-gradient(140deg, rgba(67, 184, 252, 0.9), rgba(255, 0, 212, 0.89));
+  --brand-gradient-2: linear-gradient(-45deg, rgba(249, 249, 249), rgba(249, 249, 249));
+  --brand-color-1: rgba(75, 87, 255, 0.781);
+  --brand-color-2: rgba(183, 0, 255, 0.781);
+  --brand-color-3: rgb(0, 0, 0);
+  --brand-color-3-opacity: rgba(0, 0, 0, 0.822);
+  --accent-color: rgba(183, 59, 255, 0.781);
+
+   /* Text colors */
+  --text-color: #333;
+  --text-color-light: #fff;
+  --text-color-secondary: #ccc;
+
+  /* Fonts */
+  --font-family-base: 'Poppins', sans-serif;
+  --font-family-heading: 'Poppins', sans-serif;
+  --font-family-nav: 'Inter', sans-serif;
+
+  /* Buttons */
+  --button-color: rgba(228, 39, 203, 0.911);
 }
