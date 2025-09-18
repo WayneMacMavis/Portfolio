@@ -27,7 +27,7 @@
     &__label {
         position: relative;
       font-weight: 600;
-      color: var(--color-text);
+      color: var(--text-color);
       transition: color 0.3s ease, text-shadow 0.3s ease;
 
       /* Label glow matches keyword highlight */
@@ -50,7 +50,7 @@
     }
 
     &__value {
-      color: rgba(53, 52, 52, 0.85);
+      color: var(--text-color-secondary);
     }
   }
 }

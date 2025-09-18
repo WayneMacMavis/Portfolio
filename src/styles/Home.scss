@@ -69,7 +69,7 @@ overflow: visible;
 .home__illustration-blob {
   width: 100%;
   height: 100%;
-  background: rgba(51, 222, 228, 0.781); // replace with your gradient or brand color
+  background: var(--brand-color-2); // replace with your gradient or brand color
   transform: scale(1.3);
   transform-origin: center;
   z-index: 0;

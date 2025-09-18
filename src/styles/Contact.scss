@@ -1,36 +1,4 @@
-/* ===========================
-   🎛 Breathing System Tuning Map
-   =========================== */
-
-/* Debug toggles */
-$breathing-enabled: true; // false = pause all breathing animations
-$debug-mode: false;       // true = solid color debug layers
-
-/* Timing */
-$breath-duration: 5s;
-$breath-ease: ease-in-out;
-
-/* Image scale */
-$image-scale-min: 1;
-$image-scale-max: 1.015;
-
-/* Overlay opacity */
-$overlay-opacity-min: 0.5;
-$overlay-opacity-max: 0.6;
-
-/* Overlay color temps */
-$overlay-warm: hsla(210, 37%, 97%, 0.555);
-$overlay-cool: hsla(210, 37%, 97%, 0.575);
-
-/* Tooltip glow bloom sizes */
-$glow-inner-min: 0px;
-$glow-inner-max: 8px;
-$glow-outer-min: 10px;
-$glow-outer-max: 20px;
-
-/* Tooltip glow opacity */
-$glow-opacity-min: 0.5;
-$glow-opacity-max: 0.6;
+@import './variables';
 
 /* ===========================
    Contact Section Styles
@@ -85,7 +53,7 @@ $glow-opacity-max: 0.6;
       content: "";
       position: absolute;
       inset: 0;
-      background: if($debug-mode, rgba(255, 0, 0, 0.5), $overlay-warm);
+      background: if($debug-mode, var(--brand-color-3), --overlay-warm);
       opacity: $overlay-opacity-max;
       z-index: 1;
       pointer-events: none;
@@ -245,15 +213,15 @@ $glow-opacity-max: 0.6;
 
 /* Overlay breathing + color shift */
 @keyframes overlayBreathingCounter {
-  0%   { opacity: $overlay-opacity-max; background: $overlay-warm; }
-  50%  { opacity: $overlay-opacity-min; background: $overlay-cool; }
-  100% { opacity: $overlay-opacity-max; background: $overlay-warm; }
+  0%   { opacity: $overlay-opacity-max; background: --overlay-warm; }
+  50%  { opacity: $overlay-opacity-min; background: --overlay-cool; }
+  100% { opacity: $overlay-opacity-max; background: --overlay-warm; }
 }
 
 @keyframes overlayBreathingInPhase {
-  0%   { opacity: $overlay-opacity-min; background: $overlay-cool; }
-  50%  { opacity: $overlay-opacity-max; background: $overlay-warm; }
-  100% { opacity: $overlay-opacity-min; background: $overlay-cool; }
+  0%   { opacity: $overlay-opacity-min; background: --overlay-cool; }
+  50%  { opacity: $overlay-opacity-max; background: --overlay-warm; }
+  100% { opacity: $overlay-opacity-min; background: --overlay-cool; }
 }
 
 /* Image breathing with micro-delay inertia (holds at peaks/troughs) */
@@ -278,32 +246,32 @@ $glow-opacity-max: 0.6;
 @keyframes tooltipGlowCounterDelay {
   0% {
     box-shadow:
-      0 0 $glow-inner-max 4px $overlay-warm,
-      0 0 $glow-outer-max 8px $overlay-warm;
+      0 0 $glow-inner-max 4px --overlay-warm,
+      0 0 $glow-outer-max 8px --overlay-warm;
     opacity: $glow-opacity-max;
   }
   25% {
     box-shadow:
-      0 0 $glow-inner-max 4px $overlay-warm,
-      0 0 $glow-outer-max 8px $overlay-warm;
+      0 0 $glow-inner-max 4px --overlay-warm,
+      0 0 $glow-outer-max 8px --overlay-warm;
     opacity: $glow-opacity-max;
   }
   50% {
     box-shadow:
-      0 0 $glow-inner-min 0px $overlay-cool,
-      0 0 $glow-outer-min 4px $overlay-cool;
+      0 0 $glow-inner-min 0px --overlay-cool,
+      0 0 $glow-outer-min 4px --overlay-cool;
     opacity: $glow-opacity-min;
   }
   75% {
     box-shadow:
-      0 0 $glow-inner-min 0px $overlay-cool,
-      0 0 $glow-outer-min 4px $overlay-cool;
+      0 0 $glow-inner-min 0px --overlay-cool,
+      0 0 $glow-outer-min 4px --overlay-cool;
     opacity: $glow-opacity-min;
   }
   100% {
     box-shadow:
-      0 0 $glow-inner-max 4px $overlay-warm,
-      0 0 $glow-outer-max 8px $overlay-warm;
+      0 0 $glow-inner-max 4px --overlay-warm,
+      0 0 $glow-outer-max 8px --overlay-warm;
     opacity: $glow-opacity-max;
   }
 }
@@ -311,32 +279,32 @@ $glow-opacity-max: 0.6;
 @keyframes tooltipGlowInPhaseDelay {
   0% {
     box-shadow:
-      0 0 $glow-inner-min 0px $overlay-cool,
-      0 0 $glow-outer-min 4px $overlay-cool;
+      0 0 $glow-inner-min 0px --overlay-cool,
+      0 0 $glow-outer-min 4px --overlay-cool;
     opacity: $glow-opacity-min;
   }
   25% {
     box-shadow:
-      0 0 $glow-inner-min 0px $overlay-cool,
-      0 0 $glow-outer-min 4px $overlay-cool;
+      0 0 $glow-inner-min 0px --overlay-cool,
+      0 0 $glow-outer-min 4px --overlay-cool;
     opacity: $glow-opacity-min;
   }
   50% {
     box-shadow:
-      0 0 $glow-inner-max 4px $overlay-warm,
-      0 0 $glow-outer-max 8px $overlay-warm;
+      0 0 $glow-inner-max 4px --overlay-warm,
+      0 0 $glow-outer-max 8px --overlay-warm;
     opacity: $glow-opacity-max;
   }
   75% {
     box-shadow:
-      0 0 $glow-inner-max 4px $overlay-warm,
-      0 0 $glow-outer-max 8px $overlay-warm;
+      0 0 $glow-inner-max 4px --overlay-warm,
+      0 0 $glow-outer-max 8px --overlay-warm;
     opacity: $glow-opacity-max;
   }
   100% {
     box-shadow:
-      0 0 $glow-inner-min 0px $overlay-cool,
-      0 0 $glow-outer-min 4px $overlay-cool;
+      0 0 $glow-inner-min 0px --overlay-cool,
+      0 0 $glow-outer-min 4px --overlay-cool;
     opacity: $glow-opacity-min;
   }
 }

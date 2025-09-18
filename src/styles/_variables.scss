@@ -2,12 +2,13 @@
 
 /* Default (Light Mode) */
 :root {
+  
   /* Brand colors */
   --brand-gradient: linear-gradient(140deg, rgba(67, 184, 252, 0.9), rgba(255, 0, 212, 0.89));
   --brand-gradient-2: linear-gradient(-45deg, rgba(249, 249, 249), rgba(249, 249, 249));
   --brand-color-1: rgba(75, 87, 255, 0.781);
   --brand-color-2: rgba(51, 222, 228, 0.781);
-  --brand-color-3: rgba(249, 249, 249);
+  --brand-color-3: #f9f9f9;
   --brand-color-3-opacity: rgba(249, 249, 249, 0.822);
 
    /* Text colors */
@@ -24,12 +25,13 @@
   --button-color: rgba(228, 39, 203, 0.911);
 
 
-
-
-
-
-
-
+// New About
+  --about-background: linear-gradient(
+      calc(var(--sweep-angle, 90deg) + var(--sweep-offset, 0deg)),
+      rgba(0, 217, 255, 0) 0%,
+      rgba(0, 217, 255, 0.08) 50%,
+      rgba(0, 217, 255, 0) 100%
+    );
 
 
   /* Navbar backgrounds */
@@ -70,9 +72,9 @@ $font-body: "Inter", sans-serif;
   --accent-color: rgba(183, 59, 255, 0.781);
 
    /* Text colors */
-  --text-color: #333;
+  --text-color: #eeeeee;
   --text-color-light: #fff;
-  --text-color-secondary: #ccc;
+  --text-color-secondary: #92d4bd;
 
   /* Fonts */
   --font-family-base: 'Poppins', sans-serif;
@@ -81,4 +83,40 @@ $font-body: "Inter", sans-serif;
 
   /* Buttons */
   --button-color: rgba(228, 39, 203, 0.911);
+
+
+
+
+
 }
+
+/* ===========================
+   🎛 Breathing System Tuning Map
+   =========================== */
+
+/* Debug toggles */
+$breathing-enabled: true; // false = pause all breathing animations
+$debug-mode: true;       // true = solid color debug layers
+
+/* Timing */
+$breath-duration: 5s;
+$breath-ease: ease-in-out;
+
+/* Image scale */
+$image-scale-min: 1;
+$image-scale-max: 1.015;
+
+/* Overlay opacity */
+$overlay-opacity-min: 0.5;
+$overlay-opacity-max: 0.6;
+
+
+/* Tooltip glow bloom sizes */
+$glow-inner-min: 0px;
+$glow-inner-max: 8px;
+$glow-outer-min: 10px;
+$glow-outer-max: 20px;
+
+/* Tooltip glow opacity */
+$glow-opacity-min: 0.5;
+$glow-opacity-max: 0.6;
