@@ -1,5 +1,8 @@
+import { useRef } from "react";
 import { motion } from "framer-motion";
-import useSkillsFloat from "../../hooks/useSkillsFloat"; // <-- new hook
+import useSkillsFloat from "../../hooks/useSkillsFloat";
+import useScrollProgress from "../../hooks/useScrollProgress";
+import { SKILLS_FADE_RANGE } from "../../config"; // define this in config.js
 import SkillsBackground from "./SkillsBackground";
 import {
   FaHtml5,
@@ -31,10 +34,23 @@ const skills = [
 ];
 
 export default function Skills() {
-  useSkillsFloat(); // <-- activates scroll + hover float with easing
+  const sectionRef = useRef(null);
+
+  // Fade-out logic (symmetrical)
+  const fadeProgress = useScrollProgress(sectionRef, SKILLS_FADE_RANGE);
+  const eased = fadeProgress * fadeProgress * (3 - 2 * fadeProgress); // smoothstep
+  const skillsOpacity = 1 - Math.abs(eased - 0.5) * 2; // symmetrical fade
+
+  useSkillsFloat();
 
   return (
-    <section id="skills" className="skills" data-scroll>
+    <section
+      id="skills"
+      className="skills"
+      data-scroll
+      ref={sectionRef}
+      style={{ opacity: skillsOpacity }}
+    >
       <SkillsBackground />
       <h2 className="skills__heading">Skills & Tools</h2>
       <div className="skills__grid">

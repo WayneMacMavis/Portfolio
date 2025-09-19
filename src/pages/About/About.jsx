@@ -1,10 +1,11 @@
-// src/components/About/About.jsx
 import React from "react";
 import { motion } from "framer-motion";
 import "../../styles/About.scss";
 
 import useAboutParallax from "./useAboutParallax";
 import useTilt from "./useTilt";
+import useScrollProgress from "../../hooks/useScrollProgress";
+import { ABOUT_FADE_RANGE } from "../../config";
 
 import {
   masterVariants,
@@ -34,6 +35,11 @@ export default function About({ scrollContainerRef }) {
     icon3Opacity
   } = useAboutParallax(scrollContainerRef);
 
+  // Fade progress using symmetrical fade with adjusted range
+  const fadeProgress = useScrollProgress(sectionRef, ABOUT_FADE_RANGE);
+  const eased = fadeProgress * fadeProgress * (3 - 2 * fadeProgress); // smoothstep
+  const aboutOpacity = 1 - Math.abs(eased - 0.5) * 2; // symmetrical fade
+
   const { tilt, handleMouseMove, resetTilt } = useTilt();
 
   const icon1Variants = makeIconVariants(0.8);
@@ -41,7 +47,12 @@ export default function About({ scrollContainerRef }) {
   const icon3Variants = makeIconVariants(1.3);
 
   return (
-    <section id="about" className="about" ref={sectionRef}>
+    <section
+      id="about"
+      className="about"
+      ref={sectionRef}
+      style={{ opacity: aboutOpacity }}
+    >
       <AboutBackground bgVariants={bgVariants} />
 
       <motion.div

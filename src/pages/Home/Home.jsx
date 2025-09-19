@@ -89,8 +89,8 @@ export default function Home() {
         <motion.div
           className="home__illustration-blob"
           style={{
-            WebkitMask: `url(${blobShape}) no-repeat center / 116% 116%`,
-            mask: `url(${blobShape}) no-repeat center / 116% 116%`,
+            WebkitMask: `url(${blobShape}) no-repeat center / 115% 115%`,
+            mask: `url(${blobShape}) no-repeat center / 115% 115%`,
             x: blobX,
             y: blobY,
           }}

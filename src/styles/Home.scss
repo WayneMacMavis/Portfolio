@@ -61,25 +61,32 @@ overflow: visible;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  max-width: 700px;
+  left: 10%;
+  width: 150%;
+  max-width: 1000px;
   aspect-ratio: 1 / 1;
 }
 
 .home__illustration-blob {
-  width: 100%;
-  height: 100%;
+  width: 85%;
+  height: 85%;
+  display: block;
   background: var(--brand-color-2); // replace with your gradient or brand color
-  transform: scale(1.3);
   transform-origin: center;
   z-index: 0;
 }
 
+.home__illustration-blob svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
 .home__illustration-image {
   position: absolute;
-  top: clamp(90px, 0%, 5px);
-  left: -5%;
-  width: 120%;
+  top: clamp(230px, 0%, 20px);
+  left: 10%;
+  width: 85%;
   pointer-events: none;
 }
 

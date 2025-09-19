@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaPhone, FaEnvelope, FaGithub, FaLinkedin, FaFacebook } from "react-icons/fa";
 import useBreathingMotion from "../../hooks/useBreathingMotion";
+import useScrollProgress from "../../hooks/useScrollProgress";
+import { CONTACT_FADE_RANGE } from "../../config";
 import contactImage from "../../Assets/contact-img.png";
 import "../../styles/Contact.scss";
 
@@ -9,14 +11,23 @@ export default function Contact() {
   const [sent, setSent] = useState(false);
   const [iconHovered, setIconHovered] = useState(false);
 
+  const sectionRef = useRef(null);
+
+  // Symmetrical fade logic
+  const fadeProgress = useScrollProgress(sectionRef, CONTACT_FADE_RANGE);
+  const eased = fadeProgress * fadeProgress * (3 - 2 * fadeProgress); // smoothstep
+  const contactOpacity = 1 - Math.abs(eased - 0.5) * 2;
+
   const breathingSettings = { inhale: 2.2, exhale: 2.8, pause: 0.3 };
 
-  const formBreathing = useBreathingMotion({
+  // Mount-safe breathing for the form
+  const { controls: formControls, ref: formRef } = useBreathingMotion({
     scaleRange: [1, 1.015],
     ...breathingSettings
   });
 
-  const iconBreathing = useBreathingMotion({
+  // Mount-safe breathing for the social icons
+  const { controls: iconControls, ref: iconsRef } = useBreathingMotion({
     scaleRange: [1, 1.01],
     ...breathingSettings,
     cycleOffset:
@@ -42,7 +53,12 @@ export default function Contact() {
   };
 
   return (
-    <section className="contact" id="contact">
+    <section
+      className="contact"
+      id="contact"
+      ref={sectionRef}
+      style={{ opacity: contactOpacity }}
+    >
       <div className={`contact__inner ${iconHovered ? "hover-sync" : ""}`}>
         {/* Left column: Image */}
         <div className="contact__image">
@@ -64,10 +80,12 @@ export default function Contact() {
               Whether you’ve got a project in mind, a question, or just want to say hi — I’d love to hear from you.
             </p>
           </motion.div>
+
           {/* Form */}
           <motion.form
             className="contact__form"
-            animate={iconHovered ? { scale: [1, 1.015, 1] } : formBreathing}
+            ref={formRef}
+            animate={iconHovered ? { scale: [1, 1.015, 1] } : formControls}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -118,9 +136,11 @@ export default function Contact() {
               </AnimatePresence>
             </motion.button>
           </motion.form>
+
           {/* Social icons */}
           <motion.div
             className="contact__socials"
+            ref={iconsRef}
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
@@ -141,7 +161,7 @@ export default function Contact() {
                 className={`tooltip ${className}`}
                 data-tooltip={label}
                 variants={iconVariants}
-                animate={iconBreathing}
+                animate={iconControls}
                 whileHover={{
                   scale: 1.2,
                   transition: { type: "spring", stiffness: 300, damping: 10 }
