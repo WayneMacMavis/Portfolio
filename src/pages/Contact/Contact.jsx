@@ -37,6 +37,8 @@ export default function Contact() {
   });
 
   const handleSubmit = (e) => {
+    // If you want Netlify to actually capture submissions,
+    // remove preventDefault and let the browser POST.
     e.preventDefault();
     setSent(true);
     setTimeout(() => setSent(false), 2000);
@@ -84,6 +86,10 @@ export default function Contact() {
           {/* Form */}
           <motion.form
             className="contact__form"
+            name="contact"
+            method="POST"
+            data-netlify="true"
+            data-netlify-honeypot="bot-field"
             ref={formRef}
             animate={iconHovered ? { scale: [1, 1.015, 1] } : formControls}
             initial={{ opacity: 0, y: 20 }}
@@ -92,6 +98,16 @@ export default function Contact() {
             transition={{ delay: 0.2, duration: 0.6, ease: "easeOut" }}
             onSubmit={handleSubmit}
           >
+            {/* Hidden Netlify form-name field */}
+            <input type="hidden" name="form-name" value="contact" />
+
+            {/* Honeypot field */}
+            <div hidden>
+              <label>
+                Don’t fill this out if you’re human: <input name="bot-field" />
+              </label>
+            </div>
+
             <label>
               Name
               <input type="text" name="name" required />
