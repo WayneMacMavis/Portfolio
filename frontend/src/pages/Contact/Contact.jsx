@@ -65,7 +65,7 @@ export default function Contact() {
     const API_URL =
       process.env.NODE_ENV === "development"
         ? "http://localhost:5000/contact"
-        : "https://your-render-service.onrender.com/contact"; // replace with your Render URL
+        : "https://https://portfolio-c6vy.onrender.com/contact"; // replace with your Render URL
 
     try {
       const res = await fetch(API_URL, {
