@@ -63,11 +63,10 @@ const handleSubmit = async (e) => {
     message: form.message.value
   };
 
-  // Use local backend in development, deployed backend in production
-  const API_URL =
-    process.env.NODE_ENV === "development"
-      ? "http://localhost:5000/contact"
-      : "https://your-backend-domain.com/contact"; // replace with your deployed backend URL later
+const API_URL =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:5000/contact"
+    : "https://portfolio-c6vy.onrender.com/contact";
 
   try {
     const res = await fetch(API_URL, {
