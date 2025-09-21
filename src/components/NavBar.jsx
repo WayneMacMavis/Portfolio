@@ -79,11 +79,12 @@ export default function NavBar() {
   const [activeLink, setActiveLink] = useState("Home");
   const sectionsRef = useRef([]);
   const homeRef = useRef(null);
+  const tickingRef = useRef(false);
 
   const toggleMenu = () => setIsOpen(prev => !prev);
   const closeMenu = () => setIsOpen(false);
 
-   const { theme, toggleTheme } = useThemeToggle();
+  const { theme, toggleTheme } = useThemeToggle();
 
   // Attach homeRef after mount
   useEffect(() => {
@@ -102,62 +103,115 @@ export default function NavBar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Active section tracking — delayed attach for stable layout
+  // Collect sections by id
   useEffect(() => {
-    sectionsRef.current = NAV_LINKS.map(link =>
-      document.getElementById(link.name.toLowerCase())
-    );
+    const ids = NAV_LINKS.map(l => l.name.toLowerCase());
+    sectionsRef.current = ids
+      .map(id => document.getElementById(id))
+      .filter(Boolean);
 
-    const observer = new IntersectionObserver(
-      entries => {
-        const visible = entries
-          .filter(e => e.isIntersecting)
-          .sort((a, b) => {
-            if (b.intersectionRatio !== a.intersectionRatio) {
-              return b.intersectionRatio - a.intersectionRatio;
-            }
-            return a.boundingClientRect.top - b.boundingClientRect.top;
-          });
-
-        if (visible.length > 0) {
-          const topEntry = visible[0];
-          const id = topEntry.target.id;
-          setActiveLink(id.charAt(0).toUpperCase() + id.slice(1));
-
-          if (window.location.hash !== `#${id}`) {
-            window.history.replaceState(null, "", `#${id}`);
-          }
-        }
-      },
-      {
-        threshold: Array.from({ length: 21 }, (_, i) => i / 20),
-        rootMargin: "-15% 0px -55% 0px"
-      }
-    );
-
-    const attachObserver = () => {
-      sectionsRef.current.forEach(sec => sec && observer.observe(sec));
-      // Initial check in case we're already scrolled
-      observer.takeRecords();
+    const handleResize = () => {
+      sectionsRef.current = ids
+        .map(id => document.getElementById(id))
+        .filter(Boolean);
+      // Re-evaluate on resize
+      evaluateActiveSection();
     };
 
-    if (document.readyState === "complete") {
-      attachObserver();
+    window.addEventListener("resize", handleResize);
+    // Initial sync after DOM is ready
+    const ready = () => evaluateActiveSection();
+    if (document.readyState === "complete" || document.readyState === "interactive") {
+      ready();
     } else {
-      window.addEventListener("load", attachObserver, { once: true });
+      window.addEventListener("DOMContentLoaded", ready, { once: true });
     }
 
     return () => {
-      observer.disconnect();
-      window.removeEventListener("load", attachObserver);
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("DOMContentLoaded", ready);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Override with "Home" until fade completes
-  useEffect(() => {
-    if (homeFadeProgress < 1) {
-      setActiveLink("Home");
+  // Evaluate which section is active using a viewport "focus line"
+  const evaluateActiveSection = () => {
+    const sections = sectionsRef.current;
+    if (!sections.length) return;
+
+    // Position of the focus line (tune 0.5 for exact center or 0.4 to anticipate)
+    const focus = window.innerHeight * 0.5;
+
+    // Find section whose rect contains the focus line
+    let winner = null;
+    for (const el of sections) {
+      const r = el.getBoundingClientRect();
+      if (r.top <= focus && r.bottom >= focus) {
+        winner = el;
+        break;
+      }
     }
+
+    // Fallback: pick the closest by distance to focus (handles gaps)
+    if (!winner) {
+      let best = { el: null, dist: Infinity };
+      for (const el of sections) {
+        const r = el.getBoundingClientRect();
+        // Distance of section center to focus
+        const center = r.top + r.height / 2;
+        const dist = Math.abs(center - focus);
+        if (dist < best.dist) best = { el, dist };
+      }
+      winner = best.el;
+    }
+
+    if (!winner) return;
+
+    const id = winner.id; // already lowercase
+    const formatted = id.charAt(0).toUpperCase() + id.slice(1);
+
+    // Home "lock": only force Home if the focus line is actually within Home
+    if (homeRef.current) {
+      const rh = homeRef.current.getBoundingClientRect();
+      const focusInsideHome = rh.top <= focus && rh.bottom >= focus;
+      if (homeFadeProgress < 1 && focusInsideHome) {
+        if (activeLink !== "Home") {
+          setActiveLink("Home");
+          if (window.location.hash !== "#home") {
+            window.history.replaceState(null, "", "#home");
+          }
+        }
+        return;
+      }
+    }
+
+    if (activeLink !== formatted) {
+      setActiveLink(formatted);
+      if (window.location.hash !== `#${id}`) {
+        window.history.replaceState(null, "", `#${id}`);
+      }
+    }
+  };
+
+  // Scroll listener with rAF to avoid layout thrash
+  useEffect(() => {
+    const onScroll = () => {
+      if (!tickingRef.current) {
+        window.requestAnimationFrame(() => {
+          evaluateActiveSection();
+          tickingRef.current = false;
+        });
+        tickingRef.current = true;
+      }
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    // Evaluate once after a frame to catch initial position
+    const t = setTimeout(evaluateActiveSection, 50);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      clearTimeout(t);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [homeFadeProgress]);
 
   return (
@@ -181,7 +235,8 @@ export default function NavBar() {
         </motion.a>
       </div>
 
-  <button
+      {/* Theme toggle */}
+      <button
         id="theme-toggle"
         className={`theme-toggle ${theme}-mode`}
         aria-label="Toggle theme"
@@ -191,14 +246,8 @@ export default function NavBar() {
         <motion.span
           className="icon sun"
           aria-hidden="true"
-          animate={{
-            scale: theme === 'light' ? [1, 1.2, 1] : 1
-          }}
-          transition={{
-            duration: 0.25,
-            times: [0, 0.5, 1],
-            ease: "easeOut"
-          }}
+          animate={{ scale: theme === 'light' ? [1, 1.2, 1] : 1 }}
+          transition={{ duration: 0.25, times: [0, 0.5, 1], ease: "easeOut" }}
         >
           ☀️
         </motion.span>
@@ -206,32 +255,19 @@ export default function NavBar() {
         <motion.span
           className="icon moon"
           aria-hidden="true"
-          animate={{
-            scale: theme === 'dark' ? [1, 1.2, 1] : 1
-          }}
-          transition={{
-            duration: 0.25,
-            times: [0, 0.5, 1],
-            ease: "easeOut"
-          }}
+          animate={{ scale: theme === 'dark' ? [1, 1.2, 1] : 1 }}
+          transition={{ duration: 0.25, times: [0, 0.5, 1], ease: "easeOut" }}
         >
           🌙
         </motion.span>
 
-      <motion.span
-  className="toggle-knob"
-  aria-hidden="true"
-  animate={{ x: theme === 'light' ? 30 : 0 }}
-  transition={{
-    type: "spring",
-    stiffness: 200, // lower stiffness = softer spring
-    damping: 20,    // lower damping = more glide
-    mass: 0.5,      // slightly heavier feel
-    duration: 0.5   // ensures it doesn't snap instantly
-  }}
-/>
+        <motion.span
+          className="toggle-knob"
+          aria-hidden="true"
+          animate={{ x: theme === 'light' ? 40 : 0 }}
+          transition={{ type: "spring", stiffness: 200, damping: 20, mass: 0.5, duration: 0.5 }}
+        />
       </button>
-
 
       {/* Right side */}
       <div className="nav-right">

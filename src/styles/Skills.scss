@@ -1,10 +1,10 @@
 /* ================================
-   Skills Section — Responsive + 3D Tilt + Lighting + Glint (Full)
+   Skills Section — Responsive + 3D Tilt + Lighting + Glint (Full, touch-friendly)
    ================================ */
 
 .skills {
   position: relative;
-  padding: clamp(9rem, 6vw, 9rem);
+  padding: clamp(1rem, 4vw, 6rem);
   background: var(--brand-color-3);
   max-width: 100vw;
   margin: 0 auto;
@@ -49,7 +49,8 @@
   min-width: 0;
   perspective: 800px;
 
-  &:hover {
+  &:hover,
+  &.tapped {
     transform: translateY(-4px);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
   }
@@ -69,6 +70,7 @@
     transition: box-shadow 0.3s ease;
     will-change: transform, box-shadow, filter;
     overflow: hidden;
+    backface-visibility: hidden;
 
     /* Dynamic lighting + 3D transform via CSS variables */
     background: radial-gradient(
@@ -103,7 +105,9 @@
       pointer-events: none;
     }
 
-    &[data-glint]::before {
+    /* Trigger glint via data attribute or .tapped */
+    &[data-glint]::before,
+    .skill-card.tapped &::before {
       animation: glintSweep 1s ease forwards;
     }
   }
@@ -119,8 +123,9 @@
     word-break: break-word;
   }
 
-  /* Glow + pulse on hover */
-  &:hover .skill-card__icon {
+  /* Glow + pulse on hover/tapped */
+  &:hover .skill-card__icon,
+  &.tapped .skill-card__icon {
     animation: pulseGlow 1.5s infinite alternate;
     box-shadow:
       0 0 8px var(--tooltip-shadow, rgba(0, 0, 0, 0.15)),
@@ -128,7 +133,8 @@
   }
 
   /* Ripple effect */
-  &:hover .skill-card__icon::after {
+  &:hover .skill-card__icon::after,
+  &.tapped .skill-card__icon::after {
     content: "";
     position: absolute;
     top: 50%;
@@ -159,7 +165,7 @@
     text-align: center;
     opacity: 0;
     pointer-events: none;
-    background-color: inherit;
+    background-color: rgba(0, 0, 0, 0.75); /* higher contrast than inherit */
     animation: none;
     transform-origin: bottom center;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0);
@@ -200,18 +206,21 @@
     opacity: 0;
   }
 
-  /* Hover choreography */
-  &:hover .skill-card__tooltip {
+  /* Hover/tap choreography */
+  &:hover .skill-card__tooltip,
+  &.tapped .skill-card__tooltip {
     animation: tooltipFadeScaleShadowIn 0.35s ease forwards;
     animation-delay: 0.15s;
   }
 
-  &:hover .skill-card__tooltip::after {
+  &:hover .skill-card__tooltip::after,
+  &.tapped .skill-card__tooltip::after {
     animation: tooltipArrowFadeIn 0.25s ease forwards;
     animation-delay: 0.25s;
   }
 
-  &:hover .tooltip-shimmer {
+  &:hover .tooltip-shimmer,
+  &.tapped .tooltip-shimmer {
     animation: shimmerSweep 0.6s ease forwards;
     animation-delay: 0.5s;
   }
@@ -238,13 +247,13 @@
   }
 }
 
-/* Idle float+drift when not hovered */
-.skill-card:not(:hover) .skill-card__icon {
+/* Idle float+drift when not hovered or tapped */
+.skill-card:not(:hover):not(.tapped) .skill-card__icon {
   animation: floatDrift 4s ease-in-out infinite;
 }
 
 /* Freeze float during post-hover micro-pause (toggled via data-hold on .skills) */
-.skills[data-hold] .skill-card:not(:hover) .skill-card__icon {
+.skills[data-hold] .skill-card:not(:hover):not(.tapped) .skill-card__icon {
   animation-play-state: paused;
 }
 
@@ -332,12 +341,8 @@
     transform: translateX(-100%) rotate(25deg);
     opacity: 0;
   }
-  20% {
-    opacity: 0;
-  }
-  80% {
-    opacity: 0.5;
-  }
+  20% { opacity: 0; }
+  80% { opacity: 0.5; }
   100% {
     transform: translateX(100%) rotate(25deg);
     opacity: 1;
@@ -404,7 +409,8 @@
     transition: none !important;
   }
 
-  .skill-card:hover {
+  .skill-card:hover,
+  .skill-card.tapped {
     transform: none;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   }

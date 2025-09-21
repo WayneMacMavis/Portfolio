@@ -4,8 +4,20 @@
   left: 0;
   height: 4px;
   width: 100%;
-  background-color: var(--brand-gradient);
+  /* Use gradient as a background image for better rendering */
+  background: var(--brand-gradient);
   transform: scaleX(0);
   transform-origin: left center;
   z-index: 9999;
+
+  /* Smooth fill animation */
+  transition: transform 0.25s ease-out;
+
+  /* Optional subtle glow */
+  box-shadow: 0 0 6px rgba(0, 217, 255, 0.6);
+
+  /* Support reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 }

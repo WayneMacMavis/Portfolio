@@ -1,6 +1,6 @@
 .cinematic-section {
   min-height: 100vh;
-  padding: 6rem 10%;
+  padding: clamp(3rem, 6vw, 6rem) clamp(1.5rem, 10%, 10%);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -10,9 +10,12 @@
   h2 {
     font-size: clamp(2rem, 4vw, 3rem);
     color: var(--text-color);
+    line-height: 1.2;
+    word-break: break-word;
   }
 
-  p, li {
+  p,
+  li {
     font-size: clamp(1rem, 1.5vw, 1.2rem);
     line-height: 1.6;
     max-width: 700px;
@@ -22,9 +25,45 @@
   ul {
     list-style: none;
     padding: 0;
-    li::before {
-      content: "• ";
-      color: var(--brand-color-1);
+
+    li {
+      position: relative;
+      padding-left: 1.25rem;
+
+      &::before {
+        content: "•";
+        position: absolute;
+        left: 0;
+        color: var(--brand-color-1);
+      }
     }
+  }
+}
+
+/* Tablet adjustments */
+@media (max-width: 1024px) {
+  .cinematic-section {
+    padding: clamp(2.5rem, 5vw, 4rem) clamp(1.5rem, 6vw, 3rem);
+  }
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .cinematic-section {
+    align-items: center;
+    text-align: center;
+  }
+
+  .cinematic-section p,
+  .cinematic-section li {
+    max-width: 100%;
+  }
+}
+
+/* Tiny screens & short viewports */
+@media (max-width: 380px), (max-height: 640px) {
+  .cinematic-section {
+    padding: 2rem 1rem;
+    gap: 1rem;
   }
 }

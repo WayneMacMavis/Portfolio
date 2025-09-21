@@ -20,6 +20,8 @@
     color: #6c63ff;
     margin-bottom: 1rem;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    line-height: 1.2;
+    word-break: break-word;
   }
 
   p {
@@ -40,12 +42,12 @@
 }
 
 /* Sequential delays — flowing from bio to fun facts */
-.highlight:nth-of-type(1) { animation-delay: 0.8s; }   /* "full‑stack developer" */
-.highlight:nth-of-type(2) { animation-delay: 1.0s; }   /* "technical precision" */
-.highlight:nth-of-type(3) { animation-delay: 1.2s; }   /* "immersive front‑end experiences" */
-.highlight:nth-of-type(4) { animation-delay: 1.4s; }   /* "every interaction should feel earned" */
-.highlight:nth-of-type(5) { animation-delay: 1.6s; }   /* "illustration, animation, and interactivity" */
-.highlight:nth-of-type(6) { animation-delay: 1.8s; }   /* "memorable" */
+.highlight:nth-of-type(1) { animation-delay: 0.8s; }
+.highlight:nth-of-type(2) { animation-delay: 1.0s; }
+.highlight:nth-of-type(3) { animation-delay: 1.2s; }
+.highlight:nth-of-type(4) { animation-delay: 1.4s; }
+.highlight:nth-of-type(5) { animation-delay: 1.6s; }
+.highlight:nth-of-type(6) { animation-delay: 1.8s; }
 
 /* Fun Facts labels continue the wave */
 .about__funfacts .funfact:nth-of-type(1) .funfact__label { animation-delay: 2.0s; }
@@ -69,11 +71,19 @@
   }
 }
 
+/* Tablet adjustments */
+@media (max-width: 1024px) {
+  .about__content {
+    max-width: 90%;
+  }
+}
+
 /* Mobile adjustments */
 @media (max-width: 768px) {
   .about__content {
     justify-self: center;
     text-align: center;
+    max-width: 100%;
   }
 
   .about__content h1 {
@@ -82,5 +92,23 @@
 
   .about__content p {
     font-size: 1rem;
+  }
+}
+
+/* Tiny screens */
+@media (max-width: 380px) {
+  .about__content h1 {
+    font-size: clamp(1.75rem, 7vw, 2.25rem);
+  }
+  .about__content p {
+    font-size: 0.95rem;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .highlight,
+  .funfact__label {
+    animation: none;
   }
 }

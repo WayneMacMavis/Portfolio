@@ -1,6 +1,32 @@
 @use '../styles/variables' as *;
 @use '../styles/mixins' as *;
 
+/* Anchor offset for sticky navbar (adjusts for mobile automatically) */
+:root {
+  --anchor-offset: 80px;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --anchor-offset: 72px;
+  }
+}
+
+/* Smooth scrolling + global anchor offset for in-page links */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--anchor-offset) + env(safe-area-inset-top));
+}
+
+/* Ensure sections align perfectly when navigated to via hash */
+#home,
+#about,
+#skills,
+#projects,
+#contact {
+  scroll-margin-top: calc(var(--anchor-offset) + env(safe-area-inset-top));
+}
+
 /* Base link styles reused for desktop and mobile */
 %nav-link-base {
   position: relative;
@@ -46,22 +72,20 @@
     display: flex;
     align-items: center;
     transition: transform 0.25s ease, color 0.25s ease;
-
-    /* Micro‑scale & tilt on hover */
-    .nav-link:hover & {
-      transform: scale(1.15) rotate(3deg);
-    }
-
-    /* Pressed feel when active */
-    .nav-link.active & {
-      transform: scale(1.05);
-      color: var(--accent-color);
-    }
   }
 
   .nav-text {
     display: inline-block;
   }
+}
+
+/* Icon hover/active transforms scoped safely */
+.nav-link:hover .nav-icon {
+  transform: scale(1.15) rotate(3deg);
+}
+.nav-link.active .nav-icon {
+  transform: scale(1.05);
+  color: var(--accent-color);
 }
 
 .navbar {
@@ -76,6 +100,8 @@
   font-weight: 600;
   letter-spacing: 0.5px;
   transition: padding 0.3s ease, background-color 0.3s ease;
+  min-height: var(--anchor-offset);
+  isolation: isolate;
 
   &::before {
     content: "";
@@ -87,7 +113,6 @@
     opacity: 0.3;
     transition: opacity 0.1s linear;
     z-index: -1;
-    opacity: 0.3;
   }
 
   /* Brand */
@@ -121,76 +146,65 @@
 
     li {
       position: relative;
+
       .nav-link {
         @extend %nav-link-base;
       }
     }
   }
 
-  /* NEW: Flex placeholders so toggle stays centered */
-.nav-left,
-.nav-right {
-  flex: 1 1 0;
-  display: flex;
-  align-items: center;
-}
-
-.nav-right {
-  justify-content: flex-end; /* ✅ pushes nav links to the far right */
-}
-
-
-  /* NEW: Theme toggle button */
-.theme-toggle {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 60px;
-  height: 30px;
-  background: var(--brand-color-3);
-  border-radius: 999px;
-  border: none;
-  padding: 0 4px;
-  cursor: pointer;
-  overflow: hidden;
-  gap: 10px;
-
-  .icon {
-    position:relative;
-    font-size: 1rem;
-    z-index: 1;
-    transition: text-shadow 0.3s ease;
+  /* Flex placeholders so toggle stays centered */
+  .nav-left,
+  .nav-right {
+    flex: 1 1 0;
+    display: flex;
+    align-items: center;
   }
 
-  .toggle-knob {
-    position: absolute;
-    top: 3px;
-    left: 3px;
-    width: 24px;
-    height: 24px;
-    background: rgba(255, 255, 255, 0.25);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.25);
-    z-index: 2;
+  .nav-right {
+    justify-content: flex-end; /* pushes nav links to the far right */
   }
 
-  &.light-mode {
-    .sun { text-shadow: 0 0 6px var(--accent-sun, #ffdd55); }
+  /* Theme toggle button — purely structural; behavior from variables */
+  .theme-toggle {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 70px;
+    height: 30px;
+    background: var(--brand-color-3);
+    border-radius: 100px;
+    border: none;
+    padding: 0 2px;
+    cursor: pointer;
+    overflow: hidden;
+    gap: 2px;
+
+    .icon {
+      position: relative;
+      font-size: 1.6rem;
+      left: -2px;
+      z-index: 1;
+      transition: text-shadow 0.3s ease;
+    }
+
+    .toggle-knob {
+      position: absolute;
+      top: 3px;
+      /* left position comes entirely from variables (no overrides here) */
+      width: 27px;
+      height: 27px;
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+      z-index: 2;
+      transition: left 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+    }
   }
-
-  &.dark-mode {
-    .moon { text-shadow: 0 0 6px var(--accent-moon, #88ccff); }
-  }
-}
-
-
-
-
-
 
   /* Hamburger */
   .menu-toggle {
@@ -257,6 +271,8 @@
     list-style: none;
     background: var(--brand-gradient);
     padding: 0 1.5rem;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 
     li {
       width: 100%;
@@ -312,6 +328,8 @@
   .navbar .menu-toggle {
     display: flex !important;
   }
+
+  /* Slight underline timing polish on mobile */
   .mobile-menu-links .nav-link::after {
     transition-delay: 0.12s;
   }
@@ -320,8 +338,10 @@
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   .navbar,
-  .navbar * {
+  .navbar *,
+  .mobile-menu-links {
     transition: none !important;
     animation: none !important;
+    background-size: auto !important;
   }
 }

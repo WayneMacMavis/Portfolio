@@ -3,12 +3,14 @@
   inset: 0;
   z-index: 0;
   pointer-events: none;
+
+  /* Brand gradient background */
   background: var(--brand-color-3);
   background-size: 400% 400%;
   animation: gradientShift var(--gradient-speed, 15s) ease infinite;
   will-change: transform, opacity, filter, background-position;
 
-  /* Sweep overlay */
+  /* Sweep overlay layer */
   &::after {
     content: "";
     position: absolute;
@@ -16,12 +18,12 @@
     background: var(--about-background);
     opacity: 0;
     animation: bgSweep 3.2s ease-in-out infinite;
-    animation-delay: 0.8s; /* phase sync */
+    animation-delay: 0.8s; /* phase sync with gradient */
     will-change: transform, opacity, background;
   }
 }
 
-/* Sweep motion */
+/* Sweep motion — horizontal pass */
 @keyframes bgSweep {
   0% {
     opacity: 0;
@@ -41,9 +43,20 @@
   }
 }
 
-/* Gradient breathing */
+/* Gradient breathing — slow pan */
 @keyframes gradientShift {
   0%   { background-position: 0% 50%; }
   50%  { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .about__bg {
+    animation: none;
+
+    &::after {
+      animation: none;
+    }
+  }
 }

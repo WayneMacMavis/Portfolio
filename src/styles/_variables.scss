@@ -1,8 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
 
-/* Default (Light Mode) */
+/* ==============================
+   🌞 Default (Light Mode)
+   ============================== */
 :root {
-  
   /* Brand colors */
   --brand-gradient: linear-gradient(140deg, rgba(67, 184, 252, 0.9), rgba(255, 0, 212, 0.89));
   --brand-gradient-2: linear-gradient(-45deg, rgba(249, 249, 249), rgba(249, 249, 249));
@@ -11,7 +12,7 @@
   --brand-color-3: #f9f9f9;
   --brand-color-3-opacity: rgba(249, 249, 249, 0.822);
 
-   /* Text colors */
+  /* Text colors */
   --text-color: #333;
   --text-color-light: #fff;
   --text-color-secondary: #ccc;
@@ -24,55 +25,57 @@
   /* Buttons */
   --button-color: rgba(228, 39, 203, 0.911);
 
-
-// New About
+  /* About section background sweep */
   --about-background: linear-gradient(
-      calc(var(--sweep-angle, 90deg) + var(--sweep-offset, 0deg)),
-      rgba(0, 217, 255, 0) 0%,
-      rgba(0, 217, 255, 0.08) 50%,
-      rgba(0, 217, 255, 0) 100%
-    );
-
+    calc(var(--sweep-angle, 90deg) + var(--sweep-offset, 0deg)),
+    rgba(0, 217, 255, 0) 0%,
+    rgba(0, 217, 255, 0.08) 50%,
+    rgba(0, 217, 255, 0) 100%
+  );
 
   /* Navbar backgrounds */
-  --navbar-bg-solid: rgba(255, 255, 255, 0.85); /* semi-transparent white */
+  --navbar-bg-solid: rgba(255, 255, 255, 0.85);
   --navbar-bg-gradient: linear-gradient(135deg, rgba(108, 99, 255, 0.9), rgba(101, 250, 255, 0.9));
   --navbar-border: rgba(0, 0, 0, 0.05);
---accent-color: rgba(51, 222, 228, 0.781);
+
+  /* Accent */
+  --accent-color: rgba(51, 222, 228, 0.781);
 
   /* Backgrounds */
   --bg-color: #fdfbfb;
 
-  // About
-    --color1: rgba(255, 255, 255, 0.85);
+  /* About section colors */
+  --color1: rgba(255, 255, 255, 0.85);
   --color2: rgba(188, 228, 255, 0.85);
   --color3: rgba(255, 255, 255, 0.85);
   --color4: rgba(204, 234, 255, 0.85);
   --color-text: #2a2a2a;
   --icon-color: #00d4ff;
 
+  /* Animation speeds */
   --gradient-speed: 15s;
   --pulse-duration: 2.3s;
-  
 }
 
-// About
+/* SCSS font variables for About section */
 $font-heading: "Baloo 2", sans-serif;
 $font-body: "Inter", sans-serif;
 
-/* Dark Mode (future) */
+/* ==============================
+   🌚 Dark Mode
+   ============================== */
 [data-theme="dark"] {
   /* Brand colors */
   --brand-gradient: linear-gradient(140deg, rgba(67, 184, 252, 0.9), rgba(255, 0, 212, 0.89));
   --brand-gradient-2: linear-gradient(-45deg, rgba(249, 249, 249), rgba(249, 249, 249));
   --brand-color-1: rgba(75, 87, 255, 0.781);
   --brand-color-2: rgba(183, 0, 255, 0.781);
-  --brand-color-3: rgb(0, 0, 0);
+  --brand-color-3: #000;
   --brand-color-3-opacity: rgba(0, 0, 0, 0.822);
   --accent-color: rgba(183, 59, 255, 0.781);
 
-   /* Text colors */
-  --text-color: #eeeeee;
+  /* Text colors */
+  --text-color: #eee;
   --text-color-light: #fff;
   --text-color-secondary: #92d4bd;
 
@@ -83,20 +86,15 @@ $font-body: "Inter", sans-serif;
 
   /* Buttons */
   --button-color: rgba(228, 39, 203, 0.911);
-
-
-
-
-
 }
 
-/* ===========================
+/* ==============================
    🎛 Breathing System Tuning Map
-   =========================== */
+   ============================== */
 
 /* Debug toggles */
 $breathing-enabled: true; // false = pause all breathing animations
-$debug-mode: true;       // true = solid color debug layers
+$debug-mode: true;        // true = solid color debug layers
 
 /* Timing */
 $breath-duration: 5s;
@@ -110,7 +108,6 @@ $image-scale-max: 1.015;
 $overlay-opacity-min: 0.5;
 $overlay-opacity-max: 0.6;
 
-
 /* Tooltip glow bloom sizes */
 $glow-inner-min: 0px;
 $glow-inner-max: 8px;
@@ -120,3 +117,13 @@ $glow-outer-max: 20px;
 /* Tooltip glow opacity */
 $glow-opacity-min: 0.5;
 $glow-opacity-max: 0.6;
+
+/* ==============================
+   ♿ Accessibility
+   ============================== */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

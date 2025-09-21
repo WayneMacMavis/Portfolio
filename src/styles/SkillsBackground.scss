@@ -15,8 +15,15 @@
   --scroll-y: 0px;
 }
 
+/* Ensure skills content is always above background */
+.skills {
+  position: relative;
+  z-index: 1;
+}
+
 .bg-item {
   position: absolute;
+  will-change: transform, opacity;
 
   /* Compose drift + parallax via CSS vars */
   --ox: calc(var(--mouse-x) * var(--factor) + var(--scroll-x) * var(--factor));
@@ -36,15 +43,18 @@
       font-size: clamp(4rem, 8vw, 6rem);
       opacity: 0.25; /* base opacity, fade anim will modulate this */
       color: var(--text-color);
-      opacity: 0.2;
     }
   }
 }
 
-/* Depth scaling */
-.layer-back .icon-wrap { transform: rotate(var(--rot)) scale(calc(var(--scale) * 0.9)); }
-.layer-mid  .icon-wrap { transform: rotate(var(--rot)) scale(var(--scale)); }
+/* Depth scaling + base opacity per layer */
+.layer-back  .icon-wrap { transform: rotate(var(--rot)) scale(calc(var(--scale) * 0.9));  }
+.layer-mid   .icon-wrap { transform: rotate(var(--rot)) scale(var(--scale));              }
 .layer-front .icon-wrap { transform: rotate(var(--rot)) scale(calc(var(--scale) * 1.15)); }
+
+.layer-back  .icon-wrap svg { opacity: 0.15; }
+.layer-mid   .icon-wrap svg { opacity: 0.2;  }
+.layer-front .icon-wrap svg { opacity: 0.25; }
 
 /* Drift animation — slow and subtle */
 @keyframes drift {
@@ -60,9 +70,20 @@
 }
 
 /* Layer-specific drift durations for depth */
-.layer-back { --duration: 80s; }
-.layer-mid  { --duration: 60s; }
-.layer-front{ --duration: 45s; }
+.layer-back  { --duration: 80s; }
+.layer-mid   { --duration: 60s; }
+.layer-front { --duration: 45s; }
+
+/* Optional: staggered drift delays for organic feel */
+.bg-item:nth-child(odd)  { --delay: 5s; }
+.bg-item:nth-child(even) { --delay: 12s; }
+
+/* Mobile scaling for icons */
+@media (max-width: 480px) {
+  .bg-item .icon-wrap svg {
+    font-size: clamp(2.5rem, 6vw, 4rem);
+  }
+}
 
 /* Accessibility: respect reduced motion */
 @media (prefers-reduced-motion: reduce) {

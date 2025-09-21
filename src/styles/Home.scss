@@ -10,7 +10,8 @@
   background: var(--brand-color-3);
   font-family: var(--font-family-base);
   gap: 2rem;
-overflow: visible;
+  overflow: visible;
+
   &__content {
     flex: 1;
     max-width: 500px;
@@ -71,15 +72,15 @@ overflow: visible;
   width: 85%;
   height: 85%;
   display: block;
-  background: var(--brand-color-2); // replace with your gradient or brand color
+  background: var(--brand-color-2);
   transform-origin: center;
   z-index: 0;
-}
 
-.home__illustration-blob svg {
-  width: 100%;
-  height: 100%;
-  display: block;
+  svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
 }
 
 .home__illustration-image {
@@ -89,7 +90,6 @@ overflow: visible;
   width: 85%;
   pointer-events: none;
 }
-
 
 /* === CINEMATIC SECTIONS WITH FIXED GRADIENT SHIFT === */
 .cinematic-section {
@@ -176,36 +176,66 @@ overflow: visible;
   }
 }
 
+/* Mobile centering fix for illustration */
+/* Mobile illustration centering + stacking fix */
 @media (max-width: 768px) {
   .home {
+    /* Stack hero pieces, not side-by-side */
     flex-direction: column-reverse;
+    align-items: center;      /* center both blocks horizontally */
+    justify-content: flex-start;
+    gap: 2rem;
     text-align: center;
     padding: 3rem 5%;
-    gap: 2rem;
   }
+
+  /* Ensure both blocks take full row width so they stack */
+  .home__content,
   .home__illustration-wrapper {
-    max-width: 350px;
+    width: 100%;
+    max-width: 600px;         /* content breathes on mobile */
     margin: 0 auto;
   }
-  .home__illustration-image {
-    top: 50px;
-    width: 110%;
+
+  .home__content {
+    margin-right: 0;          /* neutralize desktop margin */
+    text-align: center;
   }
-  .cinematic-section {
-    padding: 4rem 7%;
-    align-items: flex-start;
-    text-align: left;
+
+  /* Neutralize desktop push and oversize */
+  .home__illustration-wrapper {
+    position: relative;
+    left: 0;                  /* reset desktop left: 10% */
+    width: 100%;              /* reset desktop width: 150% */
+    max-width: 350px;         /* your earlier mobile size */
+    aspect-ratio: 1 / 1;      /* reserve height so content doesn't flow alongside */
+    overflow: visible;
+  }
+
+  /* Keep blob under the image and centered */
+  .home__illustration-blob {
+    position: relative;
+    z-index: 0;
+    width: 85%;
+    height: 85%;
+    margin: 0 auto;           /* center within wrapper */
+    display: block;
+  }
+
+  /* Center the image over the blob, absolute to preserve overlap */
+  .home__illustration-image {
+    position: absolute;
+    top: 50px;
+    left: 0%;
+    transform: translateX(-50%);
+    width: 100%;              /* match wrapper width */
+    max-width: 100%;
+    pointer-events: none;
+    z-index: 1;
   }
 }
 
 @media (max-width: 480px) {
-  .home__illustration-wrapper {
-    max-width: 280px;
-  }
-  .home__illustration-image {
-    top: 50px;
-  }
-  .cinematic-section {
-    padding: 3.5rem 6%;
-  }
+  .home__illustration-wrapper { max-width: 280px; }
+  .home__illustration-image { top: 50px; }
 }
