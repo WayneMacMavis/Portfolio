@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiHome, FiUser, FiCode, FiFolder, FiMail } from "react-icons/fi";
 import logo from "../Assets/nav_icon.svg";
@@ -8,7 +8,6 @@ import { HERO_FADE_RANGE } from "../config";
 import useThemeToggle from '../hooks/useThemeToggle';
 import '../styles/NavBar.scss';
 
-// Config
 const NAV_LINKS = [
   { name: "Home", icon: FiHome },
   { name: "About", icon: FiUser },
@@ -17,44 +16,41 @@ const NAV_LINKS = [
   { name: "Contact", icon: FiMail }
 ];
 
-// Motion variants
-const overlayVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: 0.25 } },
-  exit: { opacity: 0, transition: { duration: 0.2 } }
-};
-const mobileMenuContainer = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.1, delayChildren: 0.15 } },
-  exit: { transition: { staggerChildren: 0.05, staggerDirection: -1 } }
-};
-const mobileLogoVariants = {
-  hidden: { opacity: 0, y: -10, rotate: -5 },
-  visible: { opacity: 1, y: 0, rotate: 0, transition: { type: "spring", stiffness: 300, damping: 20 } }
-};
-const mobileLinkVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 20 } }
-};
-const desktopLinksContainer = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.08, delayChildren: 0.4 } }
-};
-const desktopLinkItem = {
-  hidden: { opacity: 0, y: -10 },
-  visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 20 } }
-};
-const logoVariants = {
-  hidden: { opacity: 0, y: -10, rotate: -5 },
-  visible: { opacity: 1, y: 0, rotate: 0, transition: { type: "spring", stiffness: 300, damping: 20 } }
+// Motion variants...
+const overlayVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.25 } }, exit: { opacity: 0, transition: { duration: 0.2 } } };
+const mobileMenuContainer = { hidden: {}, visible: { transition: { staggerChildren: 0.1, delayChildren: 0.15 } }, exit: { transition: { staggerChildren: 0.05, staggerDirection: -1 } } };
+const mobileLogoVariants = { hidden: { opacity: 0, y: -10, rotate: -5 }, visible: { opacity: 1, y: 0, rotate: 0, transition: { type: "spring", stiffness: 300, damping: 20 } } };
+const mobileLinkVariants = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 20 } } };
+const desktopLinksContainer = { hidden: {}, visible: { transition: { staggerChildren: 0.08, delayChildren: 0.4 } } };
+const desktopLinkItem = { hidden: { opacity: 0, y: -10 }, visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 20 } } };
+const logoVariants = { hidden: { opacity: 0, y: -10, rotate: -5 }, visible: { opacity: 1, y: 0, rotate: 0, transition: { type: "spring", stiffness: 300, damping: 20 } } };
+
+// Scroll helper with navbar offset
+const scrollToSection = (id, behavior = "smooth") => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const nav = document.querySelector(".navbar");
+  const navHeight = nav ? nav.getBoundingClientRect().height : 0;
+  const y = el.getBoundingClientRect().top + window.scrollY - navHeight;
+  window.scrollTo({ top: y, behavior });
 };
 
-// Reusable Nav Link Component
+// Nav Link Component
 function NavLinkItem({ name, Icon, active, onClick, variants }) {
+  const handleClick = (e) => {
+    e.preventDefault();
+    const id = name.toLowerCase();
+    scrollToSection(id, "smooth");
+    if (onClick) onClick();
+    if (window.location.hash !== `#${id}`) {
+      window.history.replaceState(null, "", `#${id}`);
+    }
+  };
+
   return (
     <motion.a
       href={`#${name.toLowerCase()}`}
-      onClick={onClick}
+      onClick={handleClick}
       className={`nav-link ${active ? "active" : ""}`}
       aria-current={active ? "page" : undefined}
       variants={variants}
@@ -86,63 +82,18 @@ export default function NavBar() {
 
   const { theme, toggleTheme } = useThemeToggle();
 
-  // Attach homeRef after mount
   useEffect(() => {
     const homeEl = document.getElementById("home");
     if (homeEl) homeRef.current = homeEl;
   }, []);
 
-  // Progress is 0 → 1 over HERO_FADE_RANGE
   const homeFadeProgress = useScrollProgress(homeRef, HERO_FADE_RANGE);
 
-  // Scroll detection for navbar style
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  // Collect sections by id
-  useEffect(() => {
-    const ids = NAV_LINKS.map(l => l.name.toLowerCase());
-    sectionsRef.current = ids
-      .map(id => document.getElementById(id))
-      .filter(Boolean);
-
-    const handleResize = () => {
-      sectionsRef.current = ids
-        .map(id => document.getElementById(id))
-        .filter(Boolean);
-      // Re-evaluate on resize
-      evaluateActiveSection();
-    };
-
-    window.addEventListener("resize", handleResize);
-    // Initial sync after DOM is ready
-    const ready = () => evaluateActiveSection();
-    if (document.readyState === "complete" || document.readyState === "interactive") {
-      ready();
-    } else {
-      window.addEventListener("DOMContentLoaded", ready, { once: true });
-    }
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      window.removeEventListener("DOMContentLoaded", ready);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Evaluate which section is active using a viewport "focus line"
-  const evaluateActiveSection = () => {
+  // ✅ Moved up here so it's defined before use
+  const evaluateActiveSection = useCallback(() => {
     const sections = sectionsRef.current;
     if (!sections.length) return;
-
-    // Position of the focus line (tune 0.5 for exact center or 0.4 to anticipate)
     const focus = window.innerHeight * 0.5;
-
-    // Find section whose rect contains the focus line
     let winner = null;
     for (const el of sections) {
       const r = el.getBoundingClientRect();
@@ -151,26 +102,19 @@ export default function NavBar() {
         break;
       }
     }
-
-    // Fallback: pick the closest by distance to focus (handles gaps)
     if (!winner) {
       let best = { el: null, dist: Infinity };
       for (const el of sections) {
         const r = el.getBoundingClientRect();
-        // Distance of section center to focus
         const center = r.top + r.height / 2;
         const dist = Math.abs(center - focus);
         if (dist < best.dist) best = { el, dist };
       }
       winner = best.el;
     }
-
     if (!winner) return;
-
-    const id = winner.id; // already lowercase
+    const id = winner.id;
     const formatted = id.charAt(0).toUpperCase() + id.slice(1);
-
-    // Home "lock": only force Home if the focus line is actually within Home
     if (homeRef.current) {
       const rh = homeRef.current.getBoundingClientRect();
       const focusInsideHome = rh.top <= focus && rh.bottom >= focus;
@@ -184,16 +128,44 @@ export default function NavBar() {
         return;
       }
     }
-
     if (activeLink !== formatted) {
       setActiveLink(formatted);
       if (window.location.hash !== `#${id}`) {
         window.history.replaceState(null, "", `#${id}`);
       }
     }
-  };
+  }, [activeLink, homeFadeProgress]);
 
-  // Scroll listener with rAF to avoid layout thrash
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const ids = NAV_LINKS.map(l => l.name.toLowerCase());
+    sectionsRef.current = ids.map(id => document.getElementById(id)).filter(Boolean);
+
+    const handleResize = () => {
+      sectionsRef.current = ids.map(id => document.getElementById(id)).filter(Boolean);
+      evaluateActiveSection();
+    };
+
+    window.addEventListener("resize", handleResize);
+    const ready = () => evaluateActiveSection();
+    if (document.readyState === "complete" || document.readyState === "interactive") {
+      ready();
+    } else {
+      window.addEventListener("DOMContentLoaded", ready, { once: true });
+    }
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("DOMContentLoaded", ready);
+    };
+  }, [evaluateActiveSection]);
+
   useEffect(() => {
     const onScroll = () => {
       if (!tickingRef.current) {
@@ -205,16 +177,15 @@ export default function NavBar() {
       }
     };
     window.addEventListener("scroll", onScroll, { passive: true });
-    // Evaluate once after a frame to catch initial position
     const t = setTimeout(evaluateActiveSection, 50);
     return () => {
       window.removeEventListener("scroll", onScroll);
       clearTimeout(t);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [homeFadeProgress]);
+  }, [homeFadeProgress, evaluateActiveSection]);
 
-  return (
+
+    return (
     <motion.nav
       className={`navbar ${scrolled ? "scrolled" : ""}`}
       initial={{ y: -80, opacity: 0 }}
@@ -229,6 +200,13 @@ export default function NavBar() {
           variants={logoVariants}
           initial="hidden"
           animate="visible"
+          onClick={(e) => {
+            e.preventDefault();
+            scrollToSection("home", "smooth");
+            if (window.location.hash !== "#home") {
+              window.history.replaceState(null, "", "#home");
+            }
+          }}
         >
           <span className='logo'>Portfolio</span>
           <DownloadCvBtn />
@@ -325,7 +303,18 @@ export default function NavBar() {
                 variants={mobileLogoVariants}
                 style={{ marginBottom: '1.5rem' }}
               >
-                <a href="#home" onClick={closeMenu} className="navbar__brand">
+                <a
+                  href="#home"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    scrollToSection("home", "smooth");
+                    closeMenu();
+                    if (window.location.hash !== "#home") {
+                      window.history.replaceState(null, "", "#home");
+                    }
+                  }}
+                  className="navbar__brand"
+                >
                   <img src={logo} alt="Portfolio logo" className="navbar__icon" />
                   <span className='logo'>Portfolio</span>
                 </a>

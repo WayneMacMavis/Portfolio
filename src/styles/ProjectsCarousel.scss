@@ -41,6 +41,14 @@
     display: grid;
     place-items: center;
     transform-style: preserve-3d;
+
+    /* Added for swipe: prevent native image drag/select and show drag cursor */
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
+    touch-action: pan-y; /* allow vertical scroll while we handle horizontal drag */
+    &:active { cursor: grabbing; }
   }
 
   /* ===== Card Base ===== */
@@ -86,6 +94,11 @@
         object-fit: cover;
         display: block;
         transform: translateZ(0);
+
+        /* Added for swipe: stop native image drag from stealing gesture */
+        pointer-events: none;
+        -webkit-user-drag: none;
+        user-select: none;
       }
 
       /* ===== Light Sweep ===== */

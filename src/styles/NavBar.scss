@@ -3,12 +3,12 @@
 
 /* Anchor offset for sticky navbar (adjusts for mobile automatically) */
 :root {
-  --anchor-offset: 80px;
+  --anchor-offset: 80px; /* desktop navbar height */
 }
 
 @media (max-width: 768px) {
   :root {
-    --anchor-offset: 72px;
+    --anchor-offset: 72px; /* mobile navbar height */
   }
 }
 
@@ -162,10 +162,11 @@ html {
   }
 
   .nav-right {
-    justify-content: flex-end; /* pushes nav links to the far right */
+    justify-content: flex-end;
   }
 
-  /* Theme toggle button — purely structural; behavior from variables */
+
+   /* Theme toggle button */
   .theme-toggle {
     position: relative;
     display: inline-flex;
@@ -192,7 +193,6 @@ html {
     .toggle-knob {
       position: absolute;
       top: 3px;
-      /* left position comes entirely from variables (no overrides here) */
       width: 27px;
       height: 27px;
       background: rgba(255, 255, 255, 0.25);

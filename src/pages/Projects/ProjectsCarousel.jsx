@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { motion, useSpring } from "framer-motion";
+import { useState, useRef } from "react";
+import { motion, useSpring, useInView } from "framer-motion";
 import bg1 from "../../Assets/bg1.jpg";
 import bg2 from "../../Assets/bg2.jpg";
 import bg3 from "../../Assets/bg3.jpg";
@@ -7,13 +7,7 @@ import bg4 from "../../Assets/bg4.jpg";
 import bg5 from "../../Assets/bg5.jpg";
 import "../../styles/ProjectsCarousel.scss";
 
-// Balanced mode locked in
-const balancedSettings = { 
-  multiplier: 20, 
-  perspective: 800, 
-  stiffness: 180, 
-  damping: 16 
-};
+const balancedSettings = { multiplier: 20, perspective: 800, stiffness: 180, damping: 16 };
 
 const projects = [
   { title: "Project One", image: bg1, site: "#", code: "#", figma: "#" },
@@ -23,16 +17,16 @@ const projects = [
   { title: "Project Five", image: bg5, site: "#", code: "#", figma: "#" }
 ];
 
-const slide = {
-  duration: 0.55,
-  ease: [0.22, 1, 0.36, 1]
+const slideSpring = {
+  type: "spring",
+  stiffness: 120,
+  damping: 12
 };
 
 export default function ProjectsCarousel() {
   const [visible, setVisible] = useState([projects.length - 1, 0, 1]);
   const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0 });
 
-  // Springs for smooth feel
   const multiplier = useSpring(balancedSettings.multiplier, { stiffness: 120, damping: 20 });
   const perspective = useSpring(balancedSettings.perspective, { stiffness: 120, damping: 20 });
   const stiffnessSpring = useSpring(balancedSettings.stiffness, { stiffness: 120, damping: 20 });
@@ -77,33 +71,72 @@ export default function ProjectsCarousel() {
 
   const sweepAngle = 75 + tilt.rotateY * 1.5;
 
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "0px 0px -200px 0px" });
+
   return (
     <div
+      ref={ref}
       className="three-card-carousel"
       style={{ "--tilt-perspective": `${perspective.get()}px` }}
     >
       <button className="nav prev" onClick={movePrev}>‹</button>
 
-      <div className="carousel-stage">
+      {/* Swipe-enabled stage */}
+      <motion.div
+        className="carousel-stage"
+        drag="x"
+        dragConstraints={{ left: 0, right: 0 }}
+        dragElastic={0.2}
+        dragMomentum={false}
+        onDragEnd={(event, info) => {
+          const swipeDistance = info.offset.x;
+          const swipeVelocity = info.velocity.x;
+          const distanceThreshold = 100;
+          const velocityThreshold = 400;
+
+          if (swipeDistance < -distanceThreshold || swipeVelocity < -velocityThreshold) {
+            moveNext();
+          } else if (swipeDistance > distanceThreshold || swipeVelocity > velocityThreshold) {
+            movePrev();
+          }
+        }}
+      >
         {visible.map((projIndex, pos) => {
           const project = projects[projIndex];
           const isCenter = pos === 1;
+          const isSide = pos !== 1;
           const isLeft = pos === 0;
           const isRight = pos === 2;
-          const rimOpacity = isLeft || isRight ? 0.6 : 0;
+          const rimOpacity = isSide ? 0.6 : 0;
+
+          const target = inView
+            ? positions[pos]
+            : { x: 0, scale: isCenter ? 0.9 : 0.85, opacity: 0, z: 0, zIndex: 3 };
 
           return (
             <motion.div
               key={projIndex}
               className={`card ${isCenter ? "center" : isLeft ? "left" : "right"}`}
-              animate={{
-                x: positions[pos].x,
-                scale: positions[pos].scale,
-                opacity: positions[pos].opacity,
-                z: positions[pos].z,
-                zIndex: positions[pos].zIndex
+              initial={target}
+              animate={
+                inView
+                  ? isCenter
+                    ? [
+                        { x: 0, scale: 1.1, opacity: 0, z: 60, zIndex: 4 },
+                        { ...positions[pos] }
+                      ]
+                    : [
+                        { x: 0, scale: 0.85, opacity: 0, z: 0, zIndex: 3 },
+                        { x: positions[pos].x * 1.05, scale: 0.88, opacity: positions[pos].opacity, z: positions[pos].z, zIndex: positions[pos].zIndex },
+                        { ...positions[pos] }
+                      ]
+                  : target
+              }
+              transition={{
+                ...slideSpring,
+                delay: isCenter ? 0.2 : 0.55
               }}
-              transition={slide}
             >
               <motion.div
                 className="card-tilt"
@@ -120,6 +153,7 @@ export default function ProjectsCarousel() {
                 onMouseMove={isCenter ? handleMouseMove : undefined}
                 onMouseLeave={isCenter ? resetTilt : undefined}
               >
+                {/* Disable native image drag */}
                 {isLeft && (
                   <motion.div
                     className="rim rim-right"
@@ -137,7 +171,7 @@ export default function ProjectsCarousel() {
                   />
                 )}
 
-                <img src={project.image} alt={project.title} />
+                <img src={project.image} alt={project.title} draggable={false} />
 
                 {isCenter && (
                   <>
@@ -160,7 +194,7 @@ export default function ProjectsCarousel() {
             </motion.div>
           );
         })}
-      </div>
+      </motion.div>
 
       <button className="nav next" onClick={moveNext}>›</button>
     </div>
