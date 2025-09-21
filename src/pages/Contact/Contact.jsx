@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaPhone, FaEnvelope, FaGithub, FaLinkedin, FaFacebook } from "react-icons/fa";
 import useBreathingMotion from "../../hooks/useBreathingMotion";
@@ -7,26 +7,27 @@ import { CONTACT_FADE_RANGE } from "../../config";
 import contactImage from "../../Assets/contact-img.png";
 import "../../styles/Contact.scss";
 
+const modeOrder = ["subtle", "balanced", "extreme"];
+
 export default function Contact() {
   const [sent, setSent] = useState(false);
   const [iconHovered, setIconHovered] = useState(false);
+  const [modeIndex, setModeIndex] = useState(1); // start at "balanced"
 
   const sectionRef = useRef(null);
 
-  // Symmetrical fade logic
+  // Fade logic
   const fadeProgress = useScrollProgress(sectionRef, CONTACT_FADE_RANGE);
-  const eased = fadeProgress * fadeProgress * (3 - 2 * fadeProgress); // smoothstep
+  const eased = fadeProgress * fadeProgress * (3 - 2 * fadeProgress);
   const contactOpacity = 1 - Math.abs(eased - 0.5) * 2;
 
   const breathingSettings = { inhale: 2.2, exhale: 2.8, pause: 0.3 };
 
-  // Mount-safe breathing for the form
+  // Breathing animations
   const { controls: formControls, ref: formRef } = useBreathingMotion({
     scaleRange: [1, 1.015],
     ...breathingSettings
   });
-
-  // Mount-safe breathing for the social icons
   const { controls: iconControls, ref: iconsRef } = useBreathingMotion({
     scaleRange: [1, 1.01],
     ...breathingSettings,
@@ -36,19 +37,45 @@ export default function Contact() {
         breathingSettings.pause * 2) / 2
   });
 
-  const handleSubmit = (e) => {
-    // If you want Netlify to actually capture submissions,
-    // remove preventDefault and let the browser POST.
+  // Keyboard shortcuts: T, ←, →
+  useEffect(() => {
+    const handleKey = (event) => {
+      if (!event || typeof event.key !== "string") return;
+      const key = event.key.toLowerCase();
+      if (key === "t" || key === "arrowright") {
+        setModeIndex((prev) => (prev + 1) % modeOrder.length);
+      } else if (key === "arrowleft") {
+        setModeIndex((prev) => (prev - 1 + modeOrder.length) % modeOrder.length);
+      }
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, []);
+
+  // Netlify form submission
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSent(true);
-    setTimeout(() => setSent(false), 2000);
+    const form = e.target;
+    const formData = new FormData(form);
+
+    try {
+      await fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(formData).toString()
+      });
+      setSent(true);
+      form.reset();
+      setTimeout(() => setSent(false), 2500);
+    } catch (err) {
+      console.error("Form submission error:", err);
+    }
   };
 
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
   };
-
   const iconVariants = {
     hidden: { opacity: 0, y: 10 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } }
@@ -62,14 +89,13 @@ export default function Contact() {
       style={{ opacity: contactOpacity }}
     >
       <div className={`contact__inner ${iconHovered ? "hover-sync" : ""}`}>
-        {/* Left column: Image */}
+        {/* Left column */}
         <div className="contact__image">
           <img src={contactImage} alt="Contact visual" />
         </div>
 
-        {/* Right column: Content */}
+        {/* Right column */}
         <div className="contact__content">
-          {/* Header */}
           <motion.div
             className="contact__header"
             initial={{ opacity: 0, y: 20 }}
@@ -83,7 +109,7 @@ export default function Contact() {
             </p>
           </motion.div>
 
-          {/* Form */}
+          {/* Netlify-enabled form */}
           <motion.form
             className="contact__form"
             name="contact"
@@ -98,10 +124,7 @@ export default function Contact() {
             transition={{ delay: 0.2, duration: 0.6, ease: "easeOut" }}
             onSubmit={handleSubmit}
           >
-            {/* Hidden Netlify form-name field */}
             <input type="hidden" name="form-name" value="contact" />
-
-            {/* Honeypot field */}
             <div hidden>
               <label>
                 Don’t fill this out if you’re human: <input name="bot-field" />
@@ -163,7 +186,7 @@ export default function Contact() {
             viewport={{ once: true }}
           >
             {[
-              { href: "+27728627957", label: "Phone", icon: <FaPhone />, className: "phone" },
+              { href: "tel:+27728627957", label: "Phone", icon: <FaPhone />, className: "phone" },
               { href: "mailto:you@example.com", label: "Email", icon: <FaEnvelope />, className: "email" },
               { href: "https://github.com/yourusername", label: "GitHub", icon: <FaGithub />, className: "github" },
               { href: "https://linkedin.com/in/yourusername", label: "LinkedIn", icon: <FaLinkedin />, className: "linkedin" },
