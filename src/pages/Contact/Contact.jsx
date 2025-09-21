@@ -12,7 +12,7 @@ const modeOrder = ["subtle", "balanced", "extreme"];
 export default function Contact() {
   const [sent, setSent] = useState(false);
   const [iconHovered, setIconHovered] = useState(false);
-  const [modeIndex, setModeIndex] = useState(1); // start at "balanced"
+  const [setModeIndex] = useState(1); // start at "balanced"
 
   const sectionRef = useRef(null);
 
@@ -37,20 +37,21 @@ export default function Contact() {
         breathingSettings.pause * 2) / 2
   });
 
-  // Keyboard shortcuts: T, ←, →
-  useEffect(() => {
-    const handleKey = (event) => {
-      if (!event || typeof event.key !== "string") return;
-      const key = event.key.toLowerCase();
-      if (key === "t" || key === "arrowright") {
-        setModeIndex((prev) => (prev + 1) % modeOrder.length);
-      } else if (key === "arrowleft") {
-        setModeIndex((prev) => (prev - 1 + modeOrder.length) % modeOrder.length);
-      }
-    };
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, []);
+useEffect(() => {
+  const handleKey = (event) => {
+    if (!event || typeof event.key !== "string") return;
+    const key = event.key.toLowerCase();
+    if (key === "t" || key === "arrowright") {
+      setModeIndex((prev) => (prev + 1) % modeOrder.length);
+    } else if (key === "arrowleft") {
+      setModeIndex((prev) => (prev - 1 + modeOrder.length) % modeOrder.length);
+    }
+  };
+  window.addEventListener("keydown", handleKey);
+  return () => window.removeEventListener("keydown", handleKey);
+}, [setModeIndex]); // removed modeOrder
+
+
 
   // Netlify form submission
   const handleSubmit = async (e) => {
