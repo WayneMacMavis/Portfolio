@@ -9,12 +9,10 @@ import "../../styles/Contact.scss";
 
 const modeOrder = ["subtle", "balanced", "extreme"];
 
-// ...imports stay the same
-
 export default function Contact() {
   const [sent, setSent] = useState(false);
   const [iconHovered, setIconHovered] = useState(false);
-  const [setModeIndex] = useState(1); // start at "balanced"
+  const [, setModeIndex] = useState(1); // start at "balanced"
 
   const sectionRef = useRef(null);
 
@@ -39,6 +37,7 @@ export default function Contact() {
         breathingSettings.pause * 2) / 2
   });
 
+  // Mode switching via keyboard
   useEffect(() => {
     const handleKey = (event) => {
       if (!event || typeof event.key !== "string") return;
@@ -51,44 +50,43 @@ export default function Contact() {
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [setModeIndex]);
+  }, []);
 
-// Updated backend form submission with environment detection
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  const form = e.target;
-  const formData = {
-    name: form.name.value,
-    email: form.email.value,
-    message: form.message.value
-  };
+  // Backend form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const formData = {
+      name: form.name.value,
+      email: form.email.value,
+      message: form.message.value
+    };
 
-const API_URL =
-  process.env.NODE_ENV === "development"
-    ? "http://localhost:5000/contact"
-    : "https://portfolio-c6vy.onrender.com/contact";
+    const API_URL =
+      process.env.NODE_ENV === "development"
+        ? "http://localhost:5000/contact"
+        : "https://your-render-service.onrender.com/contact"; // replace with your Render URL
 
-  try {
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData)
-    });
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
+      });
 
-    const data = await res.json();
-    if (res.ok) {
-      console.log(data.success);
-      setSent(true);
-      form.reset();
-      setTimeout(() => setSent(false), 2500);
-    } else {
-      console.error(data.error || "Failed to send message");
+      const data = await res.json();
+      if (res.ok) {
+        console.log(data.success);
+        setSent(true);
+        form.reset();
+        setTimeout(() => setSent(false), 2500);
+      } else {
+        console.error(data.error || "Failed to send message");
+      }
+    } catch (err) {
+      console.error("Form submission error:", err);
     }
-  } catch (err) {
-    console.error("Form submission error:", err);
-  }
-};
-
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
