@@ -4,7 +4,7 @@ export const HERO_FADE_RANGE = {
   endFrac: 1
 };
 
-export const ABOUT_FADE_RANGE = { startFrac: -1.3, endFrac: 1 };
-export const SKILLS_FADE_RANGE = { startFrac: -1.3, endFrac: 1 };
-export const PROJECTS_FADE_RANGE = { startFrac: -1.4, endFrac: 1 };
-export const CONTACT_FADE_RANGE = { startFrac: -1.3, endFrac: 1 };
+export const ABOUT_FADE_RANGE = { startFrac: -2, endFrac: 1.8 };
+export const SKILLS_FADE_RANGE = { startFrac: -2, endFrac: 1.8 };
+export const PROJECTS_FADE_RANGE = { startFrac: -2, endFrac: 1.8 };
+export const CONTACT_FADE_RANGE = { startFrac: -2, endFrac: 1.8 };

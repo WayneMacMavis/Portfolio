@@ -12,21 +12,22 @@ export default function AboutIllustration({
   icon2Opacity,
   icon3Y,
   icon3Opacity,
-  tilt,
+  rotateX,          // 👈 now passed directly
+  rotateY,          // 👈 now passed directly
   handleMouseMove,
-  setTilt,
+  resetTilt,        // 👈 smoother reset
   illoVariants,
   icon1Variants,
   icon2Variants,
   icon3Variants,
-  settleTrigger // <-- NEW: boolean or timestamp from useAboutParallax when settle happens
+  settleTrigger
 }) {
   // Softer spring for illo
   const illoSpringConfig = { stiffness: 180, damping: 20, mass: 0.8 };
   // Snappier spring for icons
   const iconSpringConfig = { stiffness: 300, damping: 18, mass: 0.6 };
 
-  const illoScaleSpring  = useSpring(illoOpacity,  illoSpringConfig);
+  const illoScaleSpring = useSpring(illoOpacity, illoSpringConfig);
   const icon1Scale = useSpring(icon1Opacity, iconSpringConfig);
   const icon2Scale = useSpring(icon2Opacity, iconSpringConfig);
   const icon3Scale = useSpring(icon3Opacity, iconSpringConfig);
@@ -34,7 +35,7 @@ export default function AboutIllustration({
   // Controls for one-shot breathing
   const illoControls = useAnimation();
 
-  // Trigger breath when settleTrigger changes (icons settle)
+  // Trigger breath when settleTrigger changes
   useEffect(() => {
     if (settleTrigger) {
       illoControls.start({
@@ -49,14 +50,14 @@ export default function AboutIllustration({
       className="about__illustration"
       style={{
         y: illoY,
-        rotateX: tilt.rotateX,
-        rotateY: tilt.rotateY,
+        rotateX,
+        rotateY,
         transformStyle: "preserve-3d",
         willChange: "transform",
       }}
       variants={illoVariants}
       onMouseMove={handleMouseMove}
-      onMouseLeave={() => setTilt({ rotateX: 0, rotateY: 0 })}
+      onMouseLeave={resetTilt}
     >
       {/* Illo — fade + bounce, breath on settle */}
       <motion.img

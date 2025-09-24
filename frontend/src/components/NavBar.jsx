@@ -2,9 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiHome, FiUser, FiCode, FiFolder, FiMail } from "react-icons/fi";
 import logo from "../Assets/nav_icon.svg";
-import useScrollProgress from "../hooks/useScrollProgress";
 import DownloadCvBtn from "../components/DownloadCvBtn";
-import { HERO_FADE_RANGE } from "../config";
 import useThemeToggle from '../hooks/useThemeToggle';
 import '../styles/NavBar.scss';
 
@@ -16,7 +14,7 @@ const NAV_LINKS = [
   { name: "Contact", icon: FiMail }
 ];
 
-// Motion variants...
+// Motion variants
 const overlayVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.25 } }, exit: { opacity: 0, transition: { duration: 0.2 } } };
 const mobileMenuContainer = { hidden: {}, visible: { transition: { staggerChildren: 0.1, delayChildren: 0.15 } }, exit: { transition: { staggerChildren: 0.05, staggerDirection: -1 } } };
 const mobileLogoVariants = { hidden: { opacity: 0, y: -10, rotate: -5 }, visible: { opacity: 1, y: 0, rotate: 0, transition: { type: "spring", stiffness: 300, damping: 20 } } };
@@ -25,27 +23,17 @@ const desktopLinksContainer = { hidden: {}, visible: { transition: { staggerChil
 const desktopLinkItem = { hidden: { opacity: 0, y: -10 }, visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 20 } } };
 const logoVariants = { hidden: { opacity: 0, y: -10, rotate: -5 }, visible: { opacity: 1, y: 0, rotate: 0, transition: { type: "spring", stiffness: 300, damping: 20 } } };
 
-// Scroll helper with navbar offset
-const scrollToSection = (id, behavior = "smooth") => {
-  const el = document.getElementById(id);
-  if (!el) return;
-  const nav = document.querySelector(".navbar");
-  const navHeight = nav ? nav.getBoundingClientRect().height : 0;
-  const y = el.getBoundingClientRect().top + window.scrollY - navHeight;
-  window.scrollTo({ top: y, behavior });
-};
-
-// Nav Link Component
-function NavLinkItem({ name, Icon, active, onClick, variants }) {
-  const handleClick = (e) => {
+// Memoized NavLinkItem
+const NavLinkItem = React.memo(function NavLinkItem({ name, Icon, active, onClick, variants, scrollToSection }) {
+  const handleClick = useCallback((e) => {
     e.preventDefault();
     const id = name.toLowerCase();
     scrollToSection(id, "smooth");
-    if (onClick) onClick();
+    onClick?.();
     if (window.location.hash !== `#${id}`) {
       window.history.replaceState(null, "", `#${id}`);
     }
-  };
+  }, [name, onClick, scrollToSection]);
 
   return (
     <motion.a
@@ -59,7 +47,7 @@ function NavLinkItem({ name, Icon, active, onClick, variants }) {
         className="nav-icon"
         whileHover={{ scale: 1.15, rotate: 3 }}
         whileTap={{ scale: 0.95 }}
-        animate={active ? { scale: 1.05, rotate: 0 } : { scale: 1, rotate: 0 }}
+        animate={active ? { scale: 1.05 } : { scale: 1 }}
         transition={{ type: "spring", stiffness: 300, damping: 20 }}
       >
         <Icon />
@@ -67,125 +55,80 @@ function NavLinkItem({ name, Icon, active, onClick, variants }) {
       <span className="nav-text">{name}</span>
     </motion.a>
   );
-}
+});
 
 export default function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeLink, setActiveLink] = useState("Home");
+
+  const navHeightRef = useRef(0);
   const sectionsRef = useRef([]);
-  const homeRef = useRef(null);
-  const tickingRef = useRef(false);
+
+  const { theme, toggleTheme } = useThemeToggle();
 
   const toggleMenu = () => setIsOpen(prev => !prev);
   const closeMenu = () => setIsOpen(false);
 
-  const { theme, toggleTheme } = useThemeToggle();
-
+  // Cache navbar height
   useEffect(() => {
-    const homeEl = document.getElementById("home");
-    if (homeEl) homeRef.current = homeEl;
+    const nav = document.querySelector(".navbar");
+    if (nav) navHeightRef.current = nav.getBoundingClientRect().height;
   }, []);
 
-  const homeFadeProgress = useScrollProgress(homeRef, HERO_FADE_RANGE);
+  // IntersectionObserver for active section detection + URL hash update
+useEffect(() => {
+  const ids = NAV_LINKS.map(l => l.name.toLowerCase());
+  sectionsRef.current = ids.map(id => document.getElementById(id)).filter(Boolean);
 
-  // ✅ Moved up here so it's defined before use
-  const evaluateActiveSection = useCallback(() => {
-    const sections = sectionsRef.current;
-    if (!sections.length) return;
-    const focus = window.innerHeight * 0.5;
-    let winner = null;
-    for (const el of sections) {
-      const r = el.getBoundingClientRect();
-      if (r.top <= focus && r.bottom >= focus) {
-        winner = el;
-        break;
+  const onScroll = () => {
+    const scrollY = window.scrollY + navHeightRef.current + 1;
+    const pageBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 5;
+
+    let currentSection = null;
+    for (const sec of sectionsRef.current) {
+      if (scrollY >= sec.offsetTop) {
+        currentSection = sec.id;
       }
     }
-    if (!winner) {
-      let best = { el: null, dist: Infinity };
-      for (const el of sections) {
-        const r = el.getBoundingClientRect();
-        const center = r.top + r.height / 2;
-        const dist = Math.abs(center - focus);
-        if (dist < best.dist) best = { el, dist };
-      }
-      winner = best.el;
+
+    // 👇 Force Contact active if at bottom of page
+    if (pageBottom) {
+      currentSection = "contact";
     }
-    if (!winner) return;
-    const id = winner.id;
-    const formatted = id.charAt(0).toUpperCase() + id.slice(1);
-    if (homeRef.current) {
-      const rh = homeRef.current.getBoundingClientRect();
-      const focusInsideHome = rh.top <= focus && rh.bottom >= focus;
-      if (homeFadeProgress < 1 && focusInsideHome) {
-        if (activeLink !== "Home") {
-          setActiveLink("Home");
-          if (window.location.hash !== "#home") {
-            window.history.replaceState(null, "", "#home");
-          }
-        }
-        return;
-      }
-    }
-    if (activeLink !== formatted) {
+
+    if (currentSection && currentSection !== activeLink.toLowerCase()) {
+      const formatted = currentSection.charAt(0).toUpperCase() + currentSection.slice(1);
       setActiveLink(formatted);
-      if (window.location.hash !== `#${id}`) {
-        window.history.replaceState(null, "", `#${id}`);
+      if (window.location.hash !== `#${currentSection}`) {
+        window.history.replaceState(null, "", `#${currentSection}`);
       }
     }
-  }, [activeLink, homeFadeProgress]);
+  };
 
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll(); // run once on mount
+
+  return () => window.removeEventListener("scroll", onScroll);
+}, [activeLink]);
+
+
+  // Scroll listener for scrolled state
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  useEffect(() => {
-    const ids = NAV_LINKS.map(l => l.name.toLowerCase());
-    sectionsRef.current = ids.map(id => document.getElementById(id)).filter(Boolean);
-
-    const handleResize = () => {
-      sectionsRef.current = ids.map(id => document.getElementById(id)).filter(Boolean);
-      evaluateActiveSection();
-    };
-
-    window.addEventListener("resize", handleResize);
-    const ready = () => evaluateActiveSection();
-    if (document.readyState === "complete" || document.readyState === "interactive") {
-      ready();
-    } else {
-      window.addEventListener("DOMContentLoaded", ready, { once: true });
-    }
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      window.removeEventListener("DOMContentLoaded", ready);
-    };
-  }, [evaluateActiveSection]);
-
-  useEffect(() => {
-    const onScroll = () => {
-      if (!tickingRef.current) {
-        window.requestAnimationFrame(() => {
-          evaluateActiveSection();
-          tickingRef.current = false;
-        });
-        tickingRef.current = true;
-      }
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    const t = setTimeout(evaluateActiveSection, 50);
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      clearTimeout(t);
-    };
-  }, [homeFadeProgress, evaluateActiveSection]);
-
-
-    return (
+  // Smooth scroll helper
+  const scrollToSection = useCallback((id, behavior = "smooth") => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const y = el.getBoundingClientRect().top + window.scrollY - navHeightRef.current;
+    window.scrollTo({ top: y, behavior });
+  }, []);
+  return (
     <motion.nav
       className={`navbar ${scrolled ? "scrolled" : ""}`}
       initial={{ y: -80, opacity: 0 }}
@@ -229,7 +172,6 @@ export default function NavBar() {
         >
           ☀️
         </motion.span>
-
         <motion.span
           className="icon moon"
           aria-hidden="true"
@@ -238,7 +180,6 @@ export default function NavBar() {
         >
           🌙
         </motion.span>
-
         <motion.span
           className="toggle-knob"
           aria-hidden="true"
@@ -263,6 +204,8 @@ export default function NavBar() {
                 Icon={Icon}
                 active={activeLink === name}
                 variants={desktopLinkItem}
+                onClick={undefined}
+                scrollToSection={scrollToSection}
               />
             </li>
           ))}
@@ -280,7 +223,7 @@ export default function NavBar() {
       </div>
 
       {/* Mobile Menu */}
-      <AnimatePresence>
+      <AnimatePresence presenceAffectsLayout={false}>
         {isOpen && (
           <>
             <motion.div
@@ -323,12 +266,24 @@ export default function NavBar() {
               {/* Mobile links */}
               {NAV_LINKS.map(({ name, icon: Icon }) => (
                 <motion.li key={name} variants={mobileLinkVariants}>
-                  <NavLinkItem
-                    name={name}
-                    Icon={Icon}
-                    active={activeLink === name}
-                    onClick={closeMenu}
-                  />
+                <NavLinkItem
+  name={name}
+  Icon={Icon}
+  active={activeLink === name}
+  onClick={(e) => {
+    e.preventDefault();
+    scrollToSection(name.toLowerCase(), "smooth");
+
+    // 👇 Instantly set active link
+    setActiveLink(name);
+
+    // Update URL hash immediately
+    if (window.location.hash !== `#${name.toLowerCase()}`) {
+      window.history.replaceState(null, "", `#${name.toLowerCase()}`);
+    }
+  }}
+  scrollToSection={scrollToSection}
+/>
                 </motion.li>
               ))}
             </motion.ul>

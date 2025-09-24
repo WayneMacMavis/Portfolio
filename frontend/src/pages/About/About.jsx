@@ -32,7 +32,8 @@ export default function About({ scrollContainerRef }) {
     illoOpacity,
     icon1Opacity,
     icon2Opacity,
-    icon3Opacity
+    icon3Opacity,
+    bgY // 👈 make sure your updated useAboutParallax returns this
   } = useAboutParallax(scrollContainerRef);
 
   // Fade progress using symmetrical fade with adjusted range
@@ -40,7 +41,7 @@ export default function About({ scrollContainerRef }) {
   const eased = fadeProgress * fadeProgress * (3 - 2 * fadeProgress); // smoothstep
   const aboutOpacity = 1 - Math.abs(eased - 0.5) * 2; // symmetrical fade
 
-  const { tilt, handleMouseMove, resetTilt } = useTilt();
+  const { rotateX, rotateY, handleMouseMove, resetTilt } = useTilt();
 
   const icon1Variants = makeIconVariants(0.8);
   const icon2Variants = makeIconVariants(1.05);
@@ -53,7 +54,8 @@ export default function About({ scrollContainerRef }) {
       ref={sectionRef}
       style={{ opacity: aboutOpacity }}
     >
-      <AboutBackground bgVariants={bgVariants} />
+      {/* Background now also receives bgY for parallax drift */}
+      <AboutBackground bgVariants={bgVariants} bgY={bgY} />
 
       <motion.div
         className="about__sequence"
@@ -63,11 +65,12 @@ export default function About({ scrollContainerRef }) {
         variants={masterVariants}
       >
         <AboutIllustration
+          rotateX={rotateX}
+          rotateY={rotateY}
+          handleMouseMove={handleMouseMove}
+          resetTilt={resetTilt}
           illoY={illoY}
           illoOpacity={illoOpacity}
-          tilt={tilt}
-          handleMouseMove={handleMouseMove}
-          setTilt={resetTilt}
           illoVariants={illoVariants}
           icon1Y={icon1Y}
           icon1Opacity={icon1Opacity}

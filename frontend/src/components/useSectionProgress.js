@@ -1,4 +1,3 @@
-// hooks/useSectionProgress.js
 import { useState, useEffect } from "react";
 
 export default function useScrollProgress(start, end, offset = 0) {
@@ -9,7 +8,6 @@ export default function useScrollProgress(start, end, offset = 0) {
     let endPx = 0;
 
     const measure = () => {
-      // Element mode
       if (start && start.current instanceof Element) {
         const el = start.current;
         if (!el) {
@@ -25,9 +23,7 @@ export default function useScrollProgress(start, end, offset = 0) {
 
         startPx = topDocY + h * startFrac;
         endPx   = topDocY + h * endFrac;
-      }
-      // Pixel mode
-      else {
+      } else {
         startPx = typeof start === "number" ? start : 0;
         endPx   = typeof end === "number" ? end : startPx + 1;
       }
@@ -40,18 +36,44 @@ export default function useScrollProgress(start, end, offset = 0) {
       setProgress(clamped);
     };
 
+    // Wrap scroll updates in rAF
+    let ticking = false;
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          update();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    // Initial measure
     measure();
     update();
 
-    window.addEventListener("scroll", update, { passive: true });
+    // Observe element size changes
+    let resizeObserver;
+    if (start && start.current instanceof Element) {
+      resizeObserver = new ResizeObserver(() => {
+        measure();
+        update();
+      });
+      resizeObserver.observe(start.current);
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", () => {
       measure();
       update();
     });
 
     return () => {
-      window.removeEventListener("scroll", update);
-      window.removeEventListener("resize", measure);
+      window.removeEventListener("scroll", onScroll);
+      if (resizeObserver && start.current) {
+        resizeObserver.unobserve(start.current);
+        resizeObserver.disconnect();
+      }
     };
   }, [start, end, offset]);
 

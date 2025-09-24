@@ -4,7 +4,7 @@ import "../../styles/Home.scss";
 import heroIllustration from "../../Assets/home_illustration.svg";
 import blobShape from "../../Assets/blob.svg";
 import useScrollProgress from "../../hooks/useScrollProgress";
-import { HERO_FADE_RANGE } from "../../config"; // shared fade range
+import { HERO_FADE_RANGE } from "../../config";
 
 export default function Home() {
   const heroRef = useRef(null);
@@ -12,7 +12,7 @@ export default function Home() {
   // Fade progress using shared config
   const fadeProgress = useScrollProgress(heroRef, HERO_FADE_RANGE);
   const eased = fadeProgress * fadeProgress * (3 - 2 * fadeProgress); // smoothstep
-  const heroOpacity = 1 - eased;
+  const heroOpacity = Math.max(0, Math.min(1, 1 - eased)); // clamp 0–1
 
   // Parallax motion values
   const mx = useMotionValue(0);
@@ -22,7 +22,6 @@ export default function Home() {
 
   useEffect(() => {
     const prefersReduced =
-      typeof window !== "undefined" &&
       window.matchMedia &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -32,12 +31,20 @@ export default function Home() {
       return;
     }
 
+    let ticking = false;
     const onMove = (e) => {
-      const x = (e.clientX / window.innerWidth - 0.5) * 2;
-      const y = (e.clientY / window.innerHeight - 0.5) * 2;
-      mx.set(x);
-      my.set(y);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const x = (e.clientX / window.innerWidth - 0.5) * 2;
+          const y = (e.clientY / window.innerHeight - 0.5) * 2;
+          mx.set(x);
+          my.set(y);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
+
     window.addEventListener("mousemove", onMove);
     return () => window.removeEventListener("mousemove", onMove);
   }, [mx, my]);
@@ -59,12 +66,18 @@ export default function Home() {
   };
 
   return (
-    <section className="home" id="home" ref={heroRef} style={{ opacity: heroOpacity }}>
+    <section
+      className="home"
+      id="home"
+      ref={heroRef}
+      style={{ opacity: heroOpacity }}
+    >
       <motion.div
         className="home__content"
         variants={heroTextVariants}
         initial="hidden"
         animate="visible"
+        viewport={{ once: true }} // only animate once
       >
         <h1>Hello, I’m Wayne 👋</h1>
         <h2>
@@ -85,9 +98,11 @@ export default function Home() {
         variants={heroImageVariants}
         initial="hidden"
         animate="visible"
+        viewport={{ once: true }}
       >
         <motion.div
           className="home__illustration-blob"
+          aria-hidden="true"
           style={{
             WebkitMask: `url(${blobShape}) no-repeat center / 115% 115%`,
             mask: `url(${blobShape}) no-repeat center / 115% 115%`,
@@ -98,7 +113,8 @@ export default function Home() {
         <motion.img
           className="home__illustration-image"
           src={heroIllustration}
-          alt="Working remotely illustration"
+          alt="Illustration of remote work setup"
+          loading="lazy"
           style={{ x: imgX, y: imgY }}
         />
       </motion.div>

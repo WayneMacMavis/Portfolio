@@ -1,4 +1,4 @@
-// src/pages/About/useAboutParallax.js
+// src/components/About/useAboutParallax.js
 import { useRef, useEffect, useState } from "react";
 import {
   useScroll,
@@ -12,6 +12,7 @@ export default function useAboutParallax(scrollContainerRef) {
   const sectionRef = useRef(null);
 
   const { scrollYProgress, scrollY } = useScroll({
+    container: scrollContainerRef || undefined,
     target: sectionRef,
     offset: ["start end", "end start"],
   });
@@ -21,70 +22,82 @@ export default function useAboutParallax(scrollContainerRef) {
   const lastTriggerRef = useRef(0);
   const lastScrollStartRef = useRef(scrollY.get());
 
-  const DEBOUNCE_MS = 1000; // min time between breaths
-  const DISTANCE_THRESHOLD = 50; // px scrolled before breath allowed
+  const DEBOUNCE_MS = 1000;
+  const DISTANCE_THRESHOLD = 50;
 
-  useEffect(() => {
-    const unsub = scrollYProgress.on("change", (v) =>
-      console.log("[About::progress]", v)
-    );
-    return () => unsub();
-  }, [scrollYProgress]);
+  // ✅ Text parallax: arrive and hold at center
+  const textYBase = useTransform(
+    scrollYProgress,
+    [0, 0.5, 1],
+    ["-20vh", "0vh", "0vh"],
+    { ease: easeInOut, clamp: true }
+  );
+  const textY = useSpring(textYBase, { stiffness: 100, damping: 22, mass: 0.8 });
 
-  // ✅ Content parallax — steady ease
-  const textY = useTransform(scrollYProgress, [0, 1], ["-20vh", "20vh"], { ease: easeInOut });
+  // 🎯 Illustration parallax: arrive and hold
+  const illoYBase = useTransform(
+    scrollYProgress,
+    [0, 0.5, 1],
+    ["-6vh", "0vh", "0vh"],
+    { ease: easeInOut, clamp: true }
+  );
+  const illoY = useSpring(illoYBase, { stiffness: 120, damping: 20, mass: 0.7 });
 
-  // 🎯 Depth parallax with desynced easing
-  const illoYBase  = useTransform(scrollYProgress, [0, 1], ["-6vh", "6vh"], { ease: easeInOut });
-  const icon1YBase = useTransform(scrollYProgress, [0, 1], ["-8vh", "8vh"], { ease: t => easeInOut(t * 0.95) });
-  const icon2YBase = useTransform(scrollYProgress, [0, 1], ["-7vh", "7vh"], { ease: t => easeInOut(Math.pow(t, 1.1)) });
-  const icon3YBase = useTransform(scrollYProgress, [0, 1], ["-9vh", "9vh"], { ease: t => easeInOut(Math.pow(t, 0.9)) });
+  // 🌌 Background drift: subtle, locks at center
+  const bgYBase = useTransform(
+    scrollYProgress,
+    [0, 0.5, 1],
+    ["-10vh", "0vh", "0vh"], // subtle drift, then hold
+    { ease: easeInOut, clamp: true }
+  );
+  const bgY = useSpring(bgYBase, { stiffness: 60, damping: 18, mass: 0.9 });
 
-  // ✨ Direction‑aware reactive jitter overlay for icons
+  // 🎯 Icons: float with jitter
+  const icon1YBase = useTransform(scrollYProgress, [0, 1], ["-8vh", "8vh"], {
+    ease: (t) => easeInOut(t * 0.95),
+  });
+  const icon2YBase = useTransform(scrollYProgress, [0, 1], ["-7vh", "7vh"], {
+    ease: (t) => easeInOut(Math.pow(t, 1.1)),
+  });
+  const icon3YBase = useTransform(scrollYProgress, [0, 1], ["-9vh", "9vh"], {
+    ease: (t) => easeInOut(Math.pow(t, 0.9)),
+  });
+
+  // ✨ Direction‑aware jitter overlay
   const jitter1 = motionValue(0);
   const jitter2 = motionValue(0);
   const jitter3 = motionValue(0);
 
   useEffect(() => {
     let lastY = scrollY.get();
-    let frame = 0;
     let phaseOffset = 0;
     let settleTimer;
+    let frameId;
 
-    const bouncePeriod = 1000 / 2.2; // ~455ms per cycle
+    const bouncePeriod = 1000 / 2.2;
 
     const loop = () => {
-      frame++;
-
-      // Calculate scroll speed and direction
       const currentY = scrollY.get();
       const delta = currentY - lastY;
       const speed = Math.abs(delta);
       const direction = Math.sign(delta);
       lastY = currentY;
 
-      // Detect start of a meaningful scroll
       if (speed > 0.5 && Math.abs(currentY - lastScrollStartRef.current) > DISTANCE_THRESHOLD) {
         lastScrollStartRef.current = currentY;
       }
 
-      // Flip phase instantly on direction change
       if (direction !== 0 && direction !== Math.sign(phaseOffset)) {
         phaseOffset = direction * Math.PI;
       }
 
-      // Map speed to jitter amplitude (min 0.5px, max ~3px)
-      let amp = Math.min(3, 0.5 + speed * 0.1);
-
-      // Map speed to jitter frequency multiplier (min 1x, max ~2.5x)
+      const amp = Math.min(3, 0.5 + speed * 0.1);
       const freq = 1 + Math.min(1.5, speed * 0.05);
 
-      // Apply sine wave jitter with reactive amplitude, frequency, and phase
-      jitter1.set(Math.sin(frame / (60 / freq) + phaseOffset) * amp);
-      jitter2.set(Math.sin(frame / (75 / freq) + 1 + phaseOffset) * amp * 0.8);
-      jitter3.set(Math.sin(frame / (90 / freq) + 2 + phaseOffset) * amp * 1.1);
+      jitter1.set(Math.sin(performance.now() / (60 / freq) + phaseOffset) * amp);
+      jitter2.set(Math.sin(performance.now() / (75 / freq) + 1 + phaseOffset) * amp * 0.8);
+      jitter3.set(Math.sin(performance.now() / (90 / freq) + 2 + phaseOffset) * amp * 1.1);
 
-      // Inertia settle synced to bounce period
       clearTimeout(settleTimer);
       if (speed < 0.2) {
         settleTimer = setTimeout(() => {
@@ -93,48 +106,42 @@ export default function useAboutParallax(scrollContainerRef) {
           jitter2.set(jitter2.get() + overshoot * 0.8 * Math.sign(jitter2.get() || 1));
           jitter3.set(jitter3.get() + overshoot * 1.1 * Math.sign(jitter3.get() || 1));
 
-          // 🔔 Trigger illo breath if debounce + distance conditions met
           const now = Date.now();
           const distanceSinceStart = Math.abs(currentY - lastScrollStartRef.current);
           const timeSinceLast = now - lastTriggerRef.current;
 
-          console.log(
-            `[SettleCheck] Distance: ${distanceSinceStart.toFixed(1)}px | Time since last: ${timeSinceLast}ms`
-          );
-
           if (timeSinceLast > DEBOUNCE_MS && distanceSinceStart > DISTANCE_THRESHOLD) {
             lastTriggerRef.current = now;
             setSettleTrigger(now);
-
-            // 🎭 Fun ASCII breath animation in console
-            console.log("%c\n   ( ͡° ͜ʖ ͡°)  < *inhale*  \n", "color: cyan; font-weight: bold;");
-            setTimeout(() => {
-              console.log("%c\n   ( ͡° ͜ʖ ͡°)  < *exhale*  \n", "color: lightgreen; font-weight: bold;");
-            }, 400);
-          } else {
-            console.log(
-              `[SettleTrigger] ❌ Skipped — ${
-                timeSinceLast <= DEBOUNCE_MS
-                  ? "too soon since last breath"
-                  : "scroll distance too small"
-              }`
-            );
           }
         }, bouncePeriod / 4);
       }
 
-      requestAnimationFrame(loop);
+      frameId = requestAnimationFrame(loop);
     };
-    loop();
+
+    frameId = requestAnimationFrame(loop);
+    return () => {
+      cancelAnimationFrame(frameId);
+      clearTimeout(settleTimer);
+    };
   }, [scrollY, jitter1, jitter2, jitter3]);
 
-  // Combine base parallax with jitter for icons
-  const illoY  = illoYBase;
-  const icon1Y = useSpring(useTransform([icon1YBase, jitter1], ([y, j]) => `calc(${y} + ${j}px)`));
-  const icon2Y = useSpring(useTransform([icon2YBase, jitter2], ([y, j]) => `calc(${y} + ${j}px)`));
-  const icon3Y = useSpring(useTransform([icon3YBase, jitter3], ([y, j]) => `calc(${y} + ${j}px)`));
+  // 🎛 Apply spring personalities to icons
+  const icon1Y = useSpring(
+    useTransform([icon1YBase, jitter1], ([y, j]) => y + j),
+    { stiffness: 180, damping: 15, mass: 0.5 }
+  );
+  const icon2Y = useSpring(
+    useTransform([icon2YBase, jitter2], ([y, j]) => y + j),
+    { stiffness: 180, damping: 15, mass: 0.5 }
+  );
+  const icon3Y = useSpring(
+    useTransform([icon3YBase, jitter3], ([y, j]) => y + j),
+    { stiffness: 180, damping: 15, mass: 0.5 }
+  );
 
-  // Overlapping fade timings with global ease
+  // Overlapping fade timings
   const illoOpacity  = useTransform(scrollYProgress, [0.00, 0.15, 0.85, 1], [0, 1, 1, 0], { ease: easeInOut });
   const icon1Opacity = useTransform(scrollYProgress, [0.10, 0.25, 0.85, 1], [0, 1, 1, 0], { ease: easeInOut });
   const icon2Opacity = useTransform(scrollYProgress, [0.18, 0.33, 0.85, 1], [0, 1, 1, 0], { ease: easeInOut });
@@ -144,6 +151,7 @@ export default function useAboutParallax(scrollContainerRef) {
     sectionRef,
     textY,
     illoY,
+    bgY,
     icon1Y,
     icon2Y,
     icon3Y,
@@ -151,6 +159,6 @@ export default function useAboutParallax(scrollContainerRef) {
     icon1Opacity,
     icon2Opacity,
     icon3Opacity,
-    settleTrigger // pass to AboutIllustration
+    settleTrigger
   };
 }

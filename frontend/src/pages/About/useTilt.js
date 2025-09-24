@@ -1,24 +1,33 @@
 // src/components/About/useTilt.js
-import { useState } from "react";
+import { useMotionValue, useSpring, animate } from "framer-motion";
 
 export default function useTilt() {
-  const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0 });
+  const rotateX = useMotionValue(0);
+  const rotateY = useMotionValue(0);
+
+  const springX = useSpring(rotateX, { stiffness: 150, damping: 20 });
+  const springY = useSpring(rotateY, { stiffness: 150, damping: 20 });
 
   const handleMouseMove = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;   // mouse X within element
-    const y = e.clientY - rect.top;    // mouse Y within element
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
 
-    // Map mouse position to rotation angles
-    const rotateY = ((x / rect.width) - 0.5) * 6;   // horizontal tilt
-    const rotateX = ((y / rect.height) - 0.5) * -6; // vertical tilt
-
-    setTilt({ rotateX, rotateY });
+    rotateY.set(((x / rect.width) - 0.5) * 6);
+    rotateX.set(((y / rect.height) - 0.5) * -6);
   };
 
   const resetTilt = () => {
-    setTilt({ rotateX: 0, rotateY: 0 });
+    // 👇 Animate back to 0 with a tiny overshoot
+    animate(rotateX, [rotateX.get(), -2, 1, 0], {
+      duration: 0.6,
+      ease: "easeInOut"
+    });
+    animate(rotateY, [rotateY.get(), 2, -1, 0], {
+      duration: 0.6,
+      ease: "easeInOut"
+    });
   };
 
-  return { tilt, handleMouseMove, resetTilt, setTilt };
+  return { rotateX: springX, rotateY: springY, handleMouseMove, resetTilt };
 }

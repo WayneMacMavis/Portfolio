@@ -8,7 +8,7 @@
   background: var(--brand-color-3);
   background-size: 400% 400%;
   animation: gradientShift var(--gradient-speed, 15s) ease infinite;
-  will-change: transform, opacity, filter, background-position;
+  will-change: transform, opacity, background-position;
 
   /* Sweep overlay layer */
   &::after {
@@ -19,28 +19,16 @@
     opacity: 0;
     animation: bgSweep 3.2s ease-in-out infinite;
     animation-delay: 0.8s; /* phase sync with gradient */
-    will-change: transform, opacity, background;
+    will-change: transform, opacity;
   }
 }
 
 /* Sweep motion — horizontal pass */
 @keyframes bgSweep {
-  0% {
-    opacity: 0;
-    transform: translateX(-20%);
-  }
-  20% {
-    opacity: 1;
-    transform: translateX(0%);
-  }
-  60% {
-    opacity: 1;
-    transform: translateX(20%);
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(40%);
-  }
+  0%   { opacity: 0; transform: translate3d(-20%, 0, 0); }
+  20%  { opacity: 1; transform: translate3d(0%, 0, 0); }
+  60%  { opacity: 1; transform: translate3d(20%, 0, 0); }
+  100% { opacity: 0; transform: translate3d(40%, 0, 0); }
 }
 
 /* Gradient breathing — slow pan */
